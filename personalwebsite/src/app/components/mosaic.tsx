@@ -82,7 +82,7 @@ export function MosaicBottomStrip({ className = "" }: { className?: string }) {
       aria-hidden="true"
       viewBox="0 0 1440 130"
       preserveAspectRatio="none"
-      className={`pointer-events-none absolute bottom-[12px] left-[12px] h-[92px] w-[calc(100%_-_24px)] sm:h-[116px] ${className}`}
+      className={`pointer-events-none absolute bottom-[12px] left-[12px] z-[3] h-[92px] w-[calc(100%_-_24px)] sm:h-[116px] ${className}`}
       fill="none"
     >
       <MosaicTiles tiles={BOTTOM_TILES} gap={3} />
@@ -173,7 +173,8 @@ export function MosaicPanelBacking() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute -left-7 -right-7 -top-5 -bottom-6 z-0 hidden md:block"
+      style={{ animationDelay: "300ms" }}
+      className="rise pointer-events-none absolute -left-7 -right-7 -top-5 -bottom-6 z-0 hidden md:block"
     >
       <svg
         viewBox="0 0 680 196"

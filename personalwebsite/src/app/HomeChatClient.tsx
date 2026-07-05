@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithoutRef,
+  type RefObject,
 } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -32,6 +33,7 @@ import {
   MosaicPanelBacking,
   type Tile,
 } from "@/app/components/mosaic";
+import { ActivityCalendar } from "react-activity-calendar";
 
 // Error markers stored in assistant content. Tag with a variant so the
 // renderer can show class-appropriate copy (network vs. generic 5xx).
@@ -167,7 +169,175 @@ function repairMarkdownLinks(text: string): string {
     .replace(/\]\(([^)]*?)\)/g, (_m, url) => `](${url.replace(/\s+/g, "%20")})`);
 }
 
-export default function HomeChatClient() {
+export type ContribDay = { date: string; count: number; level: number };
+
+// Right-side vertical GitHub history. Fetches the entire contribution history,
+// renders one continuous calendar rotated 90deg (so it runs top=oldest →
+// bottom=newest), and lives in its own scroll container. A bottom spacer parks
+// the newest end at the bottom of the links box on load; scrolling up ("pulling
+// the calendar down") reveals older history and slides the newest end down
+// behind the bottom mosaic (which sits at a higher z-index). Stops at the first
+// contribution date. Desktop only.
+function VerticalHistoryCalendar({
+  anchorRef,
+  initialData,
+}: {
+  anchorRef: RefObject<HTMLDivElement | null>;
+  initialData?: ContribDay[] | null;
+}) {
+  const BLOCK = 22;
+  const MARGIN = 7;
+  const cell = BLOCK + MARGIN;
+  const [data, setData] = useState<ContribDay[] | null>(initialData ?? null);
+  const [spacer, setSpacer] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // The server usually supplies the (daily-cached) history as a prop, so this
+    // client fetch is only a fallback for when it wasn't provided.
+    if (initialData && initialData.length > 0) return;
+    let cancelled = false;
+    fetch("https://github-contributions-api.jogruber.de/v4/KeshavSree?y=all")
+      .then((r) => r.json())
+      .then((j: { contributions?: ContribDay[] }) => {
+        if (cancelled) return;
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(
+          now.getMonth() + 1,
+        ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+        const days = [...(j.contributions ?? [])]
+          .filter((d) => d.date <= today)
+          .sort((a, b) => a.date.localeCompare(b.date));
+        const first = days.findIndex((d) => d.count > 0);
+        setData(first > 0 ? days.slice(first) : days);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [initialData]);
+
+  // Deterministic (unrotated) calendar size, computed from the data — never
+  // depends on measuring a rotated element. calW is the long axis (weeks), calH
+  // the 7-day axis. After rotation the wrapper is calH wide × calW tall.
+  const { calW, calH } = useMemo(() => {
+    if (!data || data.length === 0) return { calW: 0, calH: 0 };
+    const first = new Date(data[0].date + "T00:00:00");
+    const last = new Date(data[data.length - 1].date + "T00:00:00");
+    const firstSunday = new Date(first);
+    firstSunday.setDate(first.getDate() - first.getDay());
+    const totalDays =
+      Math.round((last.getTime() - firstSunday.getTime()) / 86400000) + 1;
+    const weeks = Math.ceil(totalDays / 7);
+    return {
+      calW: weeks * BLOCK + (weeks - 1) * MARGIN,
+      calH: 7 * BLOCK + 6 * MARGIN,
+    };
+  }, [data]);
+
+  // Month markers: for each month in range, the vertical offset of the week that
+  // holds its 1st (weeks run top=oldest → bottom=newest after rotation).
+  const months = useMemo(() => {
+    if (!data || data.length === 0) return [] as { y: number; label: string }[];
+    const first = new Date(data[0].date + "T00:00:00");
+    const firstSunday = new Date(first);
+    firstSunday.setDate(first.getDate() - first.getDay());
+    const out: { y: number; label: string }[] = [];
+    const seen = new Set<string>();
+    for (const d of data) {
+      const dt = new Date(d.date + "T00:00:00");
+      const key = `${dt.getFullYear()}-${dt.getMonth()}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const days = Math.round(
+        (dt.getTime() - firstSunday.getTime()) / 86400000,
+      );
+      const label = `${dt.toLocaleString("en-US", { month: "short" })} ${String(
+        dt.getFullYear(),
+      ).slice(-2)}`;
+      out.push({ y: Math.floor(days / 7) * cell, label });
+    }
+    return out;
+  }, [data, cell]);
+
+  // Spacer below the calendar so the newest end rests at the bottom of the links
+  // box; recompute on resize.
+  useEffect(() => {
+    if (calW === 0) return;
+    const measure = () => {
+      const cont = scrollRef.current;
+      if (!cont) return;
+      const contBottom = cont.getBoundingClientRect().bottom;
+      const anchorBottom =
+        anchorRef.current?.getBoundingClientRect().bottom ?? contBottom;
+      setSpacer(Math.max(0, contBottom - anchorBottom));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [calW, anchorRef]);
+
+  // Park at the most recent (bottom) once spacing is known.
+  useEffect(() => {
+    const cont = scrollRef.current;
+    if (cont) cont.scrollTop = cont.scrollHeight;
+  }, [spacer, calW]);
+
+  return (
+    <div
+      ref={scrollRef}
+      aria-hidden="true"
+      style={{ animationDelay: "450ms" }}
+      className="rise quiet-scroll absolute inset-y-0 right-0 z-[1] hidden w-[286px] overflow-y-auto overscroll-contain md:block"
+    >
+      <div className="relative" style={calW ? { height: calW + 24 } : undefined}>
+        {months.map((m) => (
+          <div
+            key={m.label}
+            className="pointer-events-none absolute left-1 w-[46px] text-right font-mono text-[9px] uppercase tracking-[0.06em] text-[var(--color-ink-faint)]"
+            style={{ top: 24 + m.y - 5 }}
+          >
+            {m.label}
+          </div>
+        ))}
+        <div
+          className="absolute"
+          style={
+            calW ? { top: 24, left: 62, width: calH, height: calW } : undefined
+          }
+        >
+          <div
+            className="absolute left-1/2 top-1/2"
+            style={{ transform: "translate(-50%, -50%) rotate(90deg)" }}
+          >
+            {data && data.length > 0 && (
+              <ActivityCalendar
+                data={data}
+                blockSize={BLOCK}
+                blockMargin={MARGIN}
+                colorScheme="light"
+                theme={{
+                  light: ["#EBF5EA", "#BDDBB6", "#9BC18C", "#6E9660", "#486B40"],
+                }}
+                showWeekdayLabels={false}
+                showMonthLabels={false}
+                showColorLegend={false}
+                showTotalCount={false}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+      <div aria-hidden="true" style={{ height: spacer }} />
+    </div>
+  );
+}
+
+export default function HomeChatClient({
+  initialHistory,
+}: {
+  initialHistory?: ContribDay[] | null;
+} = {}) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -208,6 +378,7 @@ export default function HomeChatClient() {
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const linksBoxRef = useRef<HTMLDivElement>(null);
   const isProcessingRef = useRef(false);
   const messagesRef = useRef(messages);
   const abortRef = useRef<AbortController | null>(null);
@@ -749,13 +920,20 @@ export default function HomeChatClient() {
       {!inChat && (
         <>
         <HomeMosaicFrame />
-        <section className="relative z-10 mx-auto flex h-full w-full max-w-[680px] flex-col justify-center px-7 py-12 md:px-6 md:py-8">
+        {/* Cream cover for the strip below the bottom mosaic, so the calendar
+            can't peek through the gap between the mosaic and the page edge. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] hidden h-[14px] bg-[var(--color-surface)] md:block"
+        />
+        <div className="relative mx-auto h-full w-full max-w-[1060px]">
+        <section className="relative z-10 flex h-full flex-col justify-center px-7 py-12 md:py-8 md:mr-[310px]">
           <div className="rise" style={{ animationDelay: "80ms" }}>
             <h1 className="text-[clamp(2.65rem,6vw,3.85rem)] font-normal leading-[0.94] tracking-[-0.045em] text-[var(--color-ink)]">
               Keshav Sreekantham
             </h1>
             <p className="mt-5 max-w-[540px] text-[clamp(1.05rem,1.7vw,1.2rem)] leading-[1.45] tracking-[-0.01em] text-[var(--color-ink-muted)]">
-              [[Founder, engineer, and student. Happiest with a hard problem.]]
+              Engineer, Student, always asking questions. Curious about me?
             </p>
           </div>
 
@@ -786,6 +964,7 @@ export default function HomeChatClient() {
           </div>
 
           <div
+            ref={linksBoxRef}
             className="relative mx-auto mt-10 w-full max-w-[500px] px-9 py-6 md:mt-12"
           >
             <MosaicPanelBacking />
@@ -853,6 +1032,11 @@ export default function HomeChatClient() {
             </div>
           </div>
         </section>
+        <VerticalHistoryCalendar
+          anchorRef={linksBoxRef}
+          initialData={initialHistory}
+        />
+        </div>
         </>
       )}
 

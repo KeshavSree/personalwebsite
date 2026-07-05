@@ -5,20 +5,20 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Keshav Sreekantham — [[CS & AI at Purdue, building ML systems for robotics and startups.]]",
+    "Keshav Sreekantham - Data Science (Computer Science) at Purdue, deploying AI at scale",
 };
 
 const SKILLS = [
-  "[[Machine Learning]]",
-  "[[PyTorch]]",
-  "[[Computer Vision]]",
-  "[[Robotics]]",
-  "[[Quantum Computing]]",
-  "[[TypeScript]]",
-  "[[Python]]",
-  "[[C++]]",
-  "[[AWS]]",
-  "[[AR / XR]]",
+  "Productization",
+  "Cloud Infrastructure",
+  "CI Pipeline Development",
+  "Machine Learning",
+  "Azure",
+  "AWS",
+  "Python",
+  "Rust",
+  "Docker",
+  "Kubernetes",
 ];
 
 const EXPLORING = [
@@ -51,11 +51,6 @@ export default function AboutPage() {
       <h1 className="mt-5 text-[clamp(2rem,5vw,3rem)] font-medium leading-[1.02] tracking-[-0.02em] text-[var(--color-ink)]">
         Keshav Sreekantham
       </h1>
-
-      <p className="mt-6 max-w-[620px] font-serif text-[clamp(1.05rem,1.8vw,1.3rem)] italic leading-snug text-[var(--color-ink-muted)]">
-        [[Someone who can&apos;t leave a good idea alone.]]
-      </p>
-
       <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2">
         {CONNECT.map((c) => (
           <li key={c.label}>
@@ -78,16 +73,11 @@ export default function AboutPage() {
 
       <section className="mt-10 mb-6 space-y-5 text-[16px] leading-[1.75] text-[var(--color-ink)]">
         <p>
-          [[I grew up building things that were probably too ambitious for the week I
-          had. That habit followed me into college: I am a founding engineer at Repple,
-          co-founded buildpurdue (a campus accelerator), and spend the rest of my time
-          in research labs and hackathons.]]
-        </p>
-        <p>
-          [[What I care about: systems that actually ship, interfaces that respect the
-          person using them, and the stretch of engineering where ML, robotics, and
-          quantum brush against each other. I am not precious about which layer of the
-          stack I work on, as long as the thing gets out the door.]]
+          I find the gap. Whether it be building the brand of Purdue Stack or designing tools for Fortune 100 clients,
+            I notice problems. Most of those problems I don’t have the capability to solve at that moment,
+            whether it be due to time, resources, or my authority to change things.
+            However, more often than not, I find a gap within my grasp and I close it.
+            The best part is that this skill is field-agnostic, and I grow no matter what I am doing.
         </p>
       </section>
 
