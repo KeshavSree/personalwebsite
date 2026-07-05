@@ -786,12 +786,12 @@ export default function HomeChatClient() {
           </div>
 
           <div
-            className="relative mt-12 px-4 py-5 md:mt-16"
+            className="relative mx-auto mt-10 w-full max-w-[500px] px-9 py-6 md:mt-12"
           >
             <MosaicPanelBacking />
-            <WoodPanelSurface />
+            <MosaicPanelTile />
             <nav
-              className="rise relative z-10 grid grid-cols-2 gap-x-6 gap-y-4 text-sm sm:flex sm:flex-wrap sm:items-center sm:gap-x-4 sm:gap-y-3"
+              className="rise relative z-10 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[15px]"
               style={{ animationDelay: "360ms" }}
               aria-label="Sections"
             >
@@ -825,7 +825,7 @@ export default function HomeChatClient() {
             </nav>
 
             <div
-              className="rise relative z-10 mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[var(--color-ink-muted)]"
+              className="rise relative z-10 mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[15px] text-[var(--color-ink-muted)]"
               style={{ animationDelay: "440ms" }}
             >
               <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
@@ -1102,20 +1102,24 @@ function MosaicArtifactDivider({ from }: { from: "left" | "right" }) {
   );
 }
 
-function WoodPanelSurface() {
+// The panel behind the links, drawn as a single large mosaic tessera: a ~15-sided
+// polygon that reads as a rough rectangle with hand-cut indentations, filled with
+// the raised cream and edged by the cream gap-stroke so it belongs to the mosaic.
+function MosaicPanelTile() {
   return (
     <svg
       aria-hidden="true"
-      viewBox="0 0 1000 240"
+      viewBox="0 0 700 200"
       preserveAspectRatio="none"
       className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible"
       fill="none"
     >
-      <path
-        d="M7 8C105 2 211 10 322 5C441 0 561 9 680 4C802 0 910 10 994 6L997 231C882 236 773 228 653 234C524 240 398 229 276 235C166 240 74 229 4 234Z"
+      <polygon
+        points="18,26 160,14 270,34 400,14 520,30 682,22 672,102 686,182 540,190 410,176 270,192 150,178 20,188 12,108 26,58"
         fill="var(--color-surface-raised)"
-        stroke="var(--color-hairline)"
-        strokeWidth="1"
+        stroke="var(--color-surface)"
+        strokeWidth="2.5"
+        strokeLinejoin="round"
         vectorEffect="non-scaling-stroke"
       />
     </svg>
