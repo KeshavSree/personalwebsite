@@ -1,0 +1,254 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* Surfaces: warm paper cream, tonal steps tinted toward 82deg */
+  --color-surface: #F9F4E6;
+  --color-surface-raised: oklch(97% 0.016 82);
+  --color-surface-muted: oklch(92% 0.028 82);
+  --color-surface-sunken: oklch(90% 0.032 82);
+  --color-surface-wash: oklch(92% 0.028 82);
+
+  /* Ink: warm near-black, never true black */
+  --color-ink: oklch(20% 0.018 55);
+  --color-ink-muted: oklch(42% 0.018 60);
+  --color-ink-subtle: oklch(58% 0.014 65);
+  --color-ink-faint: oklch(72% 0.012 70);
+
+  /* Hairlines: warm enough to belong to the paper */
+  --color-hairline: oklch(84% 0.024 78);
+  --color-hairline-strong: oklch(74% 0.028 78);
+
+  /* Accent: the one bright object — a single blue, drawn from the mosaic tile */
+  --color-accent: oklch(56% 0.105 216);
+  --color-accent-hover: oklch(50% 0.105 216);
+  --color-accent-soft: oklch(91% 0.04 214);
+  --color-accent-tint: oklch(95% 0.02 213);
+
+  /* Mosaic palette: muted tesserae. Blue also anchors the accent above. */
+  --color-mosaic-red: #BA5A5A;
+  --color-mosaic-green: #A4CE8B;
+  --color-mosaic-blue: #86BCBD;
+
+  /* Semantic */
+  --color-focus: var(--color-accent);
+
+  /* Typography */
+  --font-sans: var(--font-host-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), "Iowan Old Style", Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* Shadows (low-commitment, light surface appropriate) */
+  --shadow-soft: 0 1px 2px oklch(20% 0.015 60 / 0.04), 0 2px 6px oklch(20% 0.015 60 / 0.04);
+  --shadow-lift: 0 4px 12px oklch(20% 0.015 60 / 0.06), 0 1px 3px oklch(20% 0.015 60 / 0.04);
+}
+
+:root {
+  color-scheme: light;
+  --background: var(--color-surface);
+  --foreground: var(--color-ink);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-accent);
+  color: var(--color-surface);
+}
+
+/* Focus: no global ring. The input wrapper carries its own border-color change
+   on focus-within; other elements rely on hover/active affordances. */
+:focus,
+:focus-visible {
+  outline: none;
+}
+
+/* Scrollbar: minimal */
+.quiet-scroll::-webkit-scrollbar { width: 0; height: 0; }
+.quiet-scroll { scrollbar-width: none; }
+
+/* Top-of-chat blur band. A thin overlay that backdrop-blurs whatever scrolls
+   under it (messages going up). Faded out at the bottom edge so the blur
+   resolves gradually rather than ending in a hard line. */
+.chat-blur-top {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0, black 60%, transparent 100%);
+          mask-image: linear-gradient(to bottom, black 0, black 60%, transparent 100%);
+}
+
+/* Motion: staggered reveals */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slip {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes tick {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30%           { opacity: 1;   transform: translateY(-2px); }
+}
+
+.rise { animation: rise 480ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.slip { animation: slip 520ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.tick { animation: tick 1.2s ease-in-out infinite; }
+
+/* Typing indicator variants (A/B/C), selectable via ?agent= URL param */
+
+/* A — composing: vermilion underline segment travels beneath an italic word */
+@keyframes underline-scrub {
+  0%   { transform: translateX(-30%); }
+  50%  { transform: translateX(170%); }
+  100% { transform: translateX(-30%); }
+}
+.underline-scrub { animation: underline-scrub 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+
+/* B — reading ribbon: a vermilion pip slides across a hairline track */
+@keyframes ribbon-pip {
+  0%   { transform: translateX(0); }
+  50%  { transform: translateX(72px); }
+  100% { transform: translateX(0); }
+}
+.ribbon-pip { animation: ribbon-pip 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+
+/* C — caret blink: 1px vermilion bar that blinks after a serif italic verb */
+@keyframes caret-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.caret-blink { animation: caret-blink 1s steps(1, end) infinite; }
+@keyframes verb-fade {
+  0%   { opacity: 0; transform: translateY(2px); }
+  15%  { opacity: 1; transform: translateY(0); }
+  85%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-2px); }
+}
+.verb-fade { animation: verb-fade 1.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Annotation pulse: subtle scale + accent ring used as the mobile
+   "tap me to see the note" affordance. Sits on a forgiving tap target
+   so it doesn't require pinpoint accuracy. */
+@keyframes annotPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 oklch(56% 0.105 216 / 0.35);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 6px oklch(56% 0.105 216 / 0);
+    transform: scale(1.04);
+  }
+}
+.annot-pulse { animation: annotPulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+/* Skeleton shimmer for artifact placeholders. A faint highlight slides
+   left-to-right across a tinted-cream block, signaling "loading, more
+   coming" without committing to a spinner. */
+@keyframes skeletonShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-muted) 0%,
+    var(--color-hairline) 50%,
+    var(--color-surface-muted) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Sheet motion (mobile artifact overlay) */
+@keyframes sheetIn {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes sheetOut {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
+}
+@keyframes scrimIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scrimOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+.sheet-in  { animation: sheetIn 320ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.sheet-out { animation: sheetOut 260ms cubic-bezier(0.4, 0, 1, 1) both; }
+.scrim-in  { animation: scrimIn 220ms ease-out both; }
+.scrim-out { animation: scrimOut 220ms ease-in both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .slip, .tick, .annot-pulse,
+  .underline-scrub, .ribbon-pip, .caret-blink, .verb-fade,
+  .sheet-in, .sheet-out, .scrim-in, .scrim-out,
+  .skeleton-shimmer {
+    animation: none !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
+/* Prose overrides (blog) — light-mode edition */
+.prose {
+  color: var(--color-ink);
+  max-width: 68ch;
+}
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.prose h1 { font-size: 2rem;    margin: 1.4em 0 0.5em; }
+.prose h2 { font-size: 1.6rem;  margin: 1.2em 0 0.5em; }
+.prose h3 { font-size: 1.3rem;  margin: 1em 0 0.5em; }
+.prose h4 { font-size: 1.1rem;  margin: 0.9em 0 0.4em; }
+.prose p  { margin: 1.15em 0; color: var(--color-ink); line-height: 1.7; }
+.prose ul, .prose ol { padding-left: 1.4em; margin: 1.1em 0; }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose a  { color: var(--color-accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.prose a:hover { color: var(--color-accent-hover); }
+.prose img {
+  margin: 2em auto;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  max-width: 100%;
+  height: auto;
+}
+.prose code { font-family: var(--font-mono); font-size: 0.92em; background: var(--color-surface-muted); padding: 0.1em 0.35em; border-radius: var(--radius-xs); }
+.prose blockquote {
+  border-left: 2px solid var(--color-accent);
+  padding-left: 1em;
+  color: var(--color-ink-muted);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05em;
+}

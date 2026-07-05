@@ -1,0 +1,23 @@
+import type { NextConfig } from "next";
+import { config as loadEnv } from "dotenv";
+import path from "path";
+
+// Load env from the repo root so Next.js, the Python RAG scripts, and any
+// other tooling all read from one canonical .env. Override:false means
+// existing env vars (e.g., Vercel-injected on prod) win, so this only
+// matters for local dev.
+loadEnv({ path: path.resolve(__dirname, "../.env"), override: false });
+
+const nextConfig: NextConfig = {
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  },
+  // Performance optimizations
+  reactStrictMode: true,
+  poweredByHeader: false,
+  compress: true,
+};
+
+export default nextConfig;
