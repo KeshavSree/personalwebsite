@@ -187,3 +187,80 @@ export function MosaicPanelBacking() {
     </div>
   );
 }
+
+// ── Arch ──────────────────────────────────────────────────────────────────
+// An About-page-only feature: a horizontal mosaic "bridge" with a flat-ish rocky
+// top, an arched underside, side pillars for support, and a gap in the middle —
+// two cliff halves that would connect but don't. Same chunky tile style.
+const ARCH_TILES: Tile[] = [
+  { points: "309,14 462,11 417,22", c: "red" }, // triangle
+  { points: "126,124 181,117 0,150 58,138", c: "red" }, // quad
+  { points: "404,68 514,56 351,88 349,43 375,27", c: "red" }, // pentagon
+  { points: "559,7 561,26 514,56 510,32", c: "red" }, // quad
+  { points: "971,8 1156,10 1032,16 979,56 973,29", c: "red" }, // pentagon
+  { points: "1040,66 979,56 1032,16 1049,28 1088,53", c: "green" }, // pentagon
+  { points: "979,56 1103,90 926,52 928,26 973,29", c: "green" }, // pentagon
+  { points: "1252,117 1103,90 1199,103 1210,57", c: "red" }, // quad
+  { points: "1381,138 1440,150 1252,117", c: "red" }, // triangle
+  { points: "22,33 0,30 55,3 85,43", c: "red" }, // quad
+  { points: "194,24 165,43 148,15", c: "green" }, // triangle
+  { points: "243,20 246,40 194,24", c: "red" }, // triangle
+  { points: "309,29 309,14 352,30 375,27 349,43", c: "green" }, // pentagon
+  { points: "375,27 309,14 417,22 439,43 404,68", c: "blue" }, // pentagon
+  { points: "439,43 417,22 462,11 454,54", c: "green" }, // quad
+  { points: "404,68 439,43 454,54", c: "red" }, // triangle
+  { points: "510,32 501,45 454,54 462,11", c: "red" }, // quad
+  { points: "514,56 501,45 510,32", c: "green" }, // triangle
+  { points: "871,13 928,26 926,52 894,28 865,37", c: "red" }, // pentagon
+  { points: "971,8 973,29 928,26", c: "blue" }, // triangle
+  { points: "1098,32 1049,28 1032,16", c: "blue" }, // triangle
+  { points: "1156,10 1129,28 1088,53 1098,32", c: "green" }, // quad
+  { points: "1205,35 1209,15 1269,23 1210,57", c: "blue" }, // quad
+  { points: "1335,27 1286,35 1269,23", c: "green" }, // triangle
+  { points: "1395,4 1358,39 1335,27", c: "green" }, // triangle
+  { points: "25,63 0,30 22,33 84,48", c: "blue" }, // quad
+  { points: "0,30 25,107 96,92 58,138 0,150", c: "green" }, // pentagon
+  { points: "25,107 0,30 25,63 84,48 96,92", c: "red" }, // pentagon
+  { points: "84,48 22,33 85,43 154,69 96,92", c: "green" }, // pentagon
+  { points: "58,138 96,92 126,124", c: "blue" }, // triangle
+  { points: "126,124 154,69 236,60 181,117", c: "green" }, // quad
+  { points: "148,15 154,69 85,43 102,21", c: "blue" }, // quad
+  { points: "154,69 148,15 165,43 194,24 236,60", c: "red" }, // pentagon
+  { points: "96,92 154,69 126,124", c: "red" }, // triangle
+  { points: "236,60 194,24 246,40 243,20 289,46", c: "green" }, // pentagon
+  { points: "230,105 236,60 289,46 285,92", c: "red" }, // quad
+  { points: "181,117 236,60 230,105", c: "blue" }, // triangle
+  { points: "285,92 289,46 349,43 351,88", c: "green" }, // quad
+  { points: "309,14 289,46 243,20", c: "blue" }, // triangle
+  { points: "289,46 309,14 309,29 349,43", c: "red" }, // quad
+  { points: "1040,66 1088,53 1154,51 1103,90", c: "red" }, // quad
+  { points: "1098,32 1088,53 1049,28", c: "red" }, // triangle
+  { points: "1156,10 1154,51 1088,53 1129,28", c: "blue" }, // quad
+  { points: "1103,90 1154,51 1210,57 1155,91", c: "blue" }, // quad
+  { points: "1154,51 1156,10 1205,35 1210,57", c: "red" }, // quad
+  { points: "1155,91 1210,57 1199,103", c: "green" }, // triangle
+  { points: "1274,41 1252,117 1210,57 1269,23", c: "green" }, // quad
+  { points: "1286,35 1274,41 1269,23", c: "red" }, // triangle
+  { points: "1252,117 1296,93 1341,62 1341,102 1318,125", c: "green" }, // pentagon
+  { points: "1296,93 1252,117 1274,41 1286,35", c: "blue" }, // quad
+  { points: "1286,35 1335,27 1358,39 1341,62 1296,93", c: "red" }, // pentagon
+  { points: "1318,125 1341,102 1381,138", c: "red" }, // triangle
+  { points: "1395,4 1440,25 1428,113 1406,47 1358,39", c: "red" }, // pentagon
+  { points: "1358,39 1406,47 1341,62", c: "green" }, // triangle
+  { points: "1341,62 1406,47 1428,113 1341,102", c: "blue" }, // quad
+  { points: "1381,138 1428,113 1440,25 1440,150", c: "blue" }, // quad
+  { points: "1341,102 1428,113 1381,138", c: "green" }, // triangle
+];
+
+export function MosaicArch({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 -4 1440 160"
+      className={`pointer-events-none block h-auto w-full ${className}`}
+      fill="none"
+    >
+      <MosaicTiles tiles={ARCH_TILES} gap={3} />
+    </svg>
+  );
+}

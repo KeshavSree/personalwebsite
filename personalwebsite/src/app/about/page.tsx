@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { MosaicArch } from "@/app/components/mosaic";
 
 export const metadata: Metadata = {
   title: "About",
@@ -37,7 +38,7 @@ const INTERESTS: { label: string; image: string; href?: string }[] = [
 const CONNECT = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/ksreekan" },
   { label: "GitHub", href: "https://github.com/KeshavSree" },
-  { label: "Email", href: "mailto:ksreekan@purdue.edu" },
+  { label: "Email", href: "mailto:keshav.sreekantham@gmail.com" },
   { label: "Resume (PDF)", href: "/resume.pdf" },
 ];
 
@@ -81,21 +82,23 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <Divider />
+      <div className="relative left-1/2 my-10 w-screen -translate-x-1/2">
+        <MosaicArch />
+      </div>
 
       <Section label="Education">
         <p className="text-[16px] text-[var(--color-ink)]">
           <span className="font-medium">Purdue University</span>
-          <span className="text-[var(--color-ink-subtle)]"> · [[2023–2027]]</span>
+          <span className="text-[var(--color-ink-subtle)]"> · 2028</span>
         </p>
         <p className="mt-1 text-[14.5px] text-[var(--color-ink-muted)]">
-          [[B.S. in Computer Science &amp; Artificial Intelligence (double major).]]
+          B.S. in Data Science (Computer Science)
         </p>
       </Section>
 
       <Divider />
 
-      <Section label="Currently exploring">
+      <Section label="What am I learning?">
         <ul className="space-y-2.5">
           {EXPLORING.map((item) => (
             <li
