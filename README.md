@@ -41,12 +41,6 @@
 - SEO metadata via `generateMetadata()`  
 - Displays title, date, and full post content  
 
-### Gallery (`/gallery`)
-- Client component fetches album→images JSON from `/api/gallery`  
-- Detects mobile vs. desktop for responsive layout  
-- Uses **Embla** + `next/image` for each folder’s carousel  
-- “Scroll to images” arrow via `scrollToCenter`  
-
 ### Projects (`/projects`)
 - Animated **Framer Motion** cards for each project:  
   - **Verbatim**, **FORMulator**, **QKD**, **K-means SOM**, **Quantum Racer**  

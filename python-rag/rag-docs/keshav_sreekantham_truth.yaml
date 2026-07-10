@@ -16,61 +16,64 @@ links:
 education:
   - institution: "Purdue University"
     location: "West Lafayette, Indiana"
-    degree: "B.S. of Computer Science & Artificial Intelligence (Double Major)"
-    gpa: "3.93"
-    dates: "May 2027"
+    degree: "B.S. in Data Science"
+    gpa: "3.71"
+    dates: "May 2028"
     coursework:
       - "Data Structures & Algorithms"
-      - "Computer Architecture"
-      - "Programming in C"
-      - "Competitive Programming"
-      - "OOP"
+      - "Object-Oriented Programming"
+      - "Foundations of Computer Science"
+      - "Introduction to Machine Learning"
+      - "Numerical Methods"
+      - "Statistical Theory"
 
 skills:
   - category: "Languages"
     bullets:
       - Python
       - Java
-      - C/C++
       - JavaScript
+      - HTML
+      - Bash
+      - MATLAB
+      - R
+      - C++
+      - Swift
       - SQL
+    show_on: ["cv", "resume"]
+
+  - category: "Frameworks"
+    bullets:
       - React
-      - Flask
       - Next.js
+      - Node.js
+      - FastAPI
+      - Django
+      - Flask
+      - Tailwind CSS
     show_on: ["cv", "resume"]
 
-  - category: "Cloud & DevOps"
+  - category: "Developer Tools"
     bullets:
-      - AWS
-      - S3
-      - EC2
-      - Lambda
       - GCP
-      - Docker
-      - Git
-      - CI/CD
+      - MySQL
+      - PostgreSQL
+      - MongoDB
+      - Agile
       - Linux
-      - REST API
+      - Jupyter
+      - Vercel
+      - Render
+      - NoSQL
+      - OAuth
+      - Shell Scripts
+      - Git
+      - GitHub
+      - CI/CD
+      - Docker
+      - Kubernetes
+      - Cloudflare
     show_on: ["cv", "resume"]
-
-  - category: "AI/ML"
-    bullets:
-      - LLM (LangChain, RAG, CoT/Reasoning, RLHF)
-      - Agents
-      - MCP
-      - PyTorch
-      - GAN
-      - RL
-      - Diffusion
-    show_on: ["cv", "resume"]
-
-  - category: "Quantum Computing"
-    bullets:
-      - Qiskit
-      - VQE
-      - QAOA
-      - Quantum ML
-    show_on: ["cv"]
 
 experience:
   - role: AI Infrastructure Intern

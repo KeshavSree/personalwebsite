@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { InvolvementEntry } from "@/utils/involvementUtils";
-import { MosaicDivider } from "@/app/components/mosaic";
+import { MosaicDivider, MosaicBullet } from "@/app/components/mosaic";
 
 interface Props {
   involvements: InvolvementEntry[];
@@ -21,9 +21,12 @@ export function InvolvementClient({ involvements }: Props) {
       ) : (
         <div className="mt-14 space-y-16">
           {involvements.map((inv, i) => (
-            <div key={inv.slug}>
+            <div
+              key={inv.slug}
+              className={i === involvements.length - 1 ? "pb-16 md:pb-24" : ""}
+            >
               <MosaicDivider variant={(i * 5 + 2) % 3} />
-              <InvolvementSection inv={inv} />
+              <InvolvementSection inv={inv} index={i} />
             </div>
           ))}
         </div>
@@ -32,35 +35,44 @@ export function InvolvementClient({ involvements }: Props) {
   );
 }
 
-function InvolvementSection({ inv }: { inv: InvolvementEntry }) {
+function InvolvementSection({
+  inv,
+  index,
+}: {
+  inv: InvolvementEntry;
+  index: number;
+}) {
   return (
     <section id={inv.slug} className="scroll-mt-[80px] pt-10">
       <header>
         <div className="flex items-baseline justify-between gap-x-3">
-          <h2 className="text-[clamp(1.4rem,2.6vw,1.75rem)] font-medium leading-tight tracking-[-0.01em] text-[var(--color-ink)]">
-            {inv.title}
-          </h2>
+          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+            <h2 className="text-[clamp(1.4rem,2.6vw,1.75rem)] font-medium leading-tight tracking-[-0.01em] text-[var(--color-ink)]">
+              {inv.title}
+            </h2>
+            <span className="relative top-[1.5px] flex items-center gap-x-2.5">
+              <MosaicBullet
+                variant={index}
+                className="h-[7px] w-[7px] shrink-0"
+              />
+              <span className="text-[15.5px] text-[var(--color-ink-muted)]">
+                {inv.role}
+              </span>
+            </span>
+          </div>
           <span className="flex-none font-mono text-[13px] uppercase tracking-[0.14em] text-[var(--color-ink-subtle)]">
             {inv.date}
           </span>
         </div>
-        <p className="mt-1 text-[14.5px] text-[var(--color-ink-muted)]">
-          {inv.role}
-        </p>
-        {inv.tagline && (
-          <p className="mt-4 font-serif text-[clamp(1.05rem,1.6vw,1.2rem)] italic leading-snug text-[var(--color-ink-muted)]">
-            {inv.tagline}
-          </p>
-        )}
         {inv.link && (
           <Link
             href={inv.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-1 border-b border-[var(--color-accent)] pb-0.5 text-sm text-[var(--color-accent)] transition-colors hover:text-[var(--color-accent-hover)]"
+            className="group mt-5 inline-flex items-center gap-1.5 rounded-full border border-[var(--color-hairline-strong)] bg-[var(--color-surface-raised)] px-3.5 py-1.5 text-[13px] text-[var(--color-ink)] transition-all hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
           >
             Visit site
-            <ArrowUpRight className="h-3.5 w-3.5" />
+            <ArrowUpRight className="h-3 w-3 opacity-60 transition-opacity group-hover:opacity-100" />
           </Link>
         )}
       </header>

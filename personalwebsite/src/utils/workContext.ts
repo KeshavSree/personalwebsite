@@ -24,12 +24,17 @@ function normalize(value: string): string {
 }
 
 function queryMentionsCompany(query: string, company: string): boolean {
-  const normalizedQuery = normalize(query);
+  // Space-pad so matches are token-bounded: a short employer token like "ni"
+  // (from "NI @ Emerson") must appear as a whole word, not as a substring of
+  // "monitoring" or "technician". Split on "@" and em/en dashes so bare
+  // employer names ("NI", "Data Mine", "Paragon") match, not just the full
+  // "NI @ Emerson" string.
+  const paddedQuery = ` ${normalize(query)} `;
   const names = [
     normalize(company),
-    ...company.split(/\s+[—–]\s+/).map(normalize),
+    ...company.split(/\s*[—–@]\s*/).map(normalize),
   ];
-  return names.some((name) => name && normalizedQuery.includes(name));
+  return names.some((name) => name && paddedQuery.includes(` ${name} `));
 }
 
 export function isGenericWorkQuery(query: string): boolean {

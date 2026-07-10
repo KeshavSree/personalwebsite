@@ -74,42 +74,30 @@ const stripAnnot = (s: string) => s.replace(/\[\[|\]\]/g, "");
 
 const QUESTION_BANK: readonly Question[] = [
   // Work — what he's built, where he's worked, what he's researching.
-  { text: "[[What is Keshav building right now?]]", tags: ["work"] },
-  { text: "[[Where has he worked?]]", tags: ["work"] },
-  { text: "[[Show me his research.]]", tags: ["work"] },
-  { text: "[[Tell me about Repple.]]", tags: ["work"] },
-  { text: "[[What is google-tools-mcp?]]", tags: ["work"] },
-  { text: "[[Which hackathons has he won?]]", tags: ["work"] },
-  { text: "[[Tell me about buildpurdue.]]", tags: ["work"] },
-  { text: "[[What did he do at Peraton Labs?]]", tags: ["work"] },
-  { text: "[[What's Veritas?]]", tags: ["work"] },
-  { text: "[[What's Caladrius?]]", tags: ["work"] },
-  { text: "[[What did he build at the Naval Research Lab?]]", tags: ["work"] },
-  { text: "[[Has he done quantum computing research?]]", tags: ["work"] },
-  { text: "[[What tools does he use to build?]]", tags: ["work"] },
-  { text: "[[Show me his favorite project.]]", tags: ["work", "opinions"] },
+  { text: "What is Keshav building right now?", tags: ["work"] },
+  { text: "Where has he worked?", tags: ["work"] },
+  { text: "Tell me about Redub.", tags: ["work"] },
+  { text: "What's Ember?", tags: ["work"] },
+  { text: "Tell me about the Spotify Playlist Curator.", tags: ["work"] },
+  { text: "What did he do at the KiharaLab?", tags: ["work"] },
+  { text: "What does he do at NI @ Emerson?", tags: ["work"] },
+  { text: "What's his project at Purdue Data Mine?", tags: ["work"] },
+  { text: "What did he build at Continuity Pharma?", tags: ["work"] },
+  { text: "What did he do at Paragon?", tags: ["work"] },
+  { text: "What tools does he use to build?", tags: ["work"] },
+  { text: "Show me his favorite project.", tags: ["work", "opinions"] },
 
-  // Opinions — takes, philosophy, why-he-thinks-what-he-thinks.
-  { text: "[[What's his take on MCP?]]", tags: ["opinions"] },
-  { text: "[[What does he write about?]]", tags: ["opinions"] },
-  { text: "[[What's his view on the future of AI work?]]", tags: ["opinions"] },
-  { text: "[[Does he think AGI is close?]]", tags: ["opinions"] },
-  { text: "[[What AI company would he start?]]", tags: ["opinions"] },
-  { text: "[[What makes a great engineer in his view?]]", tags: ["opinions"] },
-  { text: "[[What does he think about quantum computing?]]", tags: ["opinions"] },
-  { text: "[[Why did he co-found buildpurdue?]]", tags: ["opinions", "work"] },
-  { text: "[[What does he do at buildpurdue?]]", tags: ["opinions", "work"] },
-  { text: "[[Why can't agents book a restaurant yet?]]", tags: ["opinions"] },
+  // Opinions — takes drawn from the projects and problems he chooses.
+  { text: "What kind of problems does he like to solve?", tags: ["opinions"] },
+  { text: "What does he enjoy building?", tags: ["opinions"] },
+  { text: "What draws him to a project?", tags: ["opinions"] },
 
-  // Life — story, background, what he's like outside the resume.
-  { text: "[[How did he get into AI?]]", tags: ["life"] },
-  { text: "[[Where did he grow up?]]", tags: ["life"] },
-  { text: "[[Tell me about his time at TJHSST.]]", tags: ["life"] },
-  { text: "[[What's he studying at Purdue?]]", tags: ["life"] },
-  { text: "[[Tell me something surprising about him.]]", tags: ["life"] },
-  { text: "[[Does he play any instruments?]]", tags: ["life"] },
-  { text: "[[What does he do outside of code?]]", tags: ["life"] },
-  { text: "[[Where is he based?]]", tags: ["life"] },
+  // Life — background and what he does outside of code.
+  { text: "What's he studying at Purdue?", tags: ["life"] },
+  { text: "What's he involved in at Purdue?", tags: ["life"] },
+  { text: "Tell me about the Purdue Wind Ensemble.", tags: ["life"] },
+  { text: "What does he do outside of code?", tags: ["life"] },
+  { text: "Where has he lived and worked?", tags: ["life"] },
 ];
 
 const CATEGORIES: readonly Category[] = ["work", "opinions", "life"];

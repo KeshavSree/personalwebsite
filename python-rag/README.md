@@ -104,7 +104,7 @@ The script automatically loads from these locations:
 ```
 python-rag/                            # You are here
 ├── rag-docs/                          # RAG data (same directory!)
-│   ├── karthik_thyagarajan_truth.yaml # Resume data
+│   ├── keshav_sreekantham_truth.yaml # Resume data
 │   └── *.txt                          # Additional content
 ├── create-pinecone.py
 ├── testing.py

@@ -14,7 +14,7 @@ on a page that has exactly one job: surface the chat input.
 
 **Fix options, ordered by aggressiveness:**
 1. Hide the global navbar on the unscrolled home (`!inChat`) and let the
-   in-hero rail carry it. The wordmark + "karthik ·" dot can move into the
+   in-hero rail carry it. The wordmark + "keshav ·" dot can move into the
    hero column header so identity isn't lost.
 2. Keep the navbar and remove the hero rail. Leaner code, but loses the
    editorial "rail of sections" framing that signals this site has more than

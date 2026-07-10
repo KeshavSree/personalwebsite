@@ -202,7 +202,7 @@ The system is **flat-by-default with tonal layering**. Depth comes from cream to
 - A faint SVG line drawn from each citation chip in the chat column to its corresponding artifact in the right panel, on hover or focus. Stroke is `hairline-strong` at rest, `accent` when active. Hidden below `lg` breakpoint.
 
 ### Navigation
-- Top nav: `surface/85` background with `backdrop-blur-sm`, sticky. Wordmark "karthik" set in Source Serif 4 italic with a 6px vermilion dot trailing. Inline link list in `ink-muted`, hover to `ink`. Bottom rail on the home page is the same: dot-separated link list, mono-faint pip dividers.
+- Top nav: `surface/85` background with `backdrop-blur-sm`, sticky. Wordmark "keshav" set in Source Serif 4 italic with a 6px vermilion dot trailing. Inline link list in `ink-muted`, hover to `ink`. Bottom rail on the home page is the same: dot-separated link list, mono-faint pip dividers.
 - Mobile artifact treatment: cards render inline below the assistant message instead of in a side panel.
 
 ### Quote / Blockquote

@@ -67,7 +67,7 @@ function ProjectBlock({ project, index }: { project: Project; index: number }) {
       </p>
 
       <p className="mt-2 text-[13px] text-[var(--color-ink-muted)]">
-        {project.tools}
+        <span className="text-[var(--color-ink)]">Tools:</span> {project.tools}
       </p>
 
       {links.length > 0 && (

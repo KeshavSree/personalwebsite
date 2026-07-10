@@ -4,7 +4,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## Overview
 
-Personal portfolio website for Keshav Sreekantham built with Next.js 15, React 19, TypeScript, and Tailwind CSS 4. Features a RAG-powered chatbot using OpenAI and Pinecone for Q&A about the portfolio owner. Hosted on Vercel with images on AWS S3.
+Personal portfolio website for Keshav Sreekantham built with Next.js 15, React 19, TypeScript, and Tailwind CSS 4. Features a RAG-powered chatbot using OpenAI and Pinecone for Q&A about the portfolio owner. Hosted on Vercel.
 
 Live site: https://www.keshavsreekantham.com
 
@@ -17,14 +17,11 @@ personalwebsite/
 │   │   ├── page.tsx            # Home page with RAG chatbot
 │   │   ├── about/              # About page with bio
 │   │   ├── blog/               # Blog index and [slug] routes
-│   │   ├── gallery/            # Photo gallery with Embla carousel
 │   │   ├── projects/           # Projects showcase with Framer Motion
 │   │   ├── work/               # Work timeline
 │   │   ├── components/         # Shared React components
 │   │   └── api/                # App Router API route handlers
-│   │       ├── chat/           # RAG chatbot endpoint (POST)
-│   │       │   └── route.ts
-│   │       └── gallery/        # S3 gallery data endpoint (GET)
+│   │       └── chat/           # RAG chatbot endpoint (POST)
 │   │           └── route.ts
 │   └── utils/                  # Utility functions
 │       ├── blogUtils.ts        # Markdown blog post loading
@@ -96,17 +93,10 @@ uv sync  # Installs all dependencies into .venv/
 - Dynamic routes: `/blog/[slug]` with `generateMetadata()` for SEO
 
 ### Work Timeline
-- Single source of truth: `rag-docs/karthik_thyagarajan_truth.yaml`
+- Single source of truth: `rag-docs/keshav_sreekantham_truth.yaml`
 - `jobUtils.ts` parses YAML experience entries → JobEntry interface
 - Deterministic color palette (7 colors cycling) and icon mapping
 - Fallback resolution: checks `__dirname`, `process.cwd()/rag-docs`, `../rag-docs`
-
-### Gallery
-- Images hosted on AWS S3: `kt-personalsite.s3.us-east-2.amazonaws.com/galleryimgs/**`
-- `next.config.ts` configures `remotePatterns` for S3 access
-- `/api/gallery` endpoint (`src/app/api/gallery/route.ts`) uses AWS SDK with Cognito Identity Pool to list S3 objects
-- Returns JSON mapping album names to photo URL arrays
-- Client-side Embla carousel for each album
 
 ### Styling
 - Tailwind CSS 4 with PostCSS (`@tailwindcss/postcss`)
@@ -120,7 +110,6 @@ Required in `.env.local` (not tracked in git):
 - `PINECONE_API_KEY` - Pinecone vector database
 - `PINECONE_INDEX_NAME` - Name of Pinecone index
 - `OPENAI_API_KEY` - OpenAI API for embeddings and chat completions
-- `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` - S3 gallery images (if needed server-side)
 - `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` (or `KV_REST_API_URL` / `KV_REST_API_TOKEN` from the Vercel/Upstash integration) - Upstash Redis for `/api/chat` rate limiting (10/min, 60/hr per IP). If unset, rate limiting is skipped with a console warning.
 - `NEXT_PUBLIC_*` - Any client-side env vars
 
@@ -128,8 +117,7 @@ Required in `.env.local` (not tracked in git):
 
 1. **Blog Posts**: Must have frontmatter with `title`, `date`, and optionally `summary`
 2. **Work YAML**: Experience entries require `role`, `company`, `start_date`, `end_date`, `bullets`
-3. **S3 Images**: Must match hostname `kt-personalsite.s3.us-east-2.amazonaws.com` and path `/galleryimgs/**`
-4. **API Routes**: Use Next.js 15 App Router pattern - route handlers in `src/app/api/*/route.ts` files
+3. **API Routes**: Use Next.js 15 App Router pattern - route handlers in `src/app/api/*/route.ts` files
    - Export named HTTP method functions (GET, POST, etc.)
    - Use `NextRequest` and `NextResponse` from `next/server`
    - No default exports for route handlers
@@ -145,7 +133,6 @@ Required in `.env.local` (not tracked in git):
 
 - **API Routes**: Implemented using Next.js 15 App Router pattern in `src/app/api/`
   - `/api/chat` - POST endpoint for RAG-powered chatbot
-  - `/api/gallery` - GET endpoint for S3 gallery data
 - **RAG System**: Three-stage pipeline:
   1. Embedding: OpenAI text-embedding-ada-002
   2. Retrieval: Pinecone vector search with intent-based filtering
