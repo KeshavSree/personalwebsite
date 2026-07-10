@@ -1,7 +1,6 @@
-import Link from "next/link";
-import Image from "next/image";
 import type { Metadata } from "next";
-import { MosaicArch } from "@/app/components/mosaic";
+import { Linkedin, Github } from "lucide-react";
+import { MosaicArch, MosaicDivider, MosaicBullet } from "@/app/components/mosaic";
 
 export const metadata: Metadata = {
   title: "About",
@@ -22,55 +21,75 @@ const SKILLS = [
   "Kubernetes",
 ];
 
+const CLASSES = [
+  "Data Structures & Algorithms",
+  "Object-Oriented Programming",
+  "Foundations of Computer Science",
+  "Introduction to Machine Learning",
+  "Numerical Methods",
+  "Statistical Theory",
+];
+
 const EXPLORING = [
-  "[[MCP and agent-callable real-world services]]",
-  "[[Agents that save time, not just effort]]",
-  "[[Chat-first interfaces and AI-native product surfaces]]",
-  "[[Founder density at the undergrad level]]",
+  "Current limits of edge computation",
+  "Scalable solutions to private enterprise AI deployment",
+  "Existing service ease of agent integration",
 ];
 
-const INTERESTS: { label: string; image: string; href?: string }[] = [
-  { label: "[[Music]]", image: "/interests/music-interest.jpg" },
-  { label: "[[Travel]]", image: "/interests/travel-interest.jpg" },
-  { label: "[[AI / ML]]", image: "/interests/ai-interest.jpg" },
-];
-
-const CONNECT = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/ksreekan" },
-  { label: "GitHub", href: "https://github.com/KeshavSree" },
-  { label: "Email", href: "mailto:keshav.sreekantham@gmail.com" },
-  { label: "Resume (PDF)", href: "/resume.pdf" },
+const ABOUT_QA = [
+  { q: "What is your favorite album?", a: "Submarine by The Marías." },
+  { q: "How long have you played clarinet?", a: "8 years." },
+  { q: "What is your favorite food?", a: "Tacos." },
+  {
+    q: "What are some of your hobbies?",
+    a: "Climbing, eating, pickleball, and on occasion video games and volleyball.",
+  },
+  {
+    q: "Why is every section a question?",
+    a: "It's all about asking the right questions.",
+  },
 ];
 
 export default function AboutPage() {
   return (
-    <article className="mx-auto max-w-[720px] px-5 pt-16 pb-24 md:px-6 md:pt-24">
-      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
-        About
-      </p>
-
-      <h1 className="mt-5 text-[clamp(2rem,5vw,3rem)] font-medium leading-[1.02] tracking-[-0.02em] text-[var(--color-ink)]">
-        Keshav Sreekantham
+    <article className="mx-auto max-w-[840px] px-5 pt-16 pb-24 md:px-6 md:pt-24">
+      <h1 className="text-[clamp(2rem,5vw,3rem)] font-medium leading-[1.02] tracking-[-0.02em] text-[var(--color-ink)]">
+        Who am I?
       </h1>
-      <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2">
-        {CONNECT.map((c) => (
-          <li key={c.label}>
-            <a
-              href={c.href}
-              target={c.href.startsWith("http") ? "_blank" : undefined}
-              rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="group inline-flex items-baseline gap-1.5 text-[15px] text-[var(--color-ink)] transition-colors hover:text-[var(--color-accent)]"
-            >
-              <span className="border-b border-[var(--color-hairline-strong)] pb-0.5 group-hover:border-[var(--color-accent)]">
-                {c.label}
-              </span>
-              <span className="text-[var(--color-ink-faint)] transition-colors group-hover:text-[var(--color-accent)]">
-                ↗
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
+      <div className="mt-7 flex flex-wrap items-center gap-3">
+        <a
+          href="https://www.linkedin.com/in/ksreekan"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+        >
+          <Linkedin className="h-4 w-4" />
+        </a>
+        <a
+          href="https://github.com/KeshavSree"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+        >
+          <Github className="h-4 w-4" />
+        </a>
+        <a
+          href="mailto:keshav.sreekantham@gmail.com"
+          className="inline-flex items-center rounded-full border border-[var(--color-hairline-strong)] px-4 py-1.5 text-[14px] text-[var(--color-ink)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+        >
+          Contact Me
+        </a>
+        <a
+          href="/resume.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center rounded-full border border-[var(--color-hairline-strong)] px-4 py-1.5 text-[14px] text-[var(--color-ink)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+        >
+          Resume
+        </a>
+      </div>
 
       <section className="mt-10 mb-6 space-y-5 text-[16px] leading-[1.75] text-[var(--color-ink)]">
         <p>
@@ -82,7 +101,16 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <div className="relative left-1/2 my-10 w-screen -translate-x-1/2">
+      {/* Tall broken-arch decoration. Near-full-bleed but inset 12px on each side
+          (w = 100vw - 24px, centered) to match the uniform gap the bottom strip /
+          side hills keep from the screen edge. The middle is transparent, so the
+          negative bottom margin lets the Education section pull up into its empty
+          centre instead of leaving a blank block. pointer-events-none + aria-hidden:
+          purely decorative. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none relative left-1/2 mt-8 mb-[-28vw] w-[calc(100vw-24px)] -translate-x-1/2"
+      >
         <MosaicArch />
       </div>
 
@@ -96,23 +124,18 @@ export default function AboutPage() {
         </p>
       </Section>
 
-      <Divider />
-
-      <Section label="What am I learning?">
-        <ul className="space-y-2.5">
-          {EXPLORING.map((item) => (
-            <li
-              key={item}
-              className="relative pl-5 text-[15.5px] leading-relaxed text-[var(--color-ink)]"
-            >
-              <span className="absolute left-0 top-[10px] h-px w-3 bg-[var(--color-accent)]" />
-              {item}
-            </li>
+      <Section label="Classes">
+        <p className="text-[15px] leading-[1.9] text-[var(--color-ink)]">
+          {CLASSES.map((c, i) => (
+            <span key={c}>
+              {c}
+              {i < CLASSES.length - 1 && (
+                <span className="mx-2 text-[var(--color-ink-faint)]">·</span>
+              )}
+            </span>
           ))}
-        </ul>
+        </p>
       </Section>
-
-      <Divider />
 
       <Section label="Skills">
         <p className="text-[15px] leading-[1.9] text-[var(--color-ink)]">
@@ -127,55 +150,47 @@ export default function AboutPage() {
         </p>
       </Section>
 
-      <Divider />
-
-      <Section label="Interests">
-        <div className="grid grid-cols-2 gap-3">
-          {INTERESTS.map((interest) => {
-            const Tag = interest.href ? Link : "div";
-            const props = interest.href ? { href: interest.href } : {};
-            return (
-              <Tag
-                key={interest.label}
-                {...(props as { href: string })}
-                className="group relative block aspect-[4/3] overflow-hidden rounded-md"
-              >
-                <Image
-                  src={interest.image}
-                  alt={interest.label}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  sizes="(max-width: 768px) 50vw, 360px"
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[oklch(20%_0.018_55_/_0.55)] to-transparent p-3">
-                  <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--color-surface)]">
-                    {interest.label}
-                  </span>
-                </div>
-              </Tag>
-            );
-          })}
-        </div>
+      <Section label="What am I learning?">
+        <ul className="space-y-2.5">
+          {EXPLORING.map((item, i) => (
+            <li
+              key={item}
+              className="relative pl-5 text-[15.5px] leading-relaxed text-[var(--color-ink)]"
+            >
+              <MosaicBullet variant={i} className="absolute left-0 top-[8px] w-[9px]" />
+              {item}
+            </li>
+          ))}
+        </ul>
       </Section>
 
-      <Divider />
+      <Divider variant={2} />
 
-      <blockquote className="my-10 border-l-2 border-[var(--color-accent)] pl-6">
-        <p className="font-serif text-[20px] italic leading-snug text-[var(--color-ink-muted)]">
-          [[He who has a why to live for can bear almost any how.]]
-        </p>
-        <footer className="mt-3 text-[13px] text-[var(--color-ink-subtle)]">
-          [[Friedrich Nietzsche]]
-        </footer>
-      </blockquote>
+      <section className="my-10">
+        <h2 className="text-[19px] font-medium leading-tight tracking-[-0.01em] text-[var(--color-ink)] md:text-[21px]">
+          More about me
+        </h2>
+        <dl className="mt-6 space-y-5">
+          {ABOUT_QA.map(({ q, a }) => (
+            <div key={q}>
+              <dt className="font-mono text-[13px] tracking-[0.02em] text-[var(--color-ink-subtle)]">
+                {q}
+              </dt>
+              <dd className="mt-2 text-[15.5px] leading-[1.7] text-[var(--color-ink-muted)]">
+                {a}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
     </article>
   );
 }
 
-function Section({ label, children }: { label: string; children: React.ReactNode }) {
+function Section({ label, children }: { label: string; children?: React.ReactNode }) {
   return (
     <section className="my-10">
-      <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
+      <p className="mb-4 font-mono text-[13px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
         {label}
       </p>
       {children}
@@ -183,6 +198,6 @@ function Section({ label, children }: { label: string; children: React.ReactNode
   );
 }
 
-function Divider() {
-  return <div className="h-px bg-[var(--color-hairline)]" />;
+function Divider({ variant = 0 }: { variant?: number }) {
+  return <MosaicDivider variant={variant} />;
 }

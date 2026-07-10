@@ -291,9 +291,9 @@ async function buildHydeQuery(
     .join("\n") || "";
 
   const response = await openai.chat.completions.create({
-    model: "gpt-5.4-nano",
+    model: NIM_FAST_MODEL,
     temperature: 0,
-    max_completion_tokens: 80,
+    max_tokens: 80,
     messages: [
       {
         role: "system",
@@ -365,6 +365,17 @@ function encodeSparseQuery(text: string): { indices: number[]; values: number[] 
   return { indices, values };
 }
 
+// === NVIDIA NIM CONFIG ===
+// NIM exposes an OpenAI-compatible API, so the OpenAI SDK works by pointing
+// baseURL at it. Models and base URL are env-overridable; defaults target the
+// free build.nvidia.com endpoint.
+const NIM_BASE_URL = process.env.NIM_BASE_URL ?? "https://integrate.api.nvidia.com/v1";
+// nemotron-super-49b responds fast and reliably on the free tier; the plain
+// meta/llama-3.3-70b-instruct endpoint frequently hangs there.
+const NIM_CHAT_MODEL = process.env.NIM_CHAT_MODEL ?? "nvidia/llama-3.3-nemotron-super-49b-v1";
+const NIM_FAST_MODEL = process.env.NIM_FAST_MODEL ?? "meta/llama-3.1-8b-instruct";
+const NIM_EMBED_MODEL = process.env.NIM_EMBED_MODEL ?? "nvidia/nv-embedqa-e5-v5";
+
 export const maxDuration = 30;
 
 export async function POST(req: NextRequest) {
@@ -406,7 +417,8 @@ export async function POST(req: NextRequest) {
     });
 
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY!,
+      apiKey: process.env.NVIDIA_API_KEY!,
+      baseURL: NIM_BASE_URL,
     });
 
     const index = pinecone.Index(process.env.PINECONE_INDEX_NAME!);
@@ -438,8 +450,10 @@ export async function POST(req: NextRequest) {
 
     const tRetrievalStart = Date.now();
     const baselineEmbResp = await openai.embeddings.create({
-      model: "text-embedding-3-small",
+      model: NIM_EMBED_MODEL,
       input: currentQuery,
+      // nv-embedqa (NIM) requires input_type; these are query-side embeddings.
+      ...({ input_type: "query", truncate: "END" } as Record<string, unknown>),
     });
     const baselineEmbedding = baselineEmbResp.data[0].embedding;
     const baselineSparse = encodeSparseQuery(currentQuery);
@@ -490,8 +504,10 @@ export async function POST(req: NextRequest) {
         const expandedQuery = `${currentQuery} ${hypothetical}`;
         const tExpStart = Date.now();
         const expEmbResp = await openai.embeddings.create({
-          model: "text-embedding-3-small",
+          model: NIM_EMBED_MODEL,
           input: expandedQuery,
+          // nv-embedqa (NIM) requires input_type; these are query-side embeddings.
+          ...({ input_type: "query", truncate: "END" } as Record<string, unknown>),
         });
         const expEmbedding = expEmbResp.data[0].embedding;
         const expSparse = encodeSparseQuery(expandedQuery);
@@ -626,14 +642,14 @@ export async function POST(req: NextRequest) {
         (t) => `[topic:${t.slug}] (Keshav's full prose on this topic, every sub-topic he's written)\n${t.body}`,
       );
       sections.push(
-        `=== KARTHIK'S OWN TAKE (his first-person prose on the topic the visitor asked about. Preserve his framing, his vocabulary, his anecdotes, his sharpness. Do not smooth into generic AI-summary voice. The visitor sees a verbatim quote pulled from below rendered next to your reply, so your reply must read as the same voice. Lead with the stance, not the projects. Cover his anecdotes and examples, not just his theses.) ===\n${parts.join("\n\n---\n\n")}`,
+        `=== KESHAV'S OWN TAKE (his first-person prose on the topic the visitor asked about. Preserve his framing, his vocabulary, his anecdotes, his sharpness. Do not smooth into generic AI-summary voice. The visitor sees a verbatim quote pulled from below rendered next to your reply, so your reply must read as the same voice. Lead with the stance, not the projects. Cover his anecdotes and examples, not just his theses.) ===\n${parts.join("\n\n---\n\n")}`,
       );
     } else if (opinionMatches.length > 0) {
       // Fallback: opinion chunks landed but none were tagged with a topic id
       // (e.g., legacy opinion content). Surface them as-is.
       const opinionParts = opinionMatches.map((m, i) => formatChunk(m, i));
       sections.push(
-        `=== KARTHIK'S OWN TAKE (preserve his framing, his vocabulary, his sharpness. Do not smooth into generic AI-summary voice. Lead with the stance.) ===\n${opinionParts.join("\n\n---\n\n")}`,
+        `=== KESHAV'S OWN TAKE (preserve his framing, his vocabulary, his sharpness. Do not smooth into generic AI-summary voice. Lead with the stance.) ===\n${opinionParts.join("\n\n---\n\n")}`,
       );
     }
     if (otherMatches.length > 0) {
@@ -801,7 +817,7 @@ USE THE CONTEXT AGGRESSIVELY. Before saying "no specific writeup", scan every ch
 
 REPLY STRUCTURE:
 - Factual question (one fact, one date, one name): 1 to 2 sentences plus the relevant link. Don't pad.
-- Opinion or "what does he think about X" question: lead with the stance using HIS framing from the KARTHIK'S OWN TAKE section. Then cover every distinct take in that section. Each thesis, each anecdote, each named example must appear, paraphrased to third person. Then enrich with relevant project, work, or blog evidence as proof points.
+- Opinion or "what does he think about X" question: lead with the stance using HIS framing from the KESHAV'S OWN TAKE section. Then cover every distinct take in that section. Each thesis, each anecdote, each named example must appear, paraphrased to third person. Then enrich with relevant project, work, or blog evidence as proof points.
 - Length follows from coverage. A one-take topic stays short. A five-take topic gets five beats. Do not pad a one-take topic. Do not compress a five-take topic.
 
 THE TAKE SECTION ANCHORS THE REPLY (when present):
@@ -859,11 +875,13 @@ ${STYLE_RULES}`;
     // Generate streaming response. Artifacts are emitted as citations are
     // detected in the stream, so nothing is pushed upfront.
     const stream = await openai.chat.completions.create({
-      model: "gpt-5.4",
+      model: NIM_CHAT_MODEL,
       messages: [
         { role: "system", content: systemPrompt },
         ...messagesToSend
       ],
+      max_tokens: 1024,
+      temperature: 0.7,
       stream: true,
     });
 
@@ -987,19 +1005,19 @@ ${STYLE_RULES}`;
               // The non-capturing prefix accepts either alternative; the
               // slug is always group 1.
               scanPattern(
-                /(?:karthikthyagarajan\.com|(?:^|[\s(\[]))\/projects#([a-z0-9-]+)/g,
+                /(?:keshavsreekantham\.com|(?:^|[\s(\[]))\/projects#([a-z0-9-]+)/g,
                 (slug) => (projectIdSet.has(slug) ? `project:${slug}` : null),
               );
               scanPattern(
-                /(?:karthikthyagarajan\.com|(?:^|[\s(\[]))\/blog\/([a-z0-9-]+)/g,
+                /(?:keshavsreekantham\.com|(?:^|[\s(\[]))\/blog\/([a-z0-9-]+)/g,
                 (slug) => (retrievedBlogs.has(slug) ? `blog:${slug}` : null),
               );
               scanPattern(
-                /(?:karthikthyagarajan\.com|(?:^|[\s(\[]))\/involvement#([a-z0-9-]+)/g,
+                /(?:keshavsreekantham\.com|(?:^|[\s(\[]))\/involvement#([a-z0-9-]+)/g,
                 (slug) => (involvementSlugSet.has(slug) ? `involvement:${slug}` : null),
               );
               scanPattern(
-                /(?:karthikthyagarajan\.com|(?:^|[\s(\[]))\/work#([a-z0-9-]+)/g,
+                /(?:keshavsreekantham\.com|(?:^|[\s(\[]))\/work#([a-z0-9-]+)/g,
                 (slug) => companySlugToId.get(slug) || null,
               );
 
@@ -1138,9 +1156,9 @@ ${STYLE_RULES}`;
                   let pickerJson = "{}";
                   try {
                     const picker = await openai.chat.completions.create({
-                      model: "gpt-5.4-nano",
+                      model: NIM_FAST_MODEL,
                       temperature: 0.9,
-                      max_completion_tokens: 400,
+                      max_tokens: 400,
                       response_format: { type: "json_object" },
                       messages: [
                         {
@@ -1295,9 +1313,9 @@ ${corpus}`,
                 let raw = "{}";
                 try {
                   const res = await openai.chat.completions.create({
-                    model: "gpt-5.4-nano",
+                    model: NIM_FAST_MODEL,
                     temperature: 0,
-                    max_completion_tokens: 100,
+                    max_tokens: 100,
                     response_format: { type: "json_object" },
                     messages: [
                       {

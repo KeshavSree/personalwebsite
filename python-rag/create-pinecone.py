@@ -16,7 +16,7 @@ from pinecone import Pinecone, ServerlessSpec
 from git import Repo
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
+from langchain_nvidia_ai_endpoints import NVIDIAEmbeddings
 from langchain_community.vectorstores import Pinecone as PineconeStore
 from langchain_core.documents import Document
 from dotenv import load_dotenv, find_dotenv
@@ -35,7 +35,7 @@ GITHUB_USERNAME = os.environ.get("GITHUB_USERNAME")
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
 INDEX_NAME = os.environ.get("PINECONE_INDEX_NAME")
-EMBED_DIM = 1536  # For OpenAI embeddings
+EMBED_DIM = 1024  # For NVIDIA NIM nv-embedqa-e5-v5 embeddings
 BM25_MODEL_PATH = os.path.join("..", "personalwebsite", "src", "data", "bm25-model.json")
 
 # === HELPERS ===
@@ -653,6 +653,9 @@ def ensure_hybrid_index():
             if idx_info.metric != "dotproduct":
                 print(f"  Index '{INDEX_NAME}' uses '{idx_info.metric}' metric, need 'dotproduct' for hybrid search")
                 needs_recreate = True
+            if idx_info.dimension != EMBED_DIM:
+                print(f"  Index '{INDEX_NAME}' has dimension {idx_info.dimension}, need {EMBED_DIM} for current embedding model")
+                needs_recreate = True
             break
 
     if needs_recreate:
@@ -711,7 +714,12 @@ def delete_all_vectors():
 def upload_to_pinecone(chunks):
     pc = Pinecone(api_key=PINECONE_API_KEY)
 
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+    # NVIDIAEmbeddings auto-sets input_type=passage for embed_documents and
+    # query for embed_query, and reads NVIDIA_API_KEY from the env.
+    embeddings = NVIDIAEmbeddings(
+        model=os.environ.get("NIM_EMBED_MODEL", "nvidia/nv-embedqa-e5-v5"),
+        truncate="END",
+    )
 
     # Create embeddings for all chunks
     texts = [doc.page_content for doc in chunks]

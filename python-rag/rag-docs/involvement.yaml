@@ -3,85 +3,59 @@
 # /involvement page and the `involvement` chat artifact.
 
 involvement:
-  - slug: "buildpurdue"
-    title: "buildpurdue"
-    role: "Co-President & Co-Founder"
-    org: "buildpurdue"
-    tagline: "Founder-led, peer-to-peer density for student builders at Purdue."
-    link: "https://buildpurdue.org"
-    start_date: "Sep 2025"
-    end_date: "Present"
-    date: "Sep 2025 - Present"
+  - slug: "purdue-stack"
+    title: "Purdue Stack"
+    role: "Vice President of Marketing & Founding Member"
+    org: "Purdue Stack"
+    tagline: "Purdue's premier software development consulting club."
+    link: "https://purduestack.org"
     location: "Purdue University, West Lafayette, IN"
-    tools: "Next.js, TypeScript, PostgreSQL, Supabase, RBAC, Leadership, Operations"
+    tools: "Branding, Marketing, Next.js, Recruitment Ops, Leadership"
 
     what_it_is: |
-      buildpurdue is a founder-led, peer-to-peer community for student builders
-      at Purdue. The core identity is density and agency: the more active
-      founders there are in the same room, building alongside each other, the
-      faster everyone compounds. Progress comes from proximity, not from
-      programming.
-
-      It isn't a top-down accelerator that hands founders a curriculum and waits
-      for them to graduate. It's a dense group of people already shipping,
-      giving each other real feedback, and pulling in operators and investors
-      when the group needs them.
+      Purdue Stack is Purdue's premier software development consulting club. The
+      skills most sought after by employers are the ones the college curriculum
+      doesn't begin to teach. We offer students the opportunity to gain
+      experience on projects with real clients, real requirements, and real
+      deadlines.
     my_role: |
-      I'm Co-President and co-founded the current iteration of buildpurdue.
-      I shape the operational framework the org runs on. I lead the build of
-      the internal software platform that manages it. And I spend a lot of my
-      time making sure the room stays dense with people who are actually
-      shipping.
-    contributions:
-      - area: "Operational framework"
-        detail: |
-          Shaped the playbook for how buildpurdue selects its cohort, runs its
-          cadence, and keeps the community peer-to-peer rather than
-          lecture-driven. The framework protects founder agency: founders set
-          their own goals and use the group as leverage, not as a gate.
-      - area: "Operating platform"
-        detail: |
-          Led the build of buildpurdue's internal platform in Next.js and
-          TypeScript on Supabase / PostgreSQL, with RBAC pipelines for cohort
-          tracking, alumni management, mentor matching, and event logistics.
-          Primary contributor on the codebase, working alongside the rest of
-          the team.
-      - area: "Partnerships & events"
-        detail: |
-          Forged partnerships with VC firms and recruited a rotating bench of
-          industry mentors. Organizes on-campus sessions where operators give
-          student founders direct feedback, and workshops on topics like
-          finding a first paying customer and co-founder selection.
-      - area: "Density & agency"
-        detail: |
-          Deliberately optimizes buildpurdue for density of active founders in
-          the room. The best advice a student founder gets usually comes from
-          another student founder who is two months ahead of them. Making sure
-          that conversation actually happens, and happens often, is the whole
-          point.
+      While my official title is VP of Marketing, Stack Exec is a dynamic team
+      and we all help each other. I craft and refine the brand of Stack, from
+      posters to in-person recruitment events. I lead the building of our
+      website (purduestack.org) and our internal recruitment pipeline tools. I
+      also lead committees on club merch as well as fundraising opportunities.
 
     # POV paragraphs — what I actually think about this work. These are the
-    # lines the chat will want to quote when someone asks "why buildpurdue?"
+    # lines the chat will want to quote when someone asks "why Purdue Stack?"
     point_of_view:
       - |
-        Most startups don't fail because of bad ideas. They fail because of
-        unknown unknowns that only experience can teach you. buildpurdue exists
-        to compress that experience gap for student founders before they burn
-        two years on a dead thesis.
+        One thing I've realized is the importance of marketing in today's tech
+        sphere. Even if you know you have the best product, it doesn't matter
+        unless other people know about you, can find your website, and find what
+        they're looking for quickly. Likewise, I believe if you cannot market
+        yourself, then no one will find you. Even in a corporate environment,
+        the ability to market your ideas is critical to a successful career.
+        Being in this role has expanded my capability on this frontier, and I
+        have a better sense of what it takes to advertise something, myself
+        included.
+
+  - slug: "purdue-wind-ensemble"
+    title: "Purdue Wind Ensemble"
+    role: "Performer"
+    org: "Purdue Wind Ensemble"
+    tagline: "Purdue's flagship wind band."
+    location: "Purdue University, West Lafayette, IN"
+
+    what_it_is: |
+      The Purdue Wind Ensemble is the most skilled band at Purdue, and has
+      performed across the globe at prestigious venues including Carnegie Hall.
+      Most recently, we performed on tour across Spain.
+
+    point_of_view:
       - |
-        There's a sharp difference between campus feedback and operator
-        feedback. Campus feedback is pattern-matched from people who have read
-        about startups. Operator feedback comes from people who have bet, lost,
-        and adjusted. Student founders need the second kind, and most campus
-        orgs can't deliver it.
-      - |
-        The most progress comes from density. A student founder two months
-        ahead of you is more useful than a curriculum and more honest than a
-        lecture. buildpurdue is designed around that: peer-to-peer,
-        founder-led, and built to keep the room full of people who are
-        actually shipping.
-      - |
-        Running buildpurdue is the clearest version of my "founder-engineer
-        first" identity. I co-designed the org, led the build of its software,
-        and I recruit the people who make the room worth being in. It's an
-        operation I'm running.
+        More than just my role in this ensemble, practicing clarinet has taught
+        me the importance of learning how to do hard things. I believe that the
+        more frequently you do difficult things, the more you improve at all
+        difficult things. After putting in thousands of hours of practice, I
+        believe my tenacity and desire to work on hard problems has only
+        increased.

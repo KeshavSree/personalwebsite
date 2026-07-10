@@ -41,6 +41,55 @@ export function ChatInput({
         ? "Ask anything about Keshav"
         : "Ask a follow-up";
 
+  // Hero = a wall-less terminal prompt. A transparent textarea sits exactly over
+  // a mirror span so we can render our own text + a blinking block cursor (the
+  // native caret is hidden). The mirror also drives auto-grow: as it wraps, the
+  // container grows and the absolutely-positioned textarea stretches to match.
+  if (isHero) {
+    return (
+      <form onSubmit={onSubmit} className="relative">
+        <div className="flex items-start gap-3 font-mono text-[clamp(1.2rem,2.4vw,1.6rem)] leading-relaxed">
+          <span
+            aria-hidden="true"
+            className="select-none pt-[1px] text-[var(--color-accent)]"
+          >
+            &gt;
+          </span>
+          <div className="relative min-w-0 flex-1">
+            <div
+              aria-hidden="true"
+              className="relative whitespace-pre-wrap break-words"
+            >
+              {value ? (
+                <>
+                  <span className="text-[var(--color-ink)]">{value}</span>
+                  <span className="caret-blink ml-[2px] inline-block h-[1.05em] w-[0.5ch] translate-y-[0.18em] bg-[var(--color-accent)]" />
+                </>
+              ) : (
+                <>
+                  {/* empty state: block cursor sits ON the first letter of the
+                      placeholder (terminal-style), semi-opaque so it shows through */}
+                  <span className="caret-blink absolute left-0 top-[0.2em] h-[1.05em] w-[0.9ch] bg-[var(--color-accent)] opacity-60" />
+                  <span className="text-[var(--color-ink-faint)]">{placeholder}</span>
+                </>
+              )}
+            </div>
+            <textarea
+              ref={inputRef}
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              onKeyDown={onKeyDown}
+              rows={1}
+              aria-label="Ask anything about Keshav"
+              className="absolute inset-0 h-full w-full resize-none overflow-hidden bg-transparent font-mono text-[clamp(1.2rem,2.4vw,1.6rem)] leading-relaxed text-transparent caret-transparent focus:outline-none"
+              autoFocus
+            />
+          </div>
+        </div>
+      </form>
+    );
+  }
+
   return (
     <form onSubmit={onSubmit} className={formClass}>
       {!isHero && <DockedInputVine />}

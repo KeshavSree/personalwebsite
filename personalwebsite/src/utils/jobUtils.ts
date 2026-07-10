@@ -24,14 +24,10 @@ interface RootYaml {
 
 // Simple icon filename inference: take first word of company lowercased and match existing file names manually map if needed.
 const ICON_MAP: Record<string, string> = {
-  'Samsung Research America': '/companies/sra.png',
-  'Peraton Labs': '/companies/peratonlabs.png',
-  'Memories.ai': '/companies/memoriesai.png',
-  'IDEAS Lab, Purdue University': '/companies/ideaslab.png',
-  'The Data Mine Corporate Partners, Purdue University': '/companies/agrpa.png',
-  'Naval Research Laboratory': '/companies/nrl.png',
-  'Instachip (Formerly Procyon Photonics)': '/companies/procyon.png',
-  'Fairfax County Public Schools': '/companies/fcps.png'
+  'NI @ Emerson': '/keshavcontent/niglobal_logo.jpeg',
+  'Mead Johnson @ Data Mine, Purdue': '/keshavcontent/purduedatamine_logo.jpeg',
+  'Continuity Pharma': '/keshavcontent/stack_logo.jpeg',
+  'Spring Education Group — Schools of Paragon': '/keshavcontent/paragon_logo.jpeg'
 };
 
 function getIconForCompany(company: string): string {
@@ -48,10 +44,10 @@ export function getJobsFromYaml(): JobEntry[] {
   // 3. Legacy location under workspace root rag-docs/
   // 4. Parent rag-docs/ (if app nested)
   const candidates = [
-    path.join(process.cwd(), '..', 'python-rag', 'rag-docs', 'karthik_thyagarajan_truth.yaml'),
-    path.join(__dirname, 'karthik_thyagarajan_truth.yaml'),
-    path.join(process.cwd(), 'rag-docs', 'karthik_thyagarajan_truth.yaml'),
-    path.join(process.cwd(), '..', 'rag-docs', 'karthik_thyagarajan_truth.yaml')
+    path.join(process.cwd(), '..', 'python-rag', 'rag-docs', 'keshav_sreekantham_truth.yaml'),
+    path.join(__dirname, 'keshav_sreekantham_truth.yaml'),
+    path.join(process.cwd(), 'rag-docs', 'keshav_sreekantham_truth.yaml'),
+    path.join(process.cwd(), '..', 'rag-docs', 'keshav_sreekantham_truth.yaml')
   ];
   let raw: string | undefined;
   for (const p of candidates) {

@@ -4,6 +4,7 @@ import { projects } from "@/data/projectsData";
 import type { Project, ProjectLink } from "@/data/projectsData";
 import type { Metadata } from "next";
 import { HashScroller } from "@/app/components/HashScroller";
+import { MosaicDivider } from "@/app/components/mosaic";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -25,46 +26,40 @@ const LINK_LABEL: Record<ProjectLink["type"], string> = {
 
 export default function ProjectsPage() {
   return (
-    <article className="mx-auto max-w-[800px] px-5 pt-16 pb-24 md:px-6 md:pt-24">
+    <article className="mx-auto max-w-[920px] px-5 pt-16 pb-24 md:px-6 md:pt-24">
       <HashScroller />
-      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
-        Projects
-      </p>
-      <h1 className="mt-5 text-[clamp(2rem,5vw,3rem)] font-medium leading-[1.02] tracking-[-0.02em] text-[var(--color-ink)]">
-        [[Things I&apos;ve built.]]
+      <h1 className="text-[clamp(2rem,5vw,3rem)] font-medium leading-[1.02] tracking-[-0.02em] text-[var(--color-ink)]">
+        What have I built?
       </h1>
-      <p className="mt-5 max-w-[560px] font-serif text-[clamp(1.05rem,1.8vw,1.3rem)] italic leading-snug text-[var(--color-ink-muted)]">
-        [[Hackathon wins, research prototypes, and shipped products.]]
-      </p>
-
       <ol className="mt-14">
-        {projects.map((project) => (
-          <ProjectBlock key={project.id} project={project} />
+        {projects.map((project, i) => (
+          <ProjectBlock key={project.id} project={project} index={i} />
         ))}
       </ol>
     </article>
   );
 }
 
-function ProjectBlock({ project }: { project: Project }) {
+function ProjectBlock({ project, index }: { project: Project; index: number }) {
   const { display, links } = project;
   return (
-    <li
-      id={project.id}
-      className="scroll-mt-[80px] border-t border-[var(--color-hairline)] py-10 last:border-b"
-    >
-      <header className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-        <h2 className="text-[22px] font-medium leading-tight tracking-[-0.01em] text-[var(--color-ink)] md:text-[26px]">
-          {project.title}
-        </h2>
-        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--color-ink-subtle)]">
+    <li id={project.id} className="scroll-mt-[80px]">
+      <MosaicDivider variant={(index * 5 + 2) % 3} />
+      <div className="py-10">
+      <header className="flex items-baseline justify-between gap-x-4">
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <h2 className="text-[22px] font-medium leading-tight tracking-[-0.01em] text-[var(--color-ink)] md:text-[26px]">
+            {project.title}
+          </h2>
+          {project.awards && (
+            <span className="rounded-sm bg-[var(--color-accent-soft)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--color-accent-hover)]">
+              {project.awards}
+            </span>
+          )}
+        </div>
+        <span className="flex-none font-mono text-[13px] uppercase tracking-[0.14em] text-[var(--color-ink-subtle)]">
           {project.date}
         </span>
-        {project.awards && (
-          <span className="rounded-sm bg-[var(--color-accent-soft)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--color-accent-hover)]">
-            {project.awards}
-          </span>
-        )}
       </header>
 
       <p className="mt-3 text-[15.5px] leading-[1.7] text-[var(--color-ink)]">
@@ -123,7 +118,7 @@ function ProjectBlock({ project }: { project: Project }) {
           ))}
         </div>
       )}
-
+      </div>
     </li>
   );
 }

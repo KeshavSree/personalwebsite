@@ -16,6 +16,8 @@ import {
   Check,
   ChevronDown,
   Copy,
+  Github,
+  Linkedin,
   MessageSquarePlus,
   Pencil,
   RotateCcw,
@@ -65,6 +67,10 @@ interface Message {
 // person, no em dashes).
 type Category = "work" | "opinions" | "life";
 type Question = { text: string; tags: readonly Category[] };
+
+// Strip the [[…]] annotation markers so a suggestion can be dropped into the
+// input as plain text (e.g. when recalled with the ↑/↓ shell history).
+const stripAnnot = (s: string) => s.replace(/\[\[|\]\]/g, "");
 
 const QUESTION_BANK: readonly Question[] = [
   // Work — what he's built, where he's worked, what he's researching.
@@ -181,9 +187,11 @@ export type ContribDay = { date: string; count: number; level: number };
 function VerticalHistoryCalendar({
   anchorRef,
   initialData,
+  onScrolledChange,
 }: {
   anchorRef: RefObject<HTMLDivElement | null>;
   initialData?: ContribDay[] | null;
+  onScrolledChange?: (scrolled: boolean) => void;
 }) {
   const BLOCK = 22;
   const MARGIN = 7;
@@ -284,8 +292,24 @@ function VerticalHistoryCalendar({
   }, [spacer, calW]);
 
   return (
+    <>
+    {/* Vertical "Github!" label reading top-to-bottom (tops of letters facing
+        right) down the right edge of the contributions column. */}
+    <div
+      aria-hidden="true"
+      className="rise pointer-events-none absolute right-2 top-1/2 z-[2] hidden -translate-y-1/2 [writing-mode:vertical-rl] font-mono text-[13px] uppercase tracking-[0.24em] text-[var(--color-ink-subtle)] md:block"
+      style={{ animationDelay: "500ms" }}
+    >
+      Github!
+    </div>
     <div
       ref={scrollRef}
+      onScroll={(e) => {
+        // Parked at the bottom on load; treat "scrolled" as having moved up
+        // away from that resting position.
+        const el = e.currentTarget;
+        onScrolledChange?.(el.scrollHeight - el.clientHeight - el.scrollTop > 8);
+      }}
       aria-hidden="true"
       style={{ animationDelay: "450ms" }}
       className="rise quiet-scroll absolute inset-y-0 right-0 z-[1] hidden w-[286px] overflow-y-auto overscroll-contain md:block"
@@ -317,7 +341,9 @@ function VerticalHistoryCalendar({
                 blockMargin={MARGIN}
                 colorScheme="light"
                 theme={{
-                  light: ["#EBF5EA", "#BDDBB6", "#9BC18C", "#6E9660", "#486B40"],
+                  // Red scale built around the mosaic red (#BA5A5A), from a
+                  // light warm tint (empty) to a deep red.
+                  light: ["#F4E4E1", "#E1AEA9", "#CE7C78", "#BA5A5A", "#8B3A3A"],
                 }}
                 showWeekdayLabels={false}
                 showMonthLabels={false}
@@ -330,6 +356,7 @@ function VerticalHistoryCalendar({
       </div>
       <div aria-hidden="true" style={{ height: spacer }} />
     </div>
+    </>
   );
 }
 
@@ -344,6 +371,12 @@ export default function HomeChatClient({
   const [queue, setQueue] = useState<string[]>([]);
   const [queueNavIndex, setQueueNavIndex] = useState(-1);
   const [savedInput, setSavedInput] = useState("");
+  // Hero terminal: which suggested question ↑/↓ recall is currently sitting on
+  // (-1 = none). Lets the landing prompt feel like shell history.
+  const [heroHistIndex, setHeroHistIndex] = useState(-1);
+  const savedHeroRef = useRef("");
+  // Hide the "Scroll ↓" hint once the visitor scrolls the GitHub history column.
+  const [historyScrolled, setHistoryScrolled] = useState(false);
   // Per-category queues, frozen for the session so order stays stable as the
   // user chats. The shuffle uses Math.random() and can't run during SSR (it
   // would mismatch the client render), so we start with the deterministic bank
@@ -703,6 +736,33 @@ export default function HomeChatClient({
       submit(input);
       return;
     }
+
+    // Landing hero: ↑/↓ recall the suggested questions like shell history.
+    if (messagesRef.current.length === 0 && heroChips.length > 0) {
+      if (e.key === "ArrowUp" && !e.shiftKey) {
+        e.preventDefault();
+        if (heroHistIndex === -1) savedHeroRef.current = input;
+        const next =
+          heroHistIndex === -1 ? heroChips.length - 1 : Math.max(0, heroHistIndex - 1);
+        setHeroHistIndex(next);
+        setInput(stripAnnot(heroChips[next]));
+        return;
+      }
+      if (e.key === "ArrowDown" && !e.shiftKey) {
+        e.preventDefault();
+        if (heroHistIndex === -1) return;
+        if (heroHistIndex >= heroChips.length - 1) {
+          setHeroHistIndex(-1);
+          setInput(savedHeroRef.current);
+        } else {
+          const next = heroHistIndex + 1;
+          setHeroHistIndex(next);
+          setInput(stripAnnot(heroChips[next]));
+        }
+        return;
+      }
+    }
+
     if (queue.length === 0) return;
 
     if (e.key === "ArrowUp" && !e.shiftKey) {
@@ -929,19 +989,19 @@ export default function HomeChatClient({
         <div className="relative mx-auto h-full w-full max-w-[1060px]">
         <section className="relative z-10 flex h-full flex-col justify-center px-7 py-12 md:py-8 md:mr-[310px]">
           <div className="rise" style={{ animationDelay: "80ms" }}>
-            <h1 className="text-[clamp(2.65rem,6vw,3.85rem)] font-normal leading-[0.94] tracking-[-0.045em] text-[var(--color-ink)]">
-              Keshav Sreekantham
+            <h1 className="text-[clamp(1.9rem,4.4vw,3rem)] font-normal leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] md:whitespace-nowrap">
+              Who is Keshav Sreekantham?
             </h1>
-            <p className="mt-5 max-w-[540px] text-[clamp(1.05rem,1.7vw,1.2rem)] leading-[1.45] tracking-[-0.01em] text-[var(--color-ink-muted)]">
-              Engineer, Student, always asking questions. Curious about me?
-            </p>
           </div>
 
           <div className="rise mt-3" style={{ animationDelay: "200ms" }}>
             <ChatInput
               variant="hero"
               value={input}
-              onChange={setInput}
+              onChange={(v) => {
+                if (heroHistIndex !== -1) setHeroHistIndex(-1);
+                setInput(v);
+              }}
               onSubmit={handleSubmit}
               onKeyDown={handleKeyDown}
               inputRef={inputRef}
@@ -949,16 +1009,11 @@ export default function HomeChatClient({
             />
 
             {heroChips.length > 0 && (
-              <div className="mt-6 flex flex-wrap gap-2">
-                {heroChips.map((chip) => (
-                  <button
-                    key={chip}
-                    onClick={() => submitChip(chip)}
-                    className="group rounded-full border border-[var(--color-hairline)] bg-[var(--color-surface-raised)] px-3.5 py-1.5 text-[13px] text-[var(--color-ink-muted)] transition-all hover:border-[var(--color-ink)] hover:text-[var(--color-ink)]"
-                  >
-                    {chip}
-                  </button>
-                ))}
+              <div className="mt-4 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--color-ink-faint)]">
+                <span aria-hidden="true" className="text-[var(--color-ink-subtle)]">
+                  ↑
+                </span>
+                <span>for a suggestion</span>
               </div>
             )}
           </div>
@@ -970,72 +1025,85 @@ export default function HomeChatClient({
             <MosaicPanelBacking />
             <MosaicPanelTile />
             <nav
-              className="rise relative z-10 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[15px]"
+              className="rise relative z-10 flex flex-wrap items-center justify-around gap-x-2 gap-y-2 text-[16px]"
               style={{ animationDelay: "360ms" }}
               aria-label="Sections"
             >
               {[
-                { href: "/work", label: "Work" },
-                { href: "/projects", label: "Projects" },
-                { href: "/involvement", label: "Involvement" },
-                { href: "/about", label: "About" },
-              ].map((item, i, arr) => (
-                <span
+                { href: "/work", label: "Work", nudge: "-translate-x-2" },
+                { href: "/projects", label: "Projects", nudge: "translate-x-2" },
+                { href: "/involvement", label: "Involvement", nudge: "translate-x-2" },
+                { href: "/about", label: "About", nudge: "translate-x-3" },
+              ].map((item) => (
+                <Link
                   key={item.href}
-                  className="inline-flex items-center gap-x-4"
+                  href={item.href}
+                  className={`group inline-flex items-baseline border-b border-[var(--color-hairline-strong)] pb-1 text-[var(--color-ink)] transition-[border-color,color] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] focus-visible:border-[var(--color-accent)] focus-visible:text-[var(--color-accent)] ${item.nudge}`}
                 >
-                  <Link
-                    href={item.href}
-                    className="group inline-flex items-baseline gap-1.5 border-b border-[var(--color-hairline-strong)] pb-1 text-[var(--color-ink)] transition-[border-color,color] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] focus-visible:border-[var(--color-accent)] focus-visible:text-[var(--color-accent)]"
-                  >
-                    <span>{item.label}</span>
-                    <span className="text-[var(--color-ink-subtle)] transition-[color,transform] group-hover:-translate-y-px group-hover:translate-x-px group-hover:text-[var(--color-accent)]">
-                      ↗
-                    </span>
-                  </Link>
-                  {i < arr.length - 1 && (
-                    <span
-                      aria-hidden="true"
-                      className="hidden h-3 w-px bg-[var(--color-hairline)] sm:inline-block"
-                    />
-                  )}
-                </span>
+                  {item.label}
+                </Link>
               ))}
             </nav>
+          </div>
 
-            <div
-              className="rise relative z-10 mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[15px] text-[var(--color-ink-muted)]"
-              style={{ animationDelay: "440ms" }}
+          <div
+            className="rise mt-11 flex flex-wrap items-center justify-center gap-3"
+            style={{ animationDelay: "440ms" }}
+          >
+            <a
+              href="https://www.linkedin.com/in/ksreekan"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
             >
-              <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
-                Connect
-              </span>
-              {[
-                { label: "LinkedIn", href: "https://www.linkedin.com/in/karthikthyagarajan06" },
-                { label: "GitHub", href: "https://github.com/karthikcsq" },
-                { label: "Email", href: "mailto:karthik6002@gmail.com" },
-                { label: "Resume", href: "/resume.pdf" },
-              ].map((c) => (
-                <a
-                  key={c.label}
-                  href={c.href}
-                  target={c.href.startsWith("http") ? "_blank" : undefined}
-                  rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="group inline-flex items-baseline gap-1 transition-colors hover:text-[var(--color-accent)]"
-                >
-                  <span>{c.label}</span>
-                  <span className="text-[var(--color-ink-faint)] transition-colors group-hover:text-[var(--color-accent)]">
-                    ↗
-                  </span>
-                </a>
-              ))}
-            </div>
+              <Linkedin className="h-4 w-4" />
+            </a>
+            <a
+              href="https://github.com/KeshavSree"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+            >
+              <Github className="h-4 w-4" />
+            </a>
+            <a
+              href="mailto:keshav.sreekantham@gmail.com"
+              className="inline-flex items-center rounded-full border border-[var(--color-hairline-strong)] px-4 py-1.5 text-[14px] text-[var(--color-ink)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+            >
+              Contact Me
+            </a>
+            <a
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-full border border-[var(--color-hairline-strong)] px-4 py-1.5 text-[14px] text-[var(--color-ink)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+            >
+              Resume
+            </a>
           </div>
         </section>
         <VerticalHistoryCalendar
           anchorRef={linksBoxRef}
           initialData={initialHistory}
+          onScrolledChange={(s) => {
+            // Latch: once the visitor scrolls the history, keep the hint gone
+            // even if they scroll back to the original (bottom) position.
+            if (s) setHistoryScrolled(true);
+          }}
         />
+        {/* Scroll hint centered under the GitHub history column; fades once the
+            visitor scrolls that column. */}
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute bottom-76 right-[143px] z-[20] hidden translate-x-1/2 flex-col items-center gap-1 font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-ink-muted)] transition-all duration-300 ease-out md:flex ${
+            historyScrolled ? "translate-y-24 opacity-0" : "translate-y-0 opacity-100"
+          }`}
+        >
+          <span>Scroll</span>
+          <ChevronDown className="h-4 w-4" />
+        </div>
         </div>
         </>
       )}
@@ -1289,6 +1357,16 @@ function MosaicArtifactDivider({ from }: { from: "left" | "right" }) {
 // The panel behind the links, drawn as a single large mosaic tessera: a ~15-sided
 // polygon that reads as a rough rectangle with hand-cut indentations, filled with
 // the raised cream and edged by the cream gap-stroke so it belongs to the mosaic.
+// The panel tan is sliced into four cream blocks by three transparent gaps —
+// each seam slightly slanted, and no two seams parallel (slants +4 / -6 / +8) —
+// so it reads as four hand-cut mosaic tiles, one loosely per nav link.
+const PANEL_SLICES = [
+  "18,26 160,14 168,17 172,181 150,178 20,188 12,108 26,58",
+  "180,17 270,34 346,22 340,183 270,192 184,181",
+  "358,22 400,14 518,30 526,188 410,176 352,183",
+  "530,30 682,22 672,102 686,182 540,190 538,188",
+];
+
 function MosaicPanelTile() {
   return (
     <svg
@@ -1298,14 +1376,17 @@ function MosaicPanelTile() {
       className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible"
       fill="none"
     >
-      <polygon
-        points="18,26 160,14 270,34 400,14 520,30 682,22 672,102 686,182 540,190 410,176 270,192 150,178 20,188 12,108 26,58"
-        fill="var(--color-surface-raised)"
-        stroke="var(--color-surface)"
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke"
-      />
+      {PANEL_SLICES.map((points) => (
+        <polygon
+          key={points}
+          points={points}
+          fill="var(--color-surface-raised)"
+          stroke="var(--color-surface)"
+          strokeWidth="2.5"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      ))}
     </svg>
   );
 }

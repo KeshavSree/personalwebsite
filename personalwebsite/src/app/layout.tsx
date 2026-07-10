@@ -1,5 +1,5 @@
 import "@/app/globals.css";
-import { Host_Grotesk, Source_Serif_4 } from "next/font/google";
+import { Host_Grotesk, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import ConditionalChrome from "@/app/components/ConditionalChrome";
@@ -16,6 +16,13 @@ const sourceSerif = Source_Serif_4({
   weight: ["400", "500"],
   style: ["normal", "italic"],
   variable: "--font-source-serif",
+  display: "swap",
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -63,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${hostGrotesk.variable} ${sourceSerif.variable} h-full`}
+      className={`${hostGrotesk.variable} ${sourceSerif.variable} ${jetBrainsMono.variable} h-full`}
     >
       <body className="h-full m-0 p-0 bg-surface text-ink antialiased">
         <ConditionalChrome>{children}</ConditionalChrome>

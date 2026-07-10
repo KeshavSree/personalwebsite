@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { InvolvementEntry } from "@/utils/involvementUtils";
+import { MosaicDivider } from "@/app/components/mosaic";
 
 interface Props {
   involvements: InvolvementEntry[];
@@ -9,25 +10,21 @@ interface Props {
 
 export function InvolvementClient({ involvements }: Props) {
   return (
-    <article className="mx-auto max-w-[760px] px-5 pt-16 pb-24 md:px-6 md:pt-24">
-      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
-        Involvement
-      </p>
-      <h1 className="mt-5 text-[clamp(2rem,5vw,3rem)] font-medium leading-[1.02] tracking-[-0.02em] text-[var(--color-ink)]">
-        [[Where I show up.]]
+    <article className="mx-auto max-w-[880px] px-5 pt-16 pb-24 md:px-6 md:pt-24">
+      <h1 className="text-[clamp(2rem,5vw,3rem)] font-medium leading-[1.02] tracking-[-0.02em] text-[var(--color-ink)]">
+        Where am I involved on campus?
       </h1>
-      <p className="mt-5 max-w-[560px] font-serif text-[clamp(1.05rem,1.8vw,1.3rem)] italic leading-snug text-[var(--color-ink-muted)]">
-        [[Communities and orgs I&apos;m part of.]]
-      </p>
-
       {involvements.length === 0 ? (
         <p className="mt-14 text-[15px] text-[var(--color-ink-muted)]">
           Nothing here yet.
         </p>
       ) : (
         <div className="mt-14 space-y-16">
-          {involvements.map((inv) => (
-            <InvolvementSection key={inv.slug} inv={inv} />
+          {involvements.map((inv, i) => (
+            <div key={inv.slug}>
+              <MosaicDivider variant={(i * 5 + 2) % 3} />
+              <InvolvementSection inv={inv} />
+            </div>
           ))}
         </div>
       )}
@@ -37,21 +34,18 @@ export function InvolvementClient({ involvements }: Props) {
 
 function InvolvementSection({ inv }: { inv: InvolvementEntry }) {
   return (
-    <section id={inv.slug} className="scroll-mt-[80px] border-t border-[var(--color-hairline)] pt-10">
+    <section id={inv.slug} className="scroll-mt-[80px] pt-10">
       <header>
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <div className="flex items-baseline justify-between gap-x-3">
           <h2 className="text-[clamp(1.4rem,2.6vw,1.75rem)] font-medium leading-tight tracking-[-0.01em] text-[var(--color-ink)]">
             {inv.title}
           </h2>
-          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--color-ink-subtle)]">
+          <span className="flex-none font-mono text-[13px] uppercase tracking-[0.14em] text-[var(--color-ink-subtle)]">
             {inv.date}
           </span>
         </div>
         <p className="mt-1 text-[14.5px] text-[var(--color-ink-muted)]">
           {inv.role}
-          {inv.location && (
-            <span className="text-[var(--color-ink-subtle)]"> · {inv.location}</span>
-          )}
         </p>
         {inv.tagline && (
           <p className="mt-4 font-serif text-[clamp(1.05rem,1.6vw,1.2rem)] italic leading-snug text-[var(--color-ink-muted)]">
@@ -72,15 +66,15 @@ function InvolvementSection({ inv }: { inv: InvolvementEntry }) {
       </header>
 
       {inv.whatItIs && (
-        <Block label="What it is" body={inv.whatItIs} />
+        <Block label="What is it?" body={inv.whatItIs} uppercaseLabel={false} />
       )}
       {inv.myRole && (
-        <Block label="My role" body={inv.myRole} />
+        <Block label="What's my role?" body={inv.myRole} uppercaseLabel={false} />
       )}
 
       {inv.contributions.length > 0 && (
         <div className="mt-10">
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
+          <p className="font-mono text-[13px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
             Contributions
           </p>
           <dl className="mt-5 space-y-6">
@@ -103,17 +97,12 @@ function InvolvementSection({ inv }: { inv: InvolvementEntry }) {
 
       {inv.pointOfView.length > 0 && (
         <div className="mt-10">
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
-            Why it matters
+          <p className="font-mono text-[13px] tracking-[0.02em] text-[var(--color-ink-subtle)]">
+            How has it shaped me?
           </p>
-          <div className="mt-5 space-y-5">
+          <div className="mt-4 space-y-4 text-[15.5px] leading-[1.7] text-[var(--color-ink)]">
             {inv.pointOfView.map((p, i) => (
-              <p
-                key={i}
-                className="border-l-2 border-[var(--color-accent)] pl-4 font-serif text-[clamp(1rem,1.5vw,1.15rem)] italic leading-[1.55] text-[var(--color-ink)]"
-              >
-                {p}
-              </p>
+              <p key={i}>{p}</p>
             ))}
           </div>
         </div>
@@ -121,7 +110,7 @@ function InvolvementSection({ inv }: { inv: InvolvementEntry }) {
 
       {inv.bullets.length > 0 && (
         <div className="mt-10">
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
+          <p className="font-mono text-[13px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
             Highlights
           </p>
           <ul className="mt-5 space-y-2.5">
@@ -141,10 +130,22 @@ function InvolvementSection({ inv }: { inv: InvolvementEntry }) {
   );
 }
 
-function Block({ label, body }: { label: string; body: string }) {
+function Block({
+  label,
+  body,
+  uppercaseLabel = true,
+}: {
+  label: string;
+  body: string;
+  uppercaseLabel?: boolean;
+}) {
   return (
     <div className="mt-10">
-      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
+      <p
+        className={`font-mono text-[13px] text-[var(--color-ink-subtle)] ${
+          uppercaseLabel ? "uppercase tracking-[0.2em]" : "tracking-[0.02em]"
+        }`}
+      >
         {label}
       </p>
       <div className="mt-4 space-y-4 text-[15.5px] leading-[1.7] text-[var(--color-ink)]">

@@ -188,75 +188,199 @@ export function MosaicPanelBacking() {
   );
 }
 
-// ── Arch ──────────────────────────────────────────────────────────────────
-// An About-page-only feature: a horizontal mosaic "bridge" with a flat-ish rocky
-// top, an arched underside, side pillars for support, and a gap in the middle —
-// two cliff halves that would connect but don't. Same chunky tile style.
+// ── Nav highlight tile ──────────────────────────────────────────────────────
+// A single blue tessera behind the active nav item. An asymmetric quad — a
+// parallelogram knocked slightly out of true so no two sides are parallel —
+// stretched to the item box. The cream stroke echoes the mosaic gap and softens
+// the corners against the page. Text on top is set to the surface (cream).
+export function MosaicNavTile({ className = "" }: { className?: string }) {
+  // The inset box lives on this <span> (a non-replaced element, so it honors all
+  // four offsets). The <svg> is a replaced element — if it owned the offsets it
+  // would size its height from the viewBox ratio and ignore `bottom` — so it
+  // just fills the span.
+  return (
+    <span
+      aria-hidden="true"
+      className={`pointer-events-none absolute block ${className}`}
+    >
+      <svg
+        viewBox="0 0 100 40"
+        preserveAspectRatio="none"
+        className="block h-full w-full"
+        fill="none"
+      >
+        <polygon
+          points="8,6 94,3 96,33 4,37"
+          fill="var(--color-mosaic-blue)"
+          stroke="var(--color-surface)"
+          strokeWidth={2}
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
+  );
+}
+
+// ── Thin divider ────────────────────────────────────────────────────────────
+// A hairline replacement: one serrated row of mosaic triangles forming a thin,
+// bumpy line that stretches to any width. Unlike the hand-laid hero pieces
+// above, this is GENERATED — a divider is a repeating structural rule, not a
+// curated composition — but it keeps the same tessera look (cream gap between
+// tiles, three-colour palette, no colour repeated across a shared edge).
+// Vertices alternate along a top and bottom contour and jitter so the line
+// reads as bumpy rock rather than a ruler. Three PRESETS (different step + bump
+// seed) are pre-built so callers can scatter a bit of variety across a page.
+function buildDividerTiles(width: number, step: number, seed: number): Tile[] {
+  const n = Math.round(width / step);
+  // deterministic bump so SSR and client render identically (no hydration drift)
+  const jig = (i: number, s: number) => (((i * 37 + s + seed * 13) % 7) - 3) * 0.9;
+  const vertex = (i: number) => ({
+    x: Math.min(i * step, width),
+    y: (i % 2 === 0 ? 3 : 14) + jig(i, i % 2 === 0 ? 0 : 3),
+  });
+  const pts = Array.from({ length: n + 1 }, (_, i) => vertex(i));
+  const colors: MosaicColor[] = ["red", "green", "blue"];
+  const tiles: Tile[] = [];
+  for (let k = 0; k < pts.length - 2; k++) {
+    const [a, b, c] = [pts[k], pts[k + 1], pts[k + 2]];
+    // offset the palette by the preset seed so each preset opens on a different
+    // colour (adjacent tiles still differ, so no colour repeats across an edge)
+    tiles.push({ points: `${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`, c: colors[(k + seed) % 3] });
+  }
+  return tiles;
+}
+
+const DIVIDER_PRESETS: Tile[][] = [
+  buildDividerTiles(760, 64, 0),
+  buildDividerTiles(760, 72, 1),
+  buildDividerTiles(760, 80, 2),
+];
+
+export function MosaicDivider({
+  variant = 0,
+  className = "",
+}: {
+  variant?: number;
+  className?: string;
+}) {
+  const tiles = DIVIDER_PRESETS[((variant % 3) + 3) % 3];
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 760 18"
+      preserveAspectRatio="none"
+      className={`pointer-events-none block h-[17px] w-full ${className}`}
+      fill="none"
+    >
+      <MosaicTiles tiles={tiles} gap={1.8} />
+    </svg>
+  );
+}
+
+// ── Bullet marker ─────────────────────────────────────────────────────────
+// One tiny mosaic tessera (a little diamond) used in place of a dash before a
+// list bullet. `variant` cycles the palette colour, so a list of bullets reads
+// as red / green / blue tesserae down the margin.
+const BULLET_COLORS: MosaicColor[] = ["red", "green", "blue"];
+
+export function MosaicBullet({
+  variant = 0,
+  className = "",
+}: {
+  variant?: number;
+  className?: string;
+}) {
+  const c = BULLET_COLORS[((variant % 3) + 3) % 3];
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 6 6"
+      className={`pointer-events-none ${className}`}
+      fill="none"
+    >
+      <polygon
+        points="3,0.5 5.5,3 3,5.5 0.5,3"
+        fill={FILL[c]}
+        stroke="var(--color-surface)"
+        strokeWidth={0.5}
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+// ── Arch (broken bridge) ────────────────────────────────────────────────────
+// An About-page-only feature: a broken mosaic ARCH spanning a tall region. Each
+// half is a chunky rocky band that reaches out from a crown TIP near the centre
+// (where the two halves point at each other across a gap) and widens GRADUALLY the
+// whole way toward the page-side wall. Near the wall the underside follows a y=1/x
+// elbow: the band stays a slim rocky rim (little "meat") across the whole span, then
+// hooks sharply DOWN and runs a long tapering TAIL down the page edge — horizontal
+// asymptote along the top, vertical asymptote down the edge. The span (bridge) keeps
+// its thickness; only the base is thin. It fans around a few INTERIOR vertices
+// (junctions never touching air). Both contours are jagged (rocky). The halves are
+// asymmetrical: the left is longer, the right shorter and shallower.
+//
+// Every vertex is placed BY HAND (no grid, no shared column lines, no parallel
+// edges), matching the loose chunky style of the bottom strip / side hills. Colours
+// never repeat across a shared edge and use all three roughly evenly; the
+// tessellation is watertight (every interior edge shared by exactly two tiles —
+// verified by rendering it). Because the middle is empty and the mass hugs the top
+// and the two page edges, it is placed (in about/page.tsx) with negative vw margins
+// so page text can sit within its height instead of being pushed below it.
 const ARCH_TILES: Tile[] = [
-  { points: "309,14 462,11 417,22", c: "red" }, // triangle
-  { points: "126,124 181,117 0,150 58,138", c: "red" }, // quad
-  { points: "404,68 514,56 351,88 349,43 375,27", c: "red" }, // pentagon
-  { points: "559,7 561,26 514,56 510,32", c: "red" }, // quad
-  { points: "971,8 1156,10 1032,16 979,56 973,29", c: "red" }, // pentagon
-  { points: "1040,66 979,56 1032,16 1049,28 1088,53", c: "green" }, // pentagon
-  { points: "979,56 1103,90 926,52 928,26 973,29", c: "green" }, // pentagon
-  { points: "1252,117 1103,90 1199,103 1210,57", c: "red" }, // quad
-  { points: "1381,138 1440,150 1252,117", c: "red" }, // triangle
-  { points: "22,33 0,30 55,3 85,43", c: "red" }, // quad
-  { points: "194,24 165,43 148,15", c: "green" }, // triangle
-  { points: "243,20 246,40 194,24", c: "red" }, // triangle
-  { points: "309,29 309,14 352,30 375,27 349,43", c: "green" }, // pentagon
-  { points: "375,27 309,14 417,22 439,43 404,68", c: "blue" }, // pentagon
-  { points: "439,43 417,22 462,11 454,54", c: "green" }, // quad
-  { points: "404,68 439,43 454,54", c: "red" }, // triangle
-  { points: "510,32 501,45 454,54 462,11", c: "red" }, // quad
-  { points: "514,56 501,45 510,32", c: "green" }, // triangle
-  { points: "871,13 928,26 926,52 894,28 865,37", c: "red" }, // pentagon
-  { points: "971,8 973,29 928,26", c: "blue" }, // triangle
-  { points: "1098,32 1049,28 1032,16", c: "blue" }, // triangle
-  { points: "1156,10 1129,28 1088,53 1098,32", c: "green" }, // quad
-  { points: "1205,35 1209,15 1269,23 1210,57", c: "blue" }, // quad
-  { points: "1335,27 1286,35 1269,23", c: "green" }, // triangle
-  { points: "1395,4 1358,39 1335,27", c: "green" }, // triangle
-  { points: "25,63 0,30 22,33 84,48", c: "blue" }, // quad
-  { points: "0,30 25,107 96,92 58,138 0,150", c: "green" }, // pentagon
-  { points: "25,107 0,30 25,63 84,48 96,92", c: "red" }, // pentagon
-  { points: "84,48 22,33 85,43 154,69 96,92", c: "green" }, // pentagon
-  { points: "58,138 96,92 126,124", c: "blue" }, // triangle
-  { points: "126,124 154,69 236,60 181,117", c: "green" }, // quad
-  { points: "148,15 154,69 85,43 102,21", c: "blue" }, // quad
-  { points: "154,69 148,15 165,43 194,24 236,60", c: "red" }, // pentagon
-  { points: "96,92 154,69 126,124", c: "red" }, // triangle
-  { points: "236,60 194,24 246,40 243,20 289,46", c: "green" }, // pentagon
-  { points: "230,105 236,60 289,46 285,92", c: "red" }, // quad
-  { points: "181,117 236,60 230,105", c: "blue" }, // triangle
-  { points: "285,92 289,46 349,43 351,88", c: "green" }, // quad
-  { points: "309,14 289,46 243,20", c: "blue" }, // triangle
-  { points: "289,46 309,14 309,29 349,43", c: "red" }, // quad
-  { points: "1040,66 1088,53 1154,51 1103,90", c: "red" }, // quad
-  { points: "1098,32 1088,53 1049,28", c: "red" }, // triangle
-  { points: "1156,10 1154,51 1088,53 1129,28", c: "blue" }, // quad
-  { points: "1103,90 1154,51 1210,57 1155,91", c: "blue" }, // quad
-  { points: "1154,51 1156,10 1205,35 1210,57", c: "red" }, // quad
-  { points: "1155,91 1210,57 1199,103", c: "green" }, // triangle
-  { points: "1274,41 1252,117 1210,57 1269,23", c: "green" }, // quad
-  { points: "1286,35 1274,41 1269,23", c: "red" }, // triangle
-  { points: "1252,117 1296,93 1341,62 1341,102 1318,125", c: "green" }, // pentagon
-  { points: "1296,93 1252,117 1274,41 1286,35", c: "blue" }, // quad
-  { points: "1286,35 1335,27 1358,39 1341,62 1296,93", c: "red" }, // pentagon
-  { points: "1318,125 1341,102 1381,138", c: "red" }, // triangle
-  { points: "1395,4 1440,25 1428,113 1406,47 1358,39", c: "red" }, // pentagon
-  { points: "1358,39 1406,47 1341,62", c: "green" }, // triangle
-  { points: "1341,62 1406,47 1428,113 1341,102", c: "blue" }, // quad
-  { points: "1381,138 1428,113 1440,25 1440,150", c: "blue" }, // quad
-  { points: "1341,102 1428,113 1381,138", c: "green" }, // triangle
+  // ── LEFT half — thick bridge span, then slim 1/x base; the underside now ROUNDS
+  //    through the elbow (curved arc) instead of a hard corner into the tail ──
+  { points: "655,62 586,50 604,82", c: "red" }, // triangle (crown tip)
+  { points: "586,50 604,82 520,96 514,62", c: "blue" }, // quad
+  { points: "514,62 520,96 442,58", c: "red" }, // triangle
+  { points: "442,58 520,96 440,132 350,142 368,76", c: "blue" }, // pentagon
+  { points: "350,142 368,76 300,74", c: "red" }, // triangle
+  { points: "350,142 300,74 258,90 300,166", c: "blue" }, // quad
+  { points: "300,166 258,90 258,176", c: "green" }, // triangle (bridge / base seam)
+  { points: "258,90 258,176 224,130", c: "red" }, // triangle
+  { points: "224,130 258,90 190,104 150,146", c: "green" }, // quad
+  { points: "150,146 190,104 98,92", c: "blue" }, // triangle
+  { points: "150,146 98,92 0,110 70,150", c: "red" }, // quad
+  { points: "70,150 0,110 0,150", c: "green" }, // triangle
+  { points: "258,176 224,130 150,146 196,166", c: "blue" }, // quad
+  { points: "150,146 196,166 140,178 94,190 70,150", c: "green" }, // pentagon (rounded elbow)
+  { points: "94,190 70,150 0,150 62,214", c: "red" }, // quad (rounded elbow)
+  { points: "0,150 62,214 48,262 0,320 0,230", c: "blue" }, // pentagon (tail)
+  { points: "48,262 0,320 34,330", c: "red" }, // triangle (tail)
+  { points: "34,330 0,320 0,410 23,412", c: "green" }, // quad (tail)
+  { points: "23,412 0,410 12,492", c: "blue" }, // triangle (tail)
+  { points: "0,410 12,492 0,556 0,500", c: "green" }, // quad (tail tip)
+
+  // ── RIGHT half — thick bridge span, then slim 1/x base with the same rounded elbow ──
+  { points: "800,74 872,62 886,92", c: "red" }, // triangle (crown tip)
+  { points: "872,62 886,92 948,74", c: "green" }, // triangle
+  { points: "948,74 886,92 968,108 1052,134 1024,70", c: "blue" }, // pentagon
+  { points: "1052,134 1024,70 1098,86", c: "green" }, // triangle
+  { points: "1052,134 1098,86 1166,82 1132,150", c: "blue" }, // quad
+  { points: "1132,150 1166,82 1200,168", c: "green" }, // triangle
+  { points: "1200,168 1166,82 1206,98", c: "blue" }, // triangle
+  { points: "1206,98 1200,168 1206,186", c: "red" }, // triangle (bridge / base seam)
+  { points: "1206,98 1206,186 1242,130", c: "blue" }, // triangle
+  { points: "1242,130 1206,98 1284,110 1318,144", c: "green" }, // quad
+  { points: "1284,110 1318,144 1348,96", c: "red" }, // triangle
+  { points: "1348,96 1318,144 1370,150 1440,110", c: "green" }, // quad
+  { points: "1370,150 1440,110 1440,150", c: "blue" }, // triangle
+  { points: "1206,186 1242,130 1300,178 1244,166", c: "red" }, // quad
+  { points: "1242,130 1300,178 1346,190 1370,150 1318,144", c: "blue" }, // pentagon (rounded elbow)
+  { points: "1370,150 1346,190 1378,214 1440,150", c: "red" }, // quad (rounded elbow)
+  { points: "1378,214 1440,150 1440,230 1440,320 1392,262", c: "green" }, // pentagon (tail)
+  { points: "1392,262 1440,320 1406,330", c: "red" }, // triangle (tail)
+  { points: "1440,320 1406,330 1417,412 1440,410", c: "blue" }, // quad (tail)
+  { points: "1440,410 1417,412 1428,492", c: "green" }, // triangle (tail)
+  { points: "1440,410 1428,492 1440,556 1440,500", c: "red" }, // quad (tail tip)
 ];
 
 export function MosaicArch({ className = "" }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"
-      viewBox="0 -4 1440 160"
+      viewBox="0 42 1440 522"
       className={`pointer-events-none block h-auto w-full ${className}`}
       fill="none"
     >

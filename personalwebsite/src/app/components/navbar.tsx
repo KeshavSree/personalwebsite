@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Home, Menu, X } from "lucide-react";
+import { MosaicNavTile } from "@/app/components/mosaic";
 
 const NAV_ITEMS = [
   { href: "/work", label: "Work" },
@@ -33,10 +34,12 @@ export default function Navbar() {
     <>
       <header className="sticky top-0 z-40 border-b border-[var(--color-hairline)] bg-[var(--color-surface)]/85 backdrop-blur-sm">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-7 py-4 md:px-8">
-          <Link href="/" className="group">
-            <span className="border-b border-[var(--color-hairline-strong)] pb-0.5 text-[19px] font-medium leading-none tracking-[-0.035em] text-[var(--color-ink)] transition-colors group-hover:border-[var(--color-accent)]">
-              Keshav
-            </span>
+          <Link
+            href="/"
+            aria-label="Home"
+            className="flex h-9 w-9 items-center justify-center text-[var(--color-ink)] transition-colors hover:text-[var(--color-accent)]"
+          >
+            <Home className="h-[22px] w-[22px]" />
           </Link>
 
           {/* Desktop nav */}
@@ -47,27 +50,21 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`relative text-sm transition-colors ${
+                  className={`relative text-[17px] transition-colors ${
                     active
-                      ? "text-[var(--color-ink)]"
+                      ? "text-[var(--color-surface)]"
                       : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
                   }`}
                 >
-                  {item.label}
                   {active && (
-                    <span className="absolute -bottom-[17px] left-0 right-0 h-[2px] bg-[var(--color-accent)]" />
+                    <MosaicNavTile className="-inset-x-4 -top-[6px] -bottom-[7px]" />
                   )}
+                  <span className={`relative inline-block ${active ? "-rotate-2" : ""}`}>
+                    {item.label}
+                  </span>
                 </Link>
               );
             })}
-            {pathname !== "/" && (
-              <Link
-                href="/"
-                className="text-sm text-[var(--color-ink-muted)] transition-colors hover:text-[var(--color-accent)]"
-              >
-                ← Ask the chat
-              </Link>
-            )}
           </nav>
 
           {/* Mobile toggle */}
@@ -104,14 +101,6 @@ export default function Navbar() {
               </Link>
             );
           })}
-          {pathname !== "/" && (
-            <Link
-              href="/"
-              className="mt-6 text-sm text-[var(--color-ink-muted)]"
-            >
-              ← Ask the chat
-            </Link>
-          )}
         </div>
       </div>
     </>

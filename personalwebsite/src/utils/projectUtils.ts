@@ -15,9 +15,9 @@ interface RootYaml {
 }
 
 const candidates = () => [
-  path.join(process.cwd(), "..", "python-rag", "rag-docs", "karthik_thyagarajan_truth.yaml"),
-  path.join(process.cwd(), "rag-docs", "karthik_thyagarajan_truth.yaml"),
-  path.join(process.cwd(), "..", "rag-docs", "karthik_thyagarajan_truth.yaml"),
+  path.join(process.cwd(), "..", "python-rag", "rag-docs", "keshav_sreekantham_truth.yaml"),
+  path.join(process.cwd(), "rag-docs", "keshav_sreekantham_truth.yaml"),
+  path.join(process.cwd(), "..", "rag-docs", "keshav_sreekantham_truth.yaml"),
 ];
 
 export function getProjectsFromYaml(): ProjectEntry[] {

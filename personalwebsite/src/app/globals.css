@@ -36,7 +36,7 @@
   /* Typography */
   --font-sans: var(--font-host-grotesk), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-source-serif), "Iowan Old Style", Georgia, serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 
   /* Radii */
   --radius-xs: 4px;
