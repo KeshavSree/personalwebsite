@@ -363,13 +363,13 @@ function HomeMosaicFrame() {
 // disables under prefers-reduced-motion; the loop itself also no-ops there,
 // showing a single static answer).
 const ANSWERS = [
-  "Ruthless Optimist",
-  "Engineer",
-  "Student",
-  "Musician",
-  "Dreamer",
-  "Boilermaker",
-  "Researcher",
+  "Ruthless Optimist.",
+  "Engineer.",
+  "Student.",
+  "Musician.",
+  "Dreamer.",
+  "Boilermaker.",
+  "Researcher.",
 ];
 
 function TypingAnswers() {
