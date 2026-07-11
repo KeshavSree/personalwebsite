@@ -8,7 +8,7 @@ import { MosaicDivider } from "@/app/components/mosaic";
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: "[[Selected projects, experiments, and things Keshav has shipped.]]",
+  description: "Learn about selected projects Keshav has shipped.",
 };
 
 const LINK_LABEL: Record<ProjectLink["type"], string> = {

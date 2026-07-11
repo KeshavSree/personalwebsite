@@ -3,8 +3,8 @@
 
 @theme {
   /* Surfaces: warm paper cream, tonal steps tinted toward 82deg */
-  --color-surface: #F9F4E6;
-  --color-surface-raised: oklch(97% 0.016 82);
+  --color-surface: #FBF7EF;
+  --color-surface-raised: oklch(98.5% 0.012 82);
   --color-surface-muted: oklch(92% 0.028 82);
   --color-surface-sunken: oklch(90% 0.032 82);
   --color-surface-wash: oklch(92% 0.028 82);

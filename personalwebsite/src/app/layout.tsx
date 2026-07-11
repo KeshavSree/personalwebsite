@@ -6,7 +6,7 @@ import ConditionalChrome from "@/app/components/ConditionalChrome";
 
 const hostGrotesk = Host_Grotesk({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-host-grotesk",
   display: "swap",
 });
@@ -32,14 +32,15 @@ export const metadata: Metadata = {
     default: "Keshav Sreekantham",
   },
   description:
-    "Keshav Sreekantham — [[Builder, Researcher, Engineer. Ask the site anything about his work, projects, and involvement.]]",
+    "Keshav Sreekantham: Builder, Researcher, Engineer. His work, projects, and involvement.",
   keywords: [
     "Keshav Sreekantham",
-    "[[Machine Learning]]",
-    "[[Robotics]]",
+    "Software",
+    "AI Infrastructure",
     "Portfolio",
+    "Website",
     "Purdue",
-    "[[Engineer]]",
+    "Engineer",
   ],
   authors: [{ name: "Keshav Sreekantham" }],
   creator: "Keshav Sreekantham",
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
     url: "https://www.keshavsreekantham.com",
     title: "Keshav Sreekantham",
     description:
-      "Keshav Sreekantham — [[Builder, Researcher, Engineer. Ask the site anything.]]",
+      "Keshav Sreekantham: Builder, Researcher, Engineer.",
     siteName: "Keshav Sreekantham",
   },
   robots: {

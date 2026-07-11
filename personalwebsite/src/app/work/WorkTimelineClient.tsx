@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { JobEntry } from "@/utils/jobUtils";
+import { JobEntry } from "@/data/workData";
 import { MosaicDivider, MosaicBullet } from "@/app/components/mosaic";
 
 function slugify(s: string) {
@@ -56,7 +56,7 @@ export function WorkTimelineClient({ jobs }: Props) {
                   {job.company}
                 </p>
                 <ul className="mt-4 space-y-2.5">
-                  {job.description.map((bullet, j) => (
+                  {job.highlights.map((bullet, j) => (
                     <li
                       key={j}
                       className="relative pl-5 text-[15px] leading-[1.65] text-[var(--color-ink)]"

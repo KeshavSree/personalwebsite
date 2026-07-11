@@ -1,9 +1,9 @@
-import { getInvolvementsFromYaml } from "@/utils/involvementUtils";
+import { getInvolvements } from "@/data/involvementData";
 import { InvolvementClient } from "./InvolvementClient";
 import { HashScroller } from "@/app/components/HashScroller";
 
 export default function InvolvementPage() {
-  const involvements = getInvolvementsFromYaml();
+  const involvements = getInvolvements();
   return (
     <>
       <HashScroller />

@@ -1,7 +1,7 @@
 // ImageResponse uses Satori, whose OKLCH support is less reliable than the
 // browser's. These are sRGB equivalents of the canonical tokens in globals.css.
 export const OG_COLORS = {
-  surface: "#F9F4E6",
+  surface: "#FBF7EF",
   surfaceRaised: "#FBF4E9",
   ink: "#1D140E",
   inkMuted: "#554B43",

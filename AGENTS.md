@@ -1,141 +1,99 @@
 # AGENTS.md
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+This file provides guidance to coding agents working in this repository.
 
 ## Overview
 
-Personal portfolio website for Keshav Sreekantham built with Next.js 15, React 19, TypeScript, and Tailwind CSS 4. Features a RAG-powered chatbot using OpenAI and Pinecone for Q&A about the portfolio owner. Hosted on Vercel.
+Personal portfolio website for Keshav Sreekantham built with Next.js (App Router), React 19,
+TypeScript, and Tailwind CSS 4, with Framer Motion animation and a hand-authored mosaic visual
+motif. It is a **static site** — no backend, no API routes, no database, and no environment
+variables required. Hosted on Vercel.
 
 Live site: https://www.keshavsreekantham.com
+
+> History: this repo previously had a RAG chatbot (OpenAI/NVIDIA NIM + Pinecone, a `python-rag/`
+> indexer, and an `/api/chat` route). It was **fully removed on 2026-07-10** — the home page is now
+> a static hero. Any lingering references to chat / RAG / Pinecone / `python-rag` in old design
+> docs or git history are obsolete.
 
 ## Project Structure
 
 ```
-personalwebsite/
+personalwebsite/                     # the Next.js app — run npm commands from here
 ├── src/
-│   ├── app/                    # Next.js 15 App Router pages & API routes
-│   │   ├── page.tsx            # Home page with RAG chatbot
-│   │   ├── about/              # About page with bio
-│   │   ├── blog/               # Blog index and [slug] routes
-│   │   ├── projects/           # Projects showcase with Framer Motion
-│   │   ├── work/               # Work timeline
-│   │   ├── components/         # Shared React components
-│   │   └── api/                # App Router API route handlers
-│   │       └── chat/           # RAG chatbot endpoint (POST)
-│   │           └── route.ts
-│   └── utils/                  # Utility functions
-│       ├── blogUtils.ts        # Markdown blog post loading
-│       ├── jobUtils.ts         # YAML work experience parser
-│       └── scrollUtils.ts      # Smooth scroll helpers
-├── blog/posts/                 # Markdown blog posts with frontmatter
-└── python-rag/                 # Python RAG management (all-in-one)
-    ├── rag-docs/               # RAG data sources (YAML, TXT)
-    ├── create-pinecone.py      # Script to populate Pinecone vector DB
-    ├── testing.py              # Pinecone connection testing
-    ├── pyproject.toml          # Python dependencies (uv/pip)
-    ├── uv.lock                 # Locked dependency versions
-    ├── .venv/                  # Virtual environment (gitignored)
-    └── README.md               # Python RAG documentation
+│   ├── app/
+│   │   ├── page.tsx                 # Home (server): fetches GitHub contrib history, renders HomeChatClient
+│   │   ├── HomeChatClient.tsx       # Home hero (client): mosaic + headline + nav + socials + GitHub calendar
+│   │   ├── about/                   # About page
+│   │   ├── projects/                # Projects showcase (Framer Motion)
+│   │   ├── work/                    # Work timeline
+│   │   ├── involvement/             # Involvement page
+│   │   ├── components/              # Shared components (see below)
+│   │   ├── layout.tsx               # Root layout, metadata, ConditionalChrome
+│   │   ├── opengraph-image.tsx      # Static OG image (og-brand.tsx holds OG colors/frame)
+│   │   └── globals.css
+│   ├── utils/
+│   │   ├── jobUtils.ts              # Parses work-experience YAML → JobEntry (work timeline)
+│   │   └── involvementUtils.ts      # Parses involvement YAML → InvolvementEntry
+│   └── data/
+│       ├── projects.json            # Project content
+│       └── projectsData.ts          # Typed project catalog (reads projects.json)
+└── rag-docs/                        # Source-of-truth YAML (legacy folder name)
+    ├── keshav_sreekantham_truth.yaml  # name / education / experience / projects (jobUtils reads experience)
+    └── involvement.yaml               # involvement entries (involvementUtils)
 ```
+
+Components in `src/app/components/`: `mosaic.tsx` (the signature mosaic motif), `navbar.tsx`,
+`ConditionalChrome.tsx` (chrome wrapper), `MosaicFrame.tsx` (interior-page frame), `HashScroller.tsx`.
 
 ## Development Commands
 
-### Next.js
-- **Development**: `npm run dev` (starts on http://localhost:3000)
+Run from the `personalwebsite/` directory:
+- **Development**: `npm run dev` (http://localhost:3000)
 - **Build**: `npm run build`
 - **Production**: `npm start`
 - **Lint**: `npm run lint`
 
-### Python Scripts (RAG Setup)
-
-**Setup** (uses [uv](https://docs.astral.sh/uv/) for fast dependency management):
-```bash
-cd python-rag
-uv sync  # Installs all dependencies into .venv/
-```
-
-**Populate Pinecone**: `uv run python create-pinecone.py [--reset]`
-  - Run from `python-rag/` directory
-  - Requires `.env` in **root directory** with: `PINECONE_API_KEY`, `PINECONE_INDEX_NAME`, `OPENAI_API_KEY`
-  - **Modes**:
-    - `python create-pinecone.py` - UPDATE mode (incremental, keeps existing vectors)
-    - `python create-pinecone.py --reset` - RESET mode (deletes all vectors, fresh upload)
-      - Asks for confirmation before deletion
-      - Use when content has been updated/removed
-  - Loads documents from multiple sources:
-    - YAML files from `rag-docs/` (resume data - same directory)
-    - Text files from `rag-docs/` (general content - same directory)
-    - Blog posts from `../personalwebsite/blog/posts/` (Markdown with frontmatter)
-  - Smart chunking strategy based on content type:
-    - Blog posts: 1200 chars, 200 overlap (preserves narrative)
-    - YAML data: 600 chars, 50 overlap (keeps structured data intact)
-    - Text files: 500 chars, 50 overlap (default)
-  - GitHub repo integration is currently commented out
-  - See `python-rag/README.md` for detailed documentation
+No Python, no `.env`. (The GitHub contribution calendar fetches a public API at request/build time.)
 
 ## Architecture & Key Patterns
 
-### Data Flow for RAG Chatbot
-1. **User Input** → Home page (`src/app/page.tsx`) sends POST to `/api/chat`
-2. **API Route** (`src/app/api/chat/route.ts`) embeds query using OpenAI text-embedding-ada-002
-3. **Intent Detection** → Analyzes query for content type (blog_post/project/professional/academic/technical) to apply metadata filters
-4. **Vector Search** → Queries Pinecone for top-5 relevant document chunks (score > 0.75 threshold)
-   - If filtered search returns no results, retries without filter
-5. **Citation Extraction** → Identifies blog post sources for citation links
-6. **LLM Response** → GPT-3.5-turbo generates conversational answer with retrieved context
-   - System prompt includes instruction to cite blog posts with markdown links
-7. **Client Render** → ReactMarkdown displays formatted response with clickable blog citations
+### Home page
+`src/app/page.tsx` (server component) fetches the full GitHub contribution history (daily-cached)
+and passes it to `HomeChatClient.tsx` (client). The hero renders: the mosaic background, the
+question-style headline "Who is Keshav Sreekantham?", section nav links (Work / Projects /
+Involvement / About), social + contact + resume buttons, and a rotated vertical GitHub
+contribution calendar (`VerticalHistoryCalendar`, built on `react-activity-calendar`). The
+filename `HomeChatClient` is historical — the home page is no longer a chatbot.
 
-### Blog System
-- Static generation at build time via `getSortedPosts()` in `blogUtils.ts`
-- Markdown files in `blog/posts/` with gray-matter frontmatter (title, date, summary)
-- `remark` + `remark-html` for Markdown→HTML conversion with `sanitize: false`
-- Dynamic routes: `/blog/[slug]` with `generateMetadata()` for SEO
+### Chrome (navbar + mosaic frame)
+`layout.tsx` wraps every page in `ConditionalChrome`, which renders the global `Navbar` on all
+pages **except** the home page (the hero carries its own section nav) and the `InteriorMosaicFrame`
+on interior pages.
 
-### Work Timeline
-- Single source of truth: `rag-docs/keshav_sreekantham_truth.yaml`
-- `jobUtils.ts` parses YAML experience entries → JobEntry interface
-- Deterministic color palette (7 colors cycling) and icon mapping
-- Fallback resolution: checks `__dirname`, `process.cwd()/rag-docs`, `../rag-docs`
+### Work timeline
+Single source of truth: `rag-docs/keshav_sreekantham_truth.yaml`. `jobUtils.ts` parses the
+`experience` entries into `JobEntry` objects for the timeline. Path resolution tries
+`process.cwd()/rag-docs`, then `__dirname`, then `../rag-docs`.
+
+### Involvement
+`rag-docs/involvement.yaml` → `involvementUtils.ts` → `InvolvementEntry`, rendered by the
+involvement page.
+
+### Projects
+`src/data/projects.json` → `projectsData.ts` (typed catalog) → the projects page, animated with
+Framer Motion.
 
 ### Styling
-- Tailwind CSS 4 with PostCSS (`@tailwindcss/postcss`)
-- `@tailwindcss/typography` for prose styling in blog posts
-- Custom animations via Framer Motion (projects page)
-- Path alias: `@/*` → `./src/*` (configured in `tsconfig.json`)
+Tailwind CSS 4 with PostCSS (`@tailwindcss/postcss`). Framer Motion for animation. The
+hand-authored mosaic (`components/mosaic.tsx`) is the signature visual, used on the home hero and
+interior page frames. Path alias: `@/*` → `./src/*`.
 
-## Environment Variables
-
-Required in `.env.local` (not tracked in git):
-- `PINECONE_API_KEY` - Pinecone vector database
-- `PINECONE_INDEX_NAME` - Name of Pinecone index
-- `OPENAI_API_KEY` - OpenAI API for embeddings and chat completions
-- `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` (or `KV_REST_API_URL` / `KV_REST_API_TOKEN` from the Vercel/Upstash integration) - Upstash Redis for `/api/chat` rate limiting (10/min, 60/hr per IP). If unset, rate limiting is skipped with a console warning.
-- `NEXT_PUBLIC_*` - Any client-side env vars
-
-## Important Constraints
-
-1. **Blog Posts**: Must have frontmatter with `title`, `date`, and optionally `summary`
-2. **Work YAML**: Experience entries require `role`, `company`, `start_date`, `end_date`, `bullets`
-3. **API Routes**: Use Next.js 15 App Router pattern - route handlers in `src/app/api/*/route.ts` files
-   - Export named HTTP method functions (GET, POST, etc.)
-   - Use `NextRequest` and `NextResponse` from `next/server`
-   - No default exports for route handlers
+## Data / content constraints
+- **Work YAML** experience entries require `role`, `company`, `start_date`, `end_date`, `bullets`.
+- **Involvement YAML** entries require `slug`, `title`, `role`, `date`, plus content fields
+  (`what_it_is`, `my_role`, `contributions`, `point_of_view`, `bullets`).
+- **Projects** live in `projects.json` (`title`, `tools`, `date`, `links`, `description`).
 
 ## TypeScript Configuration
-
-- Target: ES2017
-- Strict mode enabled
-- Module resolution: bundler
-- Path alias: `@/*` maps to `./src/*`
-
-## Notes for Development
-
-- **API Routes**: Implemented using Next.js 15 App Router pattern in `src/app/api/`
-  - `/api/chat` - POST endpoint for RAG-powered chatbot
-- **RAG System**: Three-stage pipeline:
-  1. Embedding: OpenAI text-embedding-ada-002
-  2. Retrieval: Pinecone vector search with intent-based filtering
-  3. Generation: GPT-3.5-turbo with dynamic system prompts
-- **Blog Markdown**: Processed server-side with `sanitize: false`, allowing raw HTML in posts
-- **Work Experience**: Data duplicated between `rag-docs/` (for RAG embeddings) and read directly by `jobUtils.ts` (for timeline display)
+- Strict mode enabled. Path alias `@/*` maps to `./src/*`.

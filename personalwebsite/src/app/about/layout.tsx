@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'Learn about Keshav Sreekantham - [[AI Infrastructure Engineer, ML Engineer, and Researcher . Discover my background, skills, and journey in computer science and AI.]]',
-  keywords: ['about', 'Keshav Sreekantham', 'machine learning', 'software engineer', 'researcher', 'computer science', 'biography', 'AI', 'Infrastructure'],
+  description: 'Learn about Keshav Sreekantham - AI Infrastructure Engineer, and Software Engineer . Discover my background, skills, and journey in computer science.',
+  keywords: ['about', 'Keshav Sreekantham', 'AI infrastructure', 'software engineer', 'computer science', 'biography', 'AI', 'Infrastructure'],
 };
 
 export default function AboutLayout({

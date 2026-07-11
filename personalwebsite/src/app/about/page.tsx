@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Linkedin, Github } from "lucide-react";
 import { MosaicArch, MosaicDivider, MosaicBullet } from "@/app/components/mosaic";
+import about from "@/data/about.json";
 
 export const metadata: Metadata = {
   title: "About",
@@ -8,53 +9,11 @@ export const metadata: Metadata = {
     "Keshav Sreekantham - Data Science (Computer Science) at Purdue, deploying AI at scale",
 };
 
-const SKILLS = [
-  "Productization",
-  "Cloud Infrastructure",
-  "CI Pipeline Development",
-  "Machine Learning",
-  "Azure",
-  "AWS",
-  "Python",
-  "Rust",
-  "Docker",
-  "Kubernetes",
-];
-
-const CLASSES = [
-  "Data Structures & Algorithms",
-  "Object-Oriented Programming",
-  "Foundations of Computer Science",
-  "Introduction to Machine Learning",
-  "Numerical Methods",
-  "Statistical Theory",
-];
-
-const EXPLORING = [
-  "Current limits of edge computation",
-  "Scalable solutions to private enterprise AI deployment",
-  "Existing service ease of agent integration",
-];
-
-const ABOUT_QA = [
-  { q: "What is your favorite album?", a: "Submarine by The Marías." },
-  { q: "How long have you played clarinet?", a: "8 years." },
-  { q: "What is your favorite food?", a: "Tacos." },
-  {
-    q: "What are some of your hobbies?",
-    a: "Climbing, eating, pickleball, and on occasion video games and volleyball.",
-  },
-  {
-    q: "Why is every section a question?",
-    a: "It's all about asking the right questions.",
-  },
-];
-
 export default function AboutPage() {
   return (
     <article className="mx-auto max-w-[840px] px-5 pt-16 pb-24 md:px-6 md:pt-24">
       <h1 className="text-[clamp(2rem,5vw,3rem)] font-medium leading-[1.02] tracking-[-0.02em] text-[var(--color-ink)]">
-        Who am I?
+        {about.heading}
       </h1>
       <div className="mt-7 flex flex-wrap items-center gap-3">
         <a
@@ -79,7 +38,7 @@ export default function AboutPage() {
           href="mailto:keshav.sreekantham@gmail.com"
           className="inline-flex items-center rounded-full border border-[var(--color-hairline-strong)] px-4 py-1.5 text-[14px] text-[var(--color-ink)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
         >
-          Contact Me
+          Email
         </a>
         <a
           href="/resume.pdf"
@@ -92,13 +51,7 @@ export default function AboutPage() {
       </div>
 
       <section className="mt-10 mb-6 space-y-5 text-[16px] leading-[1.75] text-[var(--color-ink)]">
-        <p>
-          I find the gap. Whether it be building the brand of Purdue Stack or designing tools for Fortune 100 clients,
-            I notice problems. Most of those problems I don’t have the capability to solve at that moment,
-            whether it be due to time, resources, or my authority to change things.
-            However, more often than not, I find a gap within my grasp and I close it.
-            The best part is that this skill is field-agnostic, and I grow no matter what I am doing.
-        </p>
+        <p>{about.bio}</p>
       </section>
 
       {/* Tall broken-arch decoration. Near-full-bleed but inset 12px on each side
@@ -116,20 +69,20 @@ export default function AboutPage() {
 
       <Section label="Education">
         <p className="text-[16px] text-[var(--color-ink)]">
-          <span className="font-medium">Purdue University</span>
-          <span className="text-[var(--color-ink-subtle)]"> · 2028</span>
+          <span className="font-medium">{about.education.institution}</span>
+          <span className="text-[var(--color-ink-subtle)]"> · {about.education.year}</span>
         </p>
         <p className="mt-1 text-[14.5px] text-[var(--color-ink-muted)]">
-          B.S. in Data Science (Computer Science)
+          {about.education.degree}
         </p>
       </Section>
 
       <Section label="Classes">
         <p className="text-[15px] leading-[1.9] text-[var(--color-ink)]">
-          {CLASSES.map((c, i) => (
+          {about.classes.map((c, i) => (
             <span key={c}>
               {c}
-              {i < CLASSES.length - 1 && (
+              {i < about.classes.length - 1 && (
                 <span className="mx-2 text-[var(--color-ink-faint)]">·</span>
               )}
             </span>
@@ -139,10 +92,10 @@ export default function AboutPage() {
 
       <Section label="Skills">
         <p className="text-[15px] leading-[1.9] text-[var(--color-ink)]">
-          {SKILLS.map((skill, i) => (
+          {about.skills.map((skill, i) => (
             <span key={skill}>
               {skill}
-              {i < SKILLS.length - 1 && (
+              {i < about.skills.length - 1 && (
                 <span className="mx-2 text-[var(--color-ink-faint)]">·</span>
               )}
             </span>
@@ -152,7 +105,7 @@ export default function AboutPage() {
 
       <Section label="What am I learning?">
         <ul className="space-y-2.5">
-          {EXPLORING.map((item, i) => (
+          {about.learning.map((item, i) => (
             <li
               key={item}
               className="relative pl-5 text-[15.5px] leading-relaxed text-[var(--color-ink)]"
@@ -171,7 +124,7 @@ export default function AboutPage() {
           More about me
         </h2>
         <dl className="mt-6 space-y-5">
-          {ABOUT_QA.map(({ q, a }) => (
+          {about.qa.map(({ q, a }) => (
             <div key={q}>
               <dt className="font-mono text-[13px] tracking-[0.02em] text-[var(--color-ink-subtle)]">
                 {q}

@@ -1,43 +1,58 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-04-29T00:00:00Z",
+  "generatedAt": "2026-07-03T00:00:00Z",
   "title": "Design System: Keshav Sreekantham",
   "extensions": {
     "colorMeta": {
       "accent": {
         "role": "primary",
-        "displayName": "Vermilion",
-        "canonical": "oklch(53% 0.225 26)",
+        "displayName": "Blue",
+        "canonical": "oklch(56% 0.105 216)",
         "tonalRamp": [
-          "oklch(20% 0.12 26)",
-          "oklch(30% 0.16 26)",
-          "oklch(40% 0.20 26)",
-          "oklch(53% 0.225 26)",
-          "oklch(65% 0.20 26)",
-          "oklch(78% 0.14 26)",
-          "oklch(88% 0.08 26)",
-          "oklch(95% 0.024 23)"
+          "oklch(20% 0.07 216)",
+          "oklch(30% 0.09 216)",
+          "oklch(40% 0.10 216)",
+          "oklch(56% 0.105 216)",
+          "oklch(66% 0.10 216)",
+          "oklch(78% 0.075 216)",
+          "oklch(88% 0.05 216)",
+          "oklch(95% 0.02 213)"
         ]
       },
       "accent-hover": {
         "role": "primary",
-        "displayName": "Vermilion Deep",
-        "canonical": "oklch(47% 0.22 25)"
+        "displayName": "Blue Deep",
+        "canonical": "oklch(50% 0.105 216)"
       },
       "accent-soft": {
         "role": "tertiary",
-        "displayName": "Vermilion Wash",
-        "canonical": "oklch(92% 0.05 25)"
+        "displayName": "Blue Wash",
+        "canonical": "oklch(91% 0.04 214)"
       },
       "accent-tint": {
         "role": "tertiary",
-        "displayName": "Vermilion Tint",
-        "canonical": "oklch(95% 0.024 23)"
+        "displayName": "Blue Tint",
+        "canonical": "oklch(95% 0.02 213)"
+      },
+      "mosaic-red": {
+        "role": "palette",
+        "displayName": "Mosaic Red",
+        "canonical": "#BA5A5A"
+      },
+      "mosaic-green": {
+        "role": "palette",
+        "displayName": "Mosaic Green",
+        "canonical": "#A4CE8B"
+      },
+      "mosaic-blue": {
+        "role": "palette",
+        "displayName": "Mosaic Blue",
+        "canonical": "#86BCBD"
       },
       "surface": {
         "role": "neutral",
         "displayName": "Cream Surface",
-        "canonical": "oklch(95% 0.022 82)",
+        "canonical": "#F9F4E6",
         "tonalRamp": [
           "oklch(20% 0.018 55)",
           "oklch(42% 0.018 60)",
@@ -45,7 +60,7 @@
           "oklch(72% 0.012 70)",
           "oklch(84% 0.024 78)",
           "oklch(90% 0.032 82)",
-          "oklch(95% 0.022 82)",
+          "#F9F4E6",
           "oklch(97% 0.016 82)"
         ]
       },
@@ -98,14 +113,11 @@
     "typographyMeta": {
       "display": { "displayName": "Display", "purpose": "The home headline. One per page." },
       "headline": { "displayName": "Headline", "purpose": "Section openers on About, Work, Projects." },
-      "voice": { "displayName": "Voice (Serif Italic)", "purpose": "Subtitles, blockquotes, the artifact-empty line. Always italic, always Source Serif 4, always voicing Keshav." },
-      "body": { "displayName": "Body", "purpose": "Chat answers, About prose, project descriptions. Capped at 65-75ch in long-form." },
-      "label": { "displayName": "Label (Mono)", "purpose": "System labels and kickers (Receipts, Try, Queued, About). Uppercase, 0.2em tracking." }
+      "voice": { "displayName": "Voice (Serif Italic)", "purpose": "Subtitles and blockquotes. Always italic, always Source Serif 4, always voicing Keshav." },
+      "body": { "displayName": "Body", "purpose": "About prose, project descriptions. Capped at 65-75ch in long-form." },
+      "label": { "displayName": "Label (Mono)", "purpose": "System labels and kickers (nav labels, metadata). Uppercase, 0.2em tracking." }
     },
-    "shadows": [
-      { "name": "soft", "value": "0 1px 2px oklch(20% 0.015 60 / 0.04), 0 2px 6px oklch(20% 0.015 60 / 0.04)", "purpose": "Resting state of the input shell. Almost invisible." },
-      { "name": "lift", "value": "0 4px 12px oklch(20% 0.015 60 / 0.06), 0 1px 3px oklch(20% 0.015 60 / 0.04)", "purpose": "Focus state of the input shell." }
-    ],
+    "shadows": [],
     "motion": [
       { "name": "rise", "value": "cubic-bezier(0.2, 0.8, 0.2, 1)", "purpose": "Default ease-out for staggered reveals (480ms)." },
       { "name": "slip", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Steeper ease-out for slip-in entrances (520ms)." }
@@ -118,59 +130,27 @@
   },
   "components": [
     {
-      "name": "Send Button",
-      "kind": "button",
-      "refersTo": "button-send",
-      "description": "The one true button on the site. Pill, vermilion fill, arrow-up icon.",
-      "html": "<button class=\"ds-btn-send\" aria-label=\"Send\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m5 12 7-7 7 7\"/><path d=\"M12 19V5\"/></svg></button>",
-      "css": ".ds-btn-send { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 9999px; background: oklch(53% 0.225 26); color: oklch(95% 0.022 82); border: none; cursor: pointer; transition: background 200ms cubic-bezier(0.2, 0.8, 0.2, 1); } .ds-btn-send:hover { background: oklch(47% 0.22 25); } .ds-btn-send:disabled { opacity: 0.3; cursor: not-allowed; } .ds-btn-send:focus-visible { outline: 2px solid oklch(53% 0.225 26); outline-offset: 2px; }"
-    },
-    {
-      "name": "Suggestion Chip",
+      "name": "Chip",
       "kind": "chip",
-      "refersTo": "chip-suggestion",
-      "description": "Rotating question chips below the hero input and inside the chat rail.",
-      "html": "<button class=\"ds-chip-suggestion\">What is Keshav building right now?</button>",
-      "css": ".ds-chip-suggestion { display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 9999px; border: 1px solid oklch(84% 0.024 78); background: oklch(97% 0.016 82); color: oklch(42% 0.018 60); font-family: 'Host Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1; cursor: pointer; transition: border-color 200ms cubic-bezier(0.2, 0.8, 0.2, 1), color 200ms cubic-bezier(0.2, 0.8, 0.2, 1); } .ds-chip-suggestion:hover { border-color: oklch(20% 0.018 55); color: oklch(20% 0.018 55); }"
+      "refersTo": "chip",
+      "description": "Pill chip for project links and tags. Cream-raised with a hairline that darkens on hover.",
+      "html": "<button class=\"ds-chip\">React</button>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 9999px; border: 1px solid oklch(84% 0.024 78); background: oklch(97% 0.016 82); color: oklch(42% 0.018 60); font-family: 'Host Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1; cursor: pointer; transition: border-color 200ms cubic-bezier(0.2, 0.8, 0.2, 1), color 200ms cubic-bezier(0.2, 0.8, 0.2, 1); } .ds-chip:hover { border-color: oklch(20% 0.018 55); color: oklch(20% 0.018 55); }"
     },
     {
-      "name": "Citation Chip",
-      "kind": "chip",
-      "refersTo": "citation-chip",
-      "description": "Inline 'Pulled from' chip beneath an assistant message. Threads to its artifact card on hover.",
-      "html": "<button class=\"ds-chip-citation\">Repple</button>",
-      "css": ".ds-chip-citation { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px; border: 1px solid oklch(74% 0.028 78); background: oklch(97% 0.016 82); color: oklch(20% 0.018 55); font-family: 'Host Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 12px; line-height: 1; cursor: pointer; transition: border-color 200ms cubic-bezier(0.2, 0.8, 0.2, 1), color 200ms cubic-bezier(0.2, 0.8, 0.2, 1); } .ds-chip-citation:hover, .ds-chip-citation[data-active=\"true\"] { border-color: oklch(53% 0.225 26); color: oklch(53% 0.225 26); }"
-    },
-    {
-      "name": "User Bubble",
+      "name": "Connect Link",
       "kind": "custom",
-      "refersTo": "bubble-user",
-      "description": "Right-aligned user message bubble with one asymmetric corner.",
-      "html": "<div class=\"ds-bubble-user\">Tell me about Repple.</div>",
-      "css": ".ds-bubble-user { display: inline-block; max-width: 85%; padding: 10px 16px; background: oklch(20% 0.018 55); color: oklch(95% 0.022 82); border-radius: 14px; border-top-right-radius: 4px; font-family: 'Host Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 15px; line-height: 1.5; }"
-    },
-    {
-      "name": "Input Shell",
-      "kind": "input",
-      "refersTo": "input-shell",
-      "description": "The chat composer. Cream-raised surface with hairline border that turns vermilion on focus.",
-      "html": "<form class=\"ds-input-shell\"><textarea class=\"ds-input-shell__field\" rows=\"1\" placeholder=\"Ask anything about Keshav\"></textarea><button class=\"ds-input-shell__send\" aria-label=\"Send\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m5 12 7-7 7 7\"/><path d=\"M12 19V5\"/></svg></button></form>",
-      "css": ".ds-input-shell { display: flex; align-items: flex-end; gap: 8px; padding: 12px 16px; background: oklch(97% 0.016 82); border: 1px solid oklch(84% 0.024 78); border-radius: 14px; box-shadow: 0 1px 2px oklch(20% 0.015 60 / 0.04), 0 2px 6px oklch(20% 0.015 60 / 0.04); transition: border-color 200ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 200ms cubic-bezier(0.2, 0.8, 0.2, 1); } .ds-input-shell:focus-within { border-color: oklch(53% 0.225 26); box-shadow: 0 4px 12px oklch(20% 0.015 60 / 0.06), 0 1px 3px oklch(20% 0.015 60 / 0.04); } .ds-input-shell__field { flex: 1; resize: none; padding: 6px 0; background: transparent; color: oklch(20% 0.018 55); font-family: 'Host Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 15px; line-height: 1.5; border: none; outline: none; } .ds-input-shell__field::placeholder { color: oklch(72% 0.012 70); } .ds-input-shell__send { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 9999px; background: oklch(53% 0.225 26); color: oklch(95% 0.022 82); border: none; cursor: pointer; transition: background 200ms cubic-bezier(0.2, 0.8, 0.2, 1); } .ds-input-shell__send:hover { background: oklch(47% 0.22 25); }"
-    },
-    {
-      "name": "Artifact Card",
-      "kind": "card",
-      "refersTo": "bubble-user",
-      "description": "An entry in the receipts panel. No card surface; separated by a hairline that turns vermilion on hover.",
-      "html": "<a class=\"ds-artifact\" href=\"#\"><span class=\"ds-artifact__dot\"></span><div class=\"ds-artifact__body\"><p class=\"ds-artifact__label\">Project</p><h3 class=\"ds-artifact__title\">Repple</h3><p class=\"ds-artifact__desc\">A reps-based productivity tool that turns workouts into compounding streaks.</p></div></a>",
-      "css": ".ds-artifact { display: flex; gap: 12px; padding: 28px 0; border-top: 1px solid oklch(84% 0.024 78); text-decoration: none; transition: border-color 200ms cubic-bezier(0.2, 0.8, 0.2, 1); } .ds-artifact:hover { border-top-color: oklch(53% 0.225 26); } .ds-artifact__dot { flex: none; width: 5px; height: 5px; margin-top: 8px; border-radius: 9999px; background: oklch(53% 0.225 26); } .ds-artifact__body { flex: 1; min-width: 0; } .ds-artifact__label { margin: 0 0 6px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; line-height: 1; letter-spacing: 0.2em; text-transform: uppercase; color: oklch(58% 0.014 65); } .ds-artifact__title { margin: 0 0 6px; font-family: 'Host Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: -0.01em; color: oklch(20% 0.018 55); } .ds-artifact__desc { margin: 0; font-family: 'Host Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.6; color: oklch(42% 0.018 60); }"
+      "refersTo": "connect-link",
+      "description": "Home hero social/contact link: ink text with a hairline underline that turns blue on hover, plus a trailing arrow glyph.",
+      "html": "<a class=\"ds-connect\" href=\"#\">Resume <span aria-hidden=\"true\">↗</span></a>",
+      "css": ".ds-connect { display: inline-flex; align-items: center; gap: 4px; padding-bottom: 2px; border-bottom: 1px solid oklch(74% 0.028 78); color: oklch(20% 0.018 55); text-decoration: none; font-family: 'Host Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 14px; transition: border-color 200ms cubic-bezier(0.2, 0.8, 0.2, 1), color 200ms cubic-bezier(0.2, 0.8, 0.2, 1); } .ds-connect:hover { border-bottom-color: oklch(56% 0.105 216); color: oklch(56% 0.105 216); }"
     },
     {
       "name": "Voice Subtitle",
       "kind": "custom",
       "refersTo": "voice",
-      "description": "The italic serif subtitle that voices Keshav beneath the home headline.",
-      "html": "<p class=\"ds-voice\">Founder, engineer, and student, happiest with a hard problem.</p>",
+      "description": "The italic serif line that voices Keshav (e.g. the subtitle and closing quote on About).",
+      "html": "<p class=\"ds-voice\">Happiest with a hard problem.</p>",
       "css": ".ds-voice { margin: 0; max-width: 560px; font-family: 'Source Serif 4', 'Iowan Old Style', Georgia, serif; font-style: italic; font-weight: 400; font-size: clamp(1.1rem, 2vw, 1.4rem); line-height: 1.3; color: oklch(42% 0.018 60); }"
     },
     {
@@ -178,49 +158,52 @@
       "kind": "custom",
       "refersTo": "label",
       "description": "Tiny mono label that sits above headlines and section titles.",
-      "html": "<p class=\"ds-kicker\">Portfolio · conversational</p>",
+      "html": "<p class=\"ds-kicker\">Portfolio</p>",
       "css": ".ds-kicker { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 400; line-height: 1; letter-spacing: 0.2em; text-transform: uppercase; color: oklch(58% 0.014 65); }"
     }
   ],
   "narrative": {
-    "northStar": "The Lit Reading Room",
-    "overview": "A warm, paper-cream surface holding a quiet conversation, with one bright object on the desk. The site reads first as a piece of writing and second as software. Density is low at rest, but the chrome is engineered, not sketched: hairlines are deliberate, type is set with care, and one saturated color is reserved for the moment something actually happens. The aesthetic rejects three things by name. It rejects the vibecoded look (bento grids, glassmorphism, gradient text, hero-metric stat blocks). It rejects the corporate look (SaaS landing voice, Trusted-by walls, navy-and-gold palettes). It rejects the brutalist look (oversize black borders, monospace-everywhere, deliberately ugly grids). The reference points are Lovable (chat-first interface with a receipts panel) and Tennr (editorial-warm UI density that still feels engineered).",
+    "northStar": "The Warm Mosaic",
+    "overview": "A warm, paper-cream surface holding calm, considered writing, edged by a hand-laid cultural mosaic and lit by one bright object. The site reads first as a piece of writing and second as software. Density is low at rest, but the chrome is engineered, not sketched: hairlines are deliberate, type is set with care, and one saturated color is reserved for the moment something actually happens. The mosaic is ambient, not loud: muted tesserae cluster in from the edges of the page, framing the words without ever crowding them. The aesthetic rejects three things by name. It rejects the vibecoded look (bento grids, glassmorphism, gradient text, hero-metric stat blocks). It rejects the corporate look (SaaS landing voice, Trusted-by walls, navy-and-gold palettes). It rejects the brutalist look (oversize black borders, monospace-everywhere, deliberately ugly grids). The reference point is Tennr (editorial-warm UI density that still feels engineered).",
     "keyCharacteristics": [
-      "Cream surface, warm ink, one vermilion accent",
+      "Cream surface, warm ink, one blue accent, plus a muted red/green/blue mosaic palette",
+      "The mosaic palette is featured in the background but free to appear elsewhere; blue leads as the interactive accent, red and green support",
       "Sans for structure, serif italic for voice, mono for system labels",
       "Hairlines and tonal layering instead of shadows",
       "Stillness at rest, motion only on real events",
-      "Functional color: vermilion marks the live cursor of attention, never decoration"
+      "Functional color: blue marks the live cursor of attention, never decoration"
     ],
     "rules": [
-      { "name": "The One Bright Object Rule", "body": "Vermilion is the only saturated color on any screen. It marks the live cursor of attention and nothing else. If you find yourself reaching for vermilion to decorate a heading, a divider, or a card edge that is not interactive, stop. The accent stays rare so it stays loud.", "section": "colors" },
+      { "name": "The One Bright Object Rule", "body": "Blue is the interactive accent, the live cursor of attention: it marks what is live or actionable and nothing else. If you find yourself reaching for blue to decorate a heading, a divider, or a card edge that is not interactive, stop. The accent stays rare so it stays loud. The mosaic's other two hues (red, green) are supporting palette colors, used deliberately and sparingly for expression, never to signal interactivity.", "section": "colors" },
       { "name": "The No True Black, No True White Rule", "body": "Never #000, never #fff. Every neutral carries a hue cast (warm 55-82 in OKLCH). Cold grays read as default-template; the warm cast is the signature.", "section": "colors" },
       { "name": "The Italic Voice Rule", "body": "Source Serif 4 only ever appears italic. Roman serif weights are forbidden on this site. The italic carries the personal voice; setting it upright would turn voice into editorial drag.", "section": "typography" },
       { "name": "The Mono Labels Only Rule", "body": "Mono is reserved for system labels and kickers. Not for body, not for code blocks larger than a phrase, not for emphasis.", "section": "typography" },
-      { "name": "The Tonal Lift Rule", "body": "When a surface needs to sit above the page, raise it by stepping up the cream scale and outlining it with a hairline. Reach for shadow-soft only on the input shell.", "section": "elevation" },
-      { "name": "The No Decorative Shadow Rule", "body": "Shadows are not atmospheric. They never sit under hero text, never glow under buttons, never blur a card edge for depth. Two shadow tokens exist; both belong to the input.", "section": "elevation" },
-      { "name": "The No Filled Surfaces Rule", "body": "Outside of the user message bubble and the send button, no UI element has a filled background heavier than surface-raised. Cards, chips, artifacts, citations all live on the cream scale, separated by hairlines.", "section": "elevation" },
-      { "name": "The Asymmetric Bubble Rule", "body": "The user bubble has one corner cut to rounded-xs (top-right). That asymmetry is the only place radius varies inside a single shape on the site. Don't propagate it.", "section": "elevation" }
+      { "name": "The Tonal Lift Rule", "body": "When a surface needs to sit above the page, raise it by stepping up the cream scale and outlining it with a hairline. Cards and chips lift with tone and hairline alone.", "section": "elevation" },
+      { "name": "The No Decorative Shadow Rule", "body": "Shadows are not atmospheric. They never sit under hero text, never glow under buttons, never blur a card edge for depth. Depth is tonal and hairline, not shadow.", "section": "elevation" },
+      { "name": "The No Filled Surfaces Rule", "body": "No UI element has a filled background heavier than surface-raised. Cards and chips live on the cream scale, separated by hairlines.", "section": "elevation" },
+      { "name": "The Quiet Mosaic Rule", "body": "The mosaic itself is background texture: it stays at the edges (~30% coverage, 0% at the top), never crowds the words, never animates, and never becomes interactive. It is the mosaic element that stays quiet, not the colors, which belong to the broader palette and may appear elsewhere.", "section": "background" },
+      { "name": "The Edge-Bound Rule", "body": "The mosaic reads as a frame, not a field. Coverage concentrates along the bottom (thin, wavy) and the two sides (sparse, asymmetric, never mirrored), leaving the top and the reading column clear. Uniform margins and uniform gaps keep it feeling laid by hand rather than generated.", "section": "background" }
     ],
     "dos": [
-      "Do keep vermilion (oklch(53% 0.225 26)) reserved for the live cursor of attention: send button, avatar dot, focused input border, active citation, blockquote rule, inline links inside chat answers.",
-      "Do layer surfaces tonally (surface to surface-raised to surface-muted) and separate them with 1px hairlines. Reach for shadow only on the input shell.",
-      "Do use Source Serif 4 only in italic, only for voice (subtitles, blockquotes, the artifact-empty line). Roman serif is forbidden.",
-      "Do use mono at 11px, 0.2em tracking, uppercase, for system labels (Receipts, Try, Queued, kickers).",
-      "Do cap body line length at 65-75ch in long-form contexts (About prose, blog posts, chat answers).",
+      "Do keep blue (oklch(56% 0.105 216)) reserved for the live cursor of attention: focus-visible borders, hover states on the section nav and connect links, the blockquote rule, and inline links inside prose.",
+      "Do layer surfaces tonally (surface to surface-raised to surface-muted) and separate them with 1px hairlines.",
+      "Do use Source Serif 4 only in italic, only for voice (subtitles, blockquotes). Roman serif is forbidden.",
+      "Do use mono at 11px, 0.2em tracking, uppercase, for system labels (kickers, nav labels, metadata).",
+      "Do cap body line length at 65-75ch in long-form contexts (About prose, project descriptions).",
       "Do ease motion with cubic-bezier(0.2, 0.8, 0.2, 1) (rise) or cubic-bezier(0.16, 1, 0.3, 1) (slip). Both are exponential ease-out curves. Disable all custom motion when prefers-reduced-motion: reduce.",
-      "Do match new interactive states to the existing pattern: hairline border at rest, vermilion border on focus or active."
+      "Do match new interactive states to the existing pattern: hairline border at rest, blue border on focus or active.",
+      "Do keep the background mosaic quiet and edge-bound: ~30% coverage, 0% at the top, muted tiles only, no motion. It frames the page; it never competes with the words."
     ],
     "donts": [
       "Don't use #000 or #fff. Every neutral carries a 55-82 hue cast in OKLCH. Cold grays read as template.",
-      "Don't decorate with vermilion. No vermilion underlines on every link, no vermilion section dividers, no vermilion icons that aren't interactive. The accent is rare on purpose.",
-      "Don't wrap things in cards. The artifact panel uses hairlines and tonal lift, not card surfaces. Nested cards are always wrong.",
-      "Don't use side-stripe borders (border-left greater than 1px as a colored stripe) on callouts, alerts, or list items. The blockquote vermilion rule is the exception, not a pattern to copy.",
+      "Don't decorate with blue. No blue underlines on every link, no blue section dividers, no blue icons that aren't interactive. The accent is rare on purpose.",
+      "Don't wrap things in cards. Surfaces use hairlines and tonal lift, not filled cards. Nested cards are always wrong.",
+      "Don't use side-stripe borders (border-left greater than 1px as a colored stripe) on callouts, alerts, or list items. The blockquote blue rule is the exception, not a pattern to copy.",
       "Don't ship a hero-metric template (big number plus small label plus supporting stat). That's the SaaS cliche.",
-      "Don't use bento grids, glassmorphism, gradient text, or Trusted-by logo walls. These are the vibecoded and corporate anti-references from PRODUCT.md.",
+      "Don't use bento grids, glassmorphism, gradient text, or Trusted-by logo walls. These are the vibecoded and corporate anti-references from the overview.",
       "Don't ship a brutalist grid: oversize black borders, monospace-everywhere, Helvetica-on-white-with-yellow-blocks. Restraint, not aggression.",
-      "Don't add ambient or decorative motion. Motion fires on real events only.",
-      "Don't introduce a second saturated color. If a feature seems to need one, the answer is almost always a tonal step or a hairline change instead.",
+      "Don't add ambient or decorative motion. Motion fires on real events only, the mosaic included: it is laid once and stays still.",
+      "Don't overload the UI with saturated color. Blue is the primary interactive accent; the mosaic's red and green are supporting palette colors, used deliberately and never as a competing interactive signal. When in doubt, reach for a tonal step or a hairline instead of adding more color.",
       "Don't rename or reorder the section headers in DESIGN.md. Tooling depends on exact headers."
     ]
   }

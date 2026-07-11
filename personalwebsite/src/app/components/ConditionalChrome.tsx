@@ -1,17 +1,14 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Navbar from "@/app/components/navbar";
-import { ChatModeProvider, useChatMode } from "@/app/components/ChatModeContext";
 import { InteriorMosaicFrame } from "@/app/components/MosaicFrame";
 
-function ChromeInner({ children }: { children: React.ReactNode }) {
+export default function ConditionalChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { inChat } = useChatMode();
   const isHome = pathname === "/";
-  // Hide the global navbar on the unscrolled home: the hero rail carries
-  // section nav, and showing both creates a duplicated navigation system on
-  // a page whose only job is to surface the chat input.
-  const hideNavbar = isHome && !inChat;
+  // Hide the global navbar on the home page: the hero rail carries its own
+  // section nav, and showing both creates a duplicated navigation system.
+  const hideNavbar = isHome;
   return (
     <>
       {!hideNavbar && <Navbar />}
@@ -20,13 +17,5 @@ function ChromeInner({ children }: { children: React.ReactNode }) {
         <div className={isHome ? "" : "relative z-10"}>{children}</div>
       </main>
     </>
-  );
-}
-
-export default function ConditionalChrome({ children }: { children: React.ReactNode }) {
-  return (
-    <ChatModeProvider>
-      <ChromeInner>{children}</ChromeInner>
-    </ChatModeProvider>
   );
 }

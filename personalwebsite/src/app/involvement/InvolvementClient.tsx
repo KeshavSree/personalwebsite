@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import type { InvolvementEntry } from "@/utils/involvementUtils";
+import type { InvolvementEntry } from "@/data/involvementData";
 import { MosaicDivider, MosaicBullet } from "@/app/components/mosaic";
 
 interface Props {
@@ -77,11 +77,11 @@ function InvolvementSection({
         )}
       </header>
 
-      {inv.whatItIs && (
-        <Block label="What is it?" body={inv.whatItIs} uppercaseLabel={false} />
+      {inv.whatIsIt && (
+        <Block label="What is it?" body={inv.whatIsIt} uppercaseLabel={false} />
       )}
-      {inv.myRole && (
-        <Block label="What's my role?" body={inv.myRole} uppercaseLabel={false} />
+      {inv.whatsMyRole && (
+        <Block label="What's my role?" body={inv.whatsMyRole} uppercaseLabel={false} />
       )}
 
       {inv.contributions.length > 0 && (
@@ -107,26 +107,26 @@ function InvolvementSection({
         </div>
       )}
 
-      {inv.pointOfView.length > 0 && (
+      {inv.howItShapedMe.length > 0 && (
         <div className="mt-10">
           <p className="font-mono text-[13px] tracking-[0.02em] text-[var(--color-ink-subtle)]">
             How has it shaped me?
           </p>
           <div className="mt-4 space-y-4 text-[15.5px] leading-[1.7] text-[var(--color-ink)]">
-            {inv.pointOfView.map((p, i) => (
+            {inv.howItShapedMe.map((p, i) => (
               <p key={i}>{p}</p>
             ))}
           </div>
         </div>
       )}
 
-      {inv.bullets.length > 0 && (
+      {inv.highlights.length > 0 && (
         <div className="mt-10">
           <p className="font-mono text-[13px] uppercase tracking-[0.2em] text-[var(--color-ink-subtle)]">
             Highlights
           </p>
           <ul className="mt-5 space-y-2.5">
-            {inv.bullets.map((b, i) => (
+            {inv.highlights.map((b, i) => (
               <li
                 key={i}
                 className="relative pl-5 text-[15px] leading-[1.65] text-[var(--color-ink)]"

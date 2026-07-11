@@ -27,7 +27,7 @@
     ],
     "display": {
       "images": [
-        { "src": "/keshavcontent/projects/Kihara.png", "alt": "KiharaLab Protein Function Prediction", "width": 1200, "height": 613 }
+        { "src": "/projects/Kihara.png", "alt": "KiharaLab Protein Function Prediction", "width": 1200, "height": 613 }
       ]
     }
   },
@@ -43,7 +43,7 @@
     ],
     "display": {
       "images": [
-        { "src": "/keshavcontent/projects/ember.png", "alt": "Ember", "width": 1200, "height": 614 }
+        { "src": "/projects/ember.png", "alt": "Ember", "width": 1200, "height": 614 }
       ]
     }
   },
@@ -60,7 +60,7 @@
     ],
     "display": {
       "images": [
-        { "src": "/keshavcontent/projects/spotify.jpg", "alt": "Spotify Playlist Curator", "width": 806, "height": 457 }
+        { "src": "/projects/spotify.jpg", "alt": "Spotify Playlist Curator", "width": 806, "height": 457 }
       ]
     }
   }

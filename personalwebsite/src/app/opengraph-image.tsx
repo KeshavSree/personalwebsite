@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { OG_COLORS, OgMosaicFrame } from "@/app/og-brand";
 
 export const alt =
-  "Keshav Sreekantham — [[Builder, Researcher, Engineer]]";
+  "Keshav Sreekantham — Builder, Researcher, Engineer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -23,11 +23,11 @@ async function loadGoogleFont(
 
 export default async function OpengraphImage() {
   // headline drives the font glyph subset only; the visible text is in the
-  // spans below. Includes the [[ ]] markers so those glyphs load.
-  const headline = "[[Builder, Researcher, Engineer.]]";
+  // spans below.
+  const headline = "Builder, Researcher, Engineer.";
   const eyebrow = "KESHAV SREEKANTHAM";
   const url = "keshavsreekantham.com";
-  const fontText = `${headline}${eyebrow}${url}Ask the site anything.`;
+  const fontText = `${headline}${eyebrow}${url}Who is Keshav Sreekantham?`;
 
   const [sans, mono] = await Promise.all([
     loadGoogleFont("Host Grotesk", 500, fontText),
@@ -89,8 +89,8 @@ export default async function OpengraphImage() {
             color: OG_COLORS.ink,
           }}
         >
-          <span style={{ display: "flex" }}>[[Builder, Researcher,</span>
-          <span style={{ display: "flex" }}>Engineer.]]</span>
+          <span style={{ display: "flex" }}>Builder, Researcher,</span>
+          <span style={{ display: "flex" }}>Engineer.</span>
         </div>
 
         <div
@@ -104,7 +104,7 @@ export default async function OpengraphImage() {
           }}
         >
           <span style={{ display: "flex" }}>{url}</span>
-          <span style={{ display: "flex" }}>[[Ask the site anything.]]</span>
+          <span style={{ display: "flex" }}>Who is Keshav Sreekantham?</span>
         </div>
       </div>
     ),
