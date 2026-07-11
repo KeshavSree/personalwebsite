@@ -39,10 +39,12 @@ function VerticalHistoryCalendar({
   anchorRef,
   initialData,
   onScrolledChange,
+  orientation = "vertical",
 }: {
   anchorRef: RefObject<HTMLDivElement | null>;
   initialData?: ContribDay[] | null;
   onScrolledChange?: (scrolled: boolean) => void;
+  orientation?: "vertical" | "horizontal";
 }) {
   const [data, setData] = useState<ContribDay[] | null>(initialData ?? null);
   const [spacer, setSpacer] = useState(0);
@@ -179,7 +181,7 @@ function VerticalHistoryCalendar({
   const grid = useMemo(
     () =>
       weeks.map((week, wi) => (
-        <div key={wi} className="flex" style={{ gap: GAP }}>
+        <div key={wi} className={orientation === "horizontal" ? "flex flex-col" : "flex"} style={{ gap: GAP }}>
           {week.map((day, di) => {
             if (!day) {
               return <div key={di} style={{ width: TILE, height: TILE }} />;
@@ -203,8 +205,25 @@ function VerticalHistoryCalendar({
           })}
         </div>
       )),
-    [weeks, showTip, hideTip],
+    [weeks, showTip, hideTip, orientation],
   );
+
+  if (orientation === "horizontal") {
+    return (
+      <div className="w-full">
+        {contentHeight > 0 && (
+          <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--color-ink-subtle)]">
+            {total.toLocaleString()} contributions
+          </p>
+        )}
+        <div className="quiet-scroll overflow-x-auto overscroll-x-contain pb-1">
+          <div className="flex w-max" style={{ gap: GAP }}>
+            {grid}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -440,7 +459,7 @@ export default function HomeChatClient({
   }, []);
 
   return (
-    <div className="relative h-[100dvh] overflow-hidden bg-[var(--color-surface)] text-[var(--color-ink)]">
+    <div className="relative overflow-x-hidden bg-[var(--color-surface)] text-[var(--color-ink)] md:h-[100dvh] md:overflow-hidden">
       <HomeMosaicFrame />
       {/* Cream cover for the strip below the bottom mosaic, so the calendar
           can't peek through the gap between the mosaic and the page edge. */}
@@ -448,8 +467,8 @@ export default function HomeChatClient({
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] hidden h-[14px] bg-[var(--color-surface)] md:block"
       />
-      <div className="relative mx-auto h-full w-full max-w-[1060px]">
-        <section className="relative z-10 flex h-full flex-col justify-center px-7 py-12 md:py-8 md:mr-[310px]">
+      <div className="relative mx-auto w-full max-w-[1060px] md:h-full">
+        <section className="relative z-10 flex flex-col px-7 py-12 md:h-full md:justify-center md:py-8 md:mr-[310px]">
           <div className="rise" style={{ animationDelay: "80ms" }}>
             <h1 className="text-[clamp(2rem,4.6vw,3.1rem)] font-bold leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] md:whitespace-nowrap">
               Who is Keshav Sreekantham?
@@ -484,7 +503,7 @@ export default function HomeChatClient({
                 key={t.href}
                 href={t.href}
                 aria-label={t.label}
-                className="group absolute inset-0 z-10 bg-[var(--color-surface-raised)] transition-transform duration-200 ease-out hover:-translate-y-[6px]"
+                className="group absolute inset-0 z-10 bg-[var(--color-mosaic-blue)] transition-transform duration-200 ease-out hover:-translate-y-[6px] md:bg-[var(--color-surface-raised)]"
                 style={{ clipPath: pointsToClip(t.points) }}
               >
                 <span
@@ -533,6 +552,16 @@ export default function HomeChatClient({
             >
               Resume
             </a>
+          </div>
+
+          {/* Mobile only: the GitHub history laid out horizontally below the
+              buttons (the desktop version is the vertical column on the right). */}
+          <div className="rise mt-12 md:hidden" style={{ animationDelay: "560ms" }}>
+            <VerticalHistoryCalendar
+              anchorRef={linksBoxRef}
+              initialData={initialHistory}
+              orientation="horizontal"
+            />
           </div>
         </section>
         <VerticalHistoryCalendar

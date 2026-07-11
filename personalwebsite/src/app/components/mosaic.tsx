@@ -81,7 +81,7 @@ export function MosaicBottomStrip({ className = "" }: { className?: string }) {
     <svg
       aria-hidden="true"
       viewBox="0 0 1440 130"
-      preserveAspectRatio="none"
+      preserveAspectRatio="xMidYMid slice"
       className={`pointer-events-none absolute bottom-[12px] left-[12px] z-[3] h-[92px] w-[calc(100%_-_24px)] sm:h-[116px] ${className}`}
       fill="none"
     >
