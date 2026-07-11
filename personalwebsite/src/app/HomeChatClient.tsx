@@ -122,6 +122,13 @@ function VerticalHistoryCalendar({
     if (cont) cont.scrollTop = cont.scrollHeight;
   }, [spacer, contentHeight]);
 
+  // Horizontal (mobile) layout: start scrolled all the way right = most recent.
+  useEffect(() => {
+    if (orientation !== "horizontal") return;
+    const cont = scrollRef.current;
+    if (cont) cont.scrollLeft = cont.scrollWidth;
+  }, [orientation, weeks]);
+
   const fmt = useMemo(
     () =>
       new Intl.DateTimeFormat("en-US", {
@@ -216,7 +223,7 @@ function VerticalHistoryCalendar({
             {total.toLocaleString()} contributions
           </p>
         )}
-        <div className="quiet-scroll overflow-x-auto overscroll-x-contain pb-1">
+        <div ref={scrollRef} className="quiet-scroll overflow-x-auto overscroll-x-contain pb-1">
           <div className="flex w-max" style={{ gap: GAP }}>
             {grid}
           </div>
