@@ -1,0 +1,41 @@
+{
+  "heading": "Who am I?",
+  "bio": "I find the gap. Whether it be building the brand of Purdue Stack or designing tools for Fortune 100 clients, I notice problems. Most of those problems I don't have the capability to solve at that moment, whether it be due to time, resources, or my authority to change things. However, more often than not, I find a gap within my grasp and I close it. The best part is that this skill is field-agnostic, and I grow no matter what I am doing.",
+  "education": {
+    "institution": "Purdue University",
+    "year": "2028",
+    "degree": "B.S. in Data Science (Computer Science)"
+  },
+  "classes": [
+    "Data Structures & Algorithms",
+    "Object-Oriented Programming",
+    "Foundations of Computer Science",
+    "Introduction to Machine Learning",
+    "Numerical Methods",
+    "Statistical Theory"
+  ],
+  "skills": [
+    "Productization",
+    "Cloud Infrastructure",
+    "CI Pipeline Development",
+    "Machine Learning",
+    "Azure",
+    "AWS",
+    "Python",
+    "Rust",
+    "Docker",
+    "Kubernetes"
+  ],
+  "learning": [
+    "Current limits of edge computation",
+    "Scalable solutions to private enterprise AI deployment",
+    "Existing service ease of agent integration"
+  ],
+  "qa": [
+    { "q": "What is your favorite album?", "a": "Submarine by The Marías." },
+    { "q": "How long have you played clarinet?", "a": "8 years." },
+    { "q": "What is your favorite food?", "a": "Tacos." },
+    { "q": "What are some of your hobbies?", "a": "Climbing, eating, pickleball, and on occasion video games and volleyball." },
+    { "q": "Why is every section a question?", "a": "It's all about asking the right questions." }
+  ]
+}
