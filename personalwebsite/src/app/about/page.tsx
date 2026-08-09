@@ -58,11 +58,13 @@ export default function AboutPage() {
           (w = 100vw - 24px, centered) to match the uniform gap the bottom strip /
           side hills keep from the screen edge. The middle is transparent, so the
           negative bottom margin lets the Education section pull up into its empty
-          centre instead of leaving a blank block. pointer-events-none + aria-hidden:
-          purely decorative. */}
+          centre instead of leaving a blank block. On mobile the pull is much smaller:
+          the arch is only ~28vw tall there, so -28vw would drag the text up into the
+          cliffs — -8vw keeps it in the thin tail region that clears the 20px content
+          padding. pointer-events-none + aria-hidden: purely decorative. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none relative left-1/2 mt-8 mb-[-28vw] w-[calc(100vw-24px)] -translate-x-1/2"
+        className="pointer-events-none relative left-1/2 mt-8 mb-[-8vw] w-[calc(100vw-24px)] -translate-x-1/2 md:mb-[-28vw]"
       >
         <MosaicArch />
       </div>
