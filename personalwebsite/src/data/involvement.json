@@ -11,6 +11,17 @@
     ]
   },
   {
+    "slug": "machine-learning-at-purdue",
+    "title": "Machine Learning at Purdue",
+    "role": "Director of Accelerator",
+    "link": "https://mlpurdue.com",
+    "whatIsIt": "Machine Learning @ Purdue is Purdue's Largest ML/AI community, with over 2800 discord members. More than events and projects, ML@Purdue is a community. We connect you with mentors, collaborators, and opportunities that extend well beyond campus.",
+    "whatsMyRole": "As Director of Accelerator, I lead and shape the ML@P Accelerator Program. Accelerator is a Mentorship program for those passionate about ML/AI but with little experience. I lead marketing, mentor and mentee selection, and program design. I also help with webdev.",
+    "howItShapedMe": [
+      "Teaching/learning has always been a passion of mine, and merging it with CS has been a really cool experience for me. This is also the first time I had to lead a program end to end (in college). At Purdue Stack, I just led the marketing throughout. Here, its everything, especially planning all the logistics. However, my favorite part about ML@P is all the cool people I have met."
+    ]
+  },
+  {
     "slug": "purdue-wind-ensemble",
     "title": "Purdue Wind Ensemble",
     "role": "Performer",
