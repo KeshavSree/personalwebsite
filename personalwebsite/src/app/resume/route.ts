@@ -12,6 +12,8 @@ export async function GET(req: Request) {
   const latest = await getLatestResumeUrl();
   const target = latest ?? new URL(FALLBACK_RESUME_PATH, req.url).toString();
   const res = NextResponse.redirect(target, 307);
-  res.headers.set("Cache-Control", "public, max-age=0, s-maxage=60, must-revalidate");
+  // no-store, not s-maxage: a CDN-cached redirect would keep pointing at the
+  // previous PDF for the cache lifetime after a new one is uploaded.
+  res.headers.set("Cache-Control", "no-store");
   return res;
 }
