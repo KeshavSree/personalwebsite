@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Linkedin, Github } from "lucide-react";
-import { MosaicArch, MosaicDivider, MosaicBullet } from "@/app/components/mosaic";
+import { MosaicArch, MosaicDivider } from "@/app/components/mosaic";
 import about from "@/data/about.json";
 
 export const metadata: Metadata = {
@@ -41,7 +41,7 @@ export default function AboutPage() {
           Email
         </a>
         <a
-          href="/resume.pdf"
+          href="/resume"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center rounded-full border border-[var(--color-hairline-strong)] px-4 py-1.5 text-[14px] text-[var(--color-ink)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
@@ -103,20 +103,6 @@ export default function AboutPage() {
             </span>
           ))}
         </p>
-      </Section>
-
-      <Section label="What am I learning?">
-        <ul className="space-y-2.5">
-          {about.learning.map((item, i) => (
-            <li
-              key={item}
-              className="relative pl-5 text-[15.5px] leading-relaxed text-[var(--color-ink)]"
-            >
-              <MosaicBullet variant={i} className="absolute left-0 top-[8px] w-[9px]" />
-              {item}
-            </li>
-          ))}
-        </ul>
       </Section>
 
       <Divider variant={2} />

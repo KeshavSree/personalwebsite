@@ -26,11 +26,6 @@
     "Docker",
     "Kubernetes"
   ],
-  "learning": [
-    "Current limits of edge computation",
-    "Scalable solutions to private enterprise AI deployment",
-    "Existing service ease of agent integration"
-  ],
   "qa": [
     { "q": "What is your favorite album?", "a": "Submarine by The Marías." },
     { "q": "How long have you played clarinet?", "a": "8 years." },

@@ -552,7 +552,7 @@ export default function HomeChatClient({
               Email
             </a>
             <a
-              href="/resume.pdf"
+              href="/resume"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center rounded-full border border-[var(--color-hairline-strong)] px-5 py-2 text-[15px] text-[var(--color-ink)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"

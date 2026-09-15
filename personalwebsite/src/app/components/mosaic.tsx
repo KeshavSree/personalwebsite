@@ -76,13 +76,25 @@ const BOTTOM_TILES: Tile[] = [
   { points: "1338,46 1404,54 1440,66 1388,60 1330,78", c: "green" }, // pentagon
 ];
 
+// Geometry of the strip's left-end tile (the large red pentagon in the bottom-left
+// corner). Exported so SecretResumeTile can lay an invisible, clickable copy of
+// exactly this polygon over it — the hidden door to the resume uploader. Keeping
+// one definition means the hit area can never drift away from the drawn tile.
+export const SECRET_TILE_POINTS = BOTTOM_TILES[0].points;
+
+// Positioning shared by the strip and its invisible overlay. Identical box +
+// viewBox + preserveAspectRatio means both resolve to the same on-screen shape.
+export const BOTTOM_STRIP_BOX =
+  "absolute bottom-[12px] left-[12px] h-[92px] w-[calc(100%_-_24px)] sm:h-[116px]";
+export const BOTTOM_STRIP_VIEWBOX = "0 0 1440 130";
+
 export function MosaicBottomStrip({ className = "" }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"
-      viewBox="0 0 1440 130"
+      viewBox={BOTTOM_STRIP_VIEWBOX}
       preserveAspectRatio="xMidYMid slice"
-      className={`pointer-events-none absolute bottom-[12px] left-[12px] z-[3] h-[92px] w-[calc(100%_-_24px)] sm:h-[116px] ${className}`}
+      className={`pointer-events-none z-[3] ${BOTTOM_STRIP_BOX} ${className}`}
       fill="none"
     >
       <MosaicTiles tiles={BOTTOM_TILES} gap={3} />
