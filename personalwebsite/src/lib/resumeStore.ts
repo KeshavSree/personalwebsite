@@ -1,38 +1,54 @@
 // The live resume lives in Vercel Blob so it can be swapped from the browser
 // without a redeploy.
 //
-// It is written to ONE fixed pathname, overwritten in place. The obvious
-// alternative — upload under a timestamp and have the read side list() the
-// prefix and pick the newest — does not work: Blob's list index is eventually
-// consistent, so for tens of seconds after an upload a list() still reports the
-// previous file as newest, and /resume keeps serving the old resume at exactly
-// the moment it has to be right. (Measured against production: ~90s.) Reading a
-// known pathname with head() is immediately consistent, as is fetching the URL,
-// so the fixed path is both correct and one API call cheaper.
+// Getting "the newest upload is served immediately" right took three tries,
+// because two different parts of Blob are eventually consistent in opposite
+// ways. Both were measured against the live store:
 //
-// Every upload is also copied to an immutable timestamped archive path, so
-// replacing the resume never destroys the previous one.
+//   1. list() lags. Upload under a timestamped path and pick the newest by
+//      list(), and for ~90s the scan still reports the PREVIOUS file as newest.
+//   2. Overwriting one fixed path lags too, in the CDN rather than the index.
+//      A public blob is served with `cache-control: public, max-age=60`, the
+//      overwrite's purge does not reach every edge at once, and the CDN ignores
+//      the query string — a cache-busting ?v= still came back HIT, age=40 with
+//      the old bytes.
+//
+// What IS immediately consistent is head() on a known pathname. So: every
+// upload writes the PDF to its own immutable path, which no edge can have
+// cached because that URL has never existed before, and a tiny pointer blob at
+// a fixed path records which one is current. The pointer carries the version in
+// its contentType — metadata, which head() reports immediately — rather than in
+// its body, which would be CDN-cached like any other blob content.
+//
+// The PDF is written before the pointer, so a failure between the two leaves the
+// pointer naming the previous upload: an older resume, never a broken link.
 //
 // public/resume-base.pdf is the committed fallback, served whenever nothing has
 // been uploaded yet or the store is unreachable — so /resume always resolves to
 // a real PDF even with no env vars configured (local dev, a fresh clone).
 import { BlobNotFoundError, head, put } from "@vercel/blob";
 
-export const RESUME_PATHNAME = "resume.pdf";
-export const ARCHIVE_PREFIX = "resume-archive/";
+const POINTER_PATHNAME = "resume-current";
+const VERSION_PREFIX = "resume-v/";
+const VERSION_RE = /;\s*v=(\d+)/;
+
 export const FALLBACK_RESUME_PATH = "/resume-base.pdf";
+
+function versionedUrl(pointerUrl: string, version: string): string {
+  return new URL(`/${VERSION_PREFIX}${version}.pdf`, pointerUrl).toString();
+}
 
 /** URL of the current resume, or null to use the committed fallback. */
 export async function getLatestResumeUrl(): Promise<string | null> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) return null;
   try {
-    const blob = await head(RESUME_PATHNAME);
-    // Overwriting the fixed path does purge the blob CDN, but the purge takes a
-    // moment to reach every edge — long enough to have served a stale PDF once
-    // in testing. uploadedAt changes on every upload and head() reports it with
-    // immediate consistency, so tagging the URL with it gives each version its
-    // own cache key and no edge can hand back the previous file.
-    return `${blob.url}?v=${blob.uploadedAt.getTime()}`;
+    const pointer = await head(POINTER_PATHNAME);
+    const version = pointer.contentType?.match(VERSION_RE)?.[1];
+    if (!version) {
+      console.error("[resume] pointer has no version:", pointer.contentType);
+      return null;
+    }
+    return versionedUrl(pointer.url, version);
   } catch (err) {
     // Nothing uploaded yet is the expected state on a fresh store, not an error.
     if (err instanceof BlobNotFoundError) return null;
@@ -43,19 +59,19 @@ export async function getLatestResumeUrl(): Promise<string | null> {
 }
 
 export async function uploadResume(file: Blob): Promise<string> {
-  // Archive first: if the overwrite below fails, the new file is still kept.
-  await put(`${ARCHIVE_PREFIX}${Date.now()}.pdf`, file, {
+  const version = String(Date.now());
+  const { url } = await put(`${VERSION_PREFIX}${version}.pdf`, file, {
     access: "public",
+    addRandomSuffix: false,
+    allowOverwrite: true, // only ever true for a same-millisecond re-upload
     contentType: "application/pdf",
   });
-  const { url } = await put(RESUME_PATHNAME, file, {
+  // Publish it only once the bytes are in place.
+  await put(POINTER_PATHNAME, version, {
     access: "public",
     addRandomSuffix: false,
     allowOverwrite: true,
-    contentType: "application/pdf",
-    // Floored at 60s by the platform, which is why the read side cache-busts
-    // with ?v= rather than relying on this.
-    cacheControlMaxAge: 0,
+    contentType: `text/plain; v=${version}`,
   });
   return url;
 }
