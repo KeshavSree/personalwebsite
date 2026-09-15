@@ -26,7 +26,13 @@ export const FALLBACK_RESUME_PATH = "/resume-base.pdf";
 export async function getLatestResumeUrl(): Promise<string | null> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) return null;
   try {
-    return (await head(RESUME_PATHNAME)).url;
+    const blob = await head(RESUME_PATHNAME);
+    // Overwriting the fixed path does purge the blob CDN, but the purge takes a
+    // moment to reach every edge — long enough to have served a stale PDF once
+    // in testing. uploadedAt changes on every upload and head() reports it with
+    // immediate consistency, so tagging the URL with it gives each version its
+    // own cache key and no edge can hand back the previous file.
+    return `${blob.url}?v=${blob.uploadedAt.getTime()}`;
   } catch (err) {
     // Nothing uploaded yet is the expected state on a fresh store, not an error.
     if (err instanceof BlobNotFoundError) return null;
@@ -47,9 +53,8 @@ export async function uploadResume(file: Blob): Promise<string> {
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/pdf",
-    // The canonical URL never changes, so anything cached against it would
-    // outlive the file. No CDN TTL: correctness matters more than shaving a
-    // few ms off a link opened a handful of times a day.
+    // Floored at 60s by the platform, which is why the read side cache-busts
+    // with ?v= rather than relying on this.
     cacheControlMaxAge: 0,
   });
   return url;
