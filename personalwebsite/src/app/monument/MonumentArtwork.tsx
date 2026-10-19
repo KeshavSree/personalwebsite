@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { buildMonument, disposeMonument, type MovingParts } from "./MonumentWorld";
+import { buildMonument, disposeMonument, monumentAnchors, type MovingParts } from "./MonumentWorld";
 
 export type SceneName = "home" | "experience" | "projects" | "involvement" | "about";
 
@@ -26,15 +26,15 @@ const copyPose = (pose: Pose): Pose => ({ ...pose });
 const blend = (from: Pose, to: Pose, progress: number): Pose => Object.fromEntries(poseKeys.map((key) => [key, from[key] + (to[key] - from[key]) * progress])) as Pose;
 
 function setParts(parts: MovingParts, pose: Pose) {
-  parts.leftTower.position.set(-2.55 + pose.leftX, -.65 + pose.leftY, .28 + pose.leftZ);
+  parts.leftTower.position.set(monumentAnchors.leftTower[0] + pose.leftX, monumentAnchors.leftTower[1] + pose.leftY, monumentAnchors.leftTower[2] + pose.leftZ);
   parts.leftTower.rotation.y = pose.leftTurn;
-  parts.rightTower.position.set(2.52 + pose.rightX, -.95 + pose.rightY, -.35 + pose.rightZ);
+  parts.rightTower.position.set(monumentAnchors.rightTower[0] + pose.rightX, monumentAnchors.rightTower[1] + pose.rightY, monumentAnchors.rightTower[2] + pose.rightZ);
   parts.rightTower.rotation.y = pose.rightTurn;
-  parts.upperGallery.position.y = 1.24 + pose.galleryY;
+  parts.upperGallery.position.y = monumentAnchors.upperGallery[1] + pose.galleryY;
   parts.upperGallery.rotation.y = pose.galleryTurn;
-  parts.lowerCourt.position.y = -3.15 + pose.courtY;
+  parts.lowerCourt.position.y = monumentAnchors.lowerCourt[1] + pose.courtY;
   parts.lowerCourt.rotation.y = pose.courtTurn;
-  parts.crossing.position.y = 2.43 + pose.crossingY;
+  parts.crossing.position.y = monumentAnchors.crossing[1] + pose.crossingY;
   parts.crossing.rotation.y = pose.crossingTurn;
   parts.crossing.rotation.z = pose.crossingTilt;
 }

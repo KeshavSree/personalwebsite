@@ -11,8 +11,16 @@ export type MovingParts = {
   traveler: THREE.Group;
 };
 
-const plaster = new THREE.MeshLambertMaterial({ color: "#e9a5a0" });
-const plasterLight = new THREE.MeshLambertMaterial({ color: "#f4b5a8" });
+export const monumentAnchors = {
+  leftTower: [-3.05, -.65, .48],
+  rightTower: [3.02, -.95, -.5],
+  upperGallery: [.06, .54, .42],
+  lowerCourt: [.7, -3.6, .85],
+  crossing: [.05, 2.43, 1.13],
+} as const;
+
+const plaster = new THREE.MeshLambertMaterial({ color: "#efa29d" });
+const plasterLight = new THREE.MeshLambertMaterial({ color: "#f7b09f" });
 const plasterShade = new THREE.MeshLambertMaterial({ color: "#c78391" });
 const deepRose = new THREE.MeshLambertMaterial({ color: "#8e667e" });
 const cream = new THREE.MeshLambertMaterial({ color: "#ffead0" });
@@ -193,8 +201,8 @@ function planter(parent: THREE.Object3D, x: number, y: number, z: number) {
 
 export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
   const scene = new THREE.Scene();
-  scene.add(new THREE.AmbientLight("#fff8ed", 1.28));
-  const key = new THREE.DirectionalLight("#fff1e4", 2.05);
+  scene.add(new THREE.AmbientLight("#fff8ed", .98));
+  const key = new THREE.DirectionalLight("#fff1e4", 1.72);
   key.position.set(-5, 11, 9);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
@@ -205,7 +213,7 @@ export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
   key.shadow.normalBias = .035;
   key.shadow.radius = 3;
   scene.add(key);
-  const fill = new THREE.DirectionalLight("#8acccc", .55);
+  const fill = new THREE.DirectionalLight("#8acccc", .38);
   fill.position.set(7, 5, -7);
   scene.add(fill);
 
@@ -215,54 +223,56 @@ export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
 
   // Stepped architectural core and open arcades. The arches are actual holes,
   // so the eye can see one tier through another as components rotate.
-  const mainArcade = archWall(root, -.5, -2.8, 1.55, 3.1, 4.0, .3, 1.55);
-  mainArcade.rotation.y = Math.PI / 2;
-  archWall(root, .05, -2.8, -.8, 2.8, 4.3, .34, 1.15);
+  archWall(root, -1.5, -2.8, 1.15, 3.0, 4.15, .34, 1.43);
+  archWall(root, -.05, -2.8, -.8, 2.7, 4.25, .34, 1.2);
   tower(root, { x: -.36, y: .85, z: -1.02, height: 6.25, width: 1.12, openTop: true });
   tower(root, { x: 1.18, y: .27, z: -1.0, height: 3.8, width: .88, roof: false });
-  terrace(root, -.25, 2.25, .45, 3.1, 1.22);
+  terrace(root, -.3, 2.25, .45, 2.75, 1.1);
+  box(root, -1.5, 1.41, 1.22, 3.02, .13, .42, cream);
   terrace(root, .88, 3.55, -.58, 1.8, 1.35);
   box(root, .88, 3.59, -.58, 1.07, .04, .57, turquoise);
   box(root, .88, 3.64, -.58, .73, .025, .34, turquoiseDark);
   box(root, .82, 1.07, .71, .34, 2.87, .07, turquoise);
   box(root, .82, -.41, .78, .34, .11, .18, turquoiseDark);
   box(root, 1.26, 2.29, .43, 1.14, .045, .35, turquoise);
-  stairs(root, -.95, 2.1, .52, 1.14, 1.4, 10, 0);
+  stairs(root, -1.08, 2.1, .52, 1.1, 1.4, 10, 0);
   cypress(root, -1.56, 2.32, .34, .77);
   cypress(root, 1.52, 3.7, -.95, .57);
 
   const leftTower = new THREE.Group();
-  leftTower.position.set(-2.55, -.65, .28);
+  leftTower.position.set(...monumentAnchors.leftTower);
   root.add(leftTower);
   tower(leftTower, { x: 0, y: 0, z: 0, height: 4.5, width: .88, openTop: true });
   terrace(leftTower, .1, 1.56, .43, 1.18, .95);
   planter(leftTower, -.27, 1.61, .64);
-  stairs(root, -1.4, 3.85, .71, 2.3, -1.6, 18, 0);
+  stairs(root, -1.73, 3.85, .71, 2.6, -1.6, 18, 0);
 
   const rightTower = new THREE.Group();
-  rightTower.position.set(2.52, -.95, -.35);
+  rightTower.position.set(...monumentAnchors.rightTower);
   root.add(rightTower);
   tower(rightTower, { x: 0, y: 0, z: 0, height: 4.8, width: .94, openTop: true });
-  archWall(root, 1.0, -2.45, .31, 2.05, 3.1, .3, .88);
-  terrace(root, 1.55, .75, .65, 1.95, .9);
-  stairs(root, 1.74, -.69, 1.24, 1.69, 1.38, 13, Math.PI / 2);
-  planter(root, 2.17, .84, .75);
+  archWall(root, 1.52, -2.45, .31, 2.05, 3.1, .3, .88);
+  terrace(root, 2.06, .75, .65, 1.95, .9);
+  stairs(root, 2.2, -.69, 1.24, 1.69, 1.38, 13, Math.PI / 2);
+  planter(root, 2.69, .84, .75);
 
   const upperGallery = new THREE.Group();
-  upperGallery.position.set(.06, 1.24, .42);
+  upperGallery.position.set(...monumentAnchors.upperGallery);
   root.add(upperGallery);
-  archWall(upperGallery, -1.31, 0, -.34, 2.62, 1.28, .28, .92);
-  terrace(upperGallery, -.03, 1.3, -.19, 2.8, .96);
-  box(upperGallery, .87, 1.36, -.19, .75, .04, .52, turquoise);
-  box(upperGallery, -.48, 1.37, .17, 1.55, .035, .16, turquoise);
+  archWall(upperGallery, -1.17, 0, -.34, 2.34, 1.28, .28, .92);
+  terrace(upperGallery, -.03, 1.3, -.19, 2.48, .96);
+  box(upperGallery, .77, 1.36, -.19, .62, .04, .52, turquoise);
+  box(upperGallery, -.53, 1.37, .17, 1.28, .035, .16, turquoise);
   cypress(upperGallery, -1.03, 1.48, -.19, .53);
 
   const lowerCourt = new THREE.Group();
-  lowerCourt.position.set(.15, -3.15, 1.5);
+  lowerCourt.position.set(...monumentAnchors.lowerCourt);
   root.add(lowerCourt);
-  archWall(lowerCourt, -2.0, -.8, .23, 4.0, 2.45, .4, 1.8);
-  archWall(lowerCourt, -.84, -2.24, .23, 1.7, 2.7, .34, .71);
-  terrace(lowerCourt, -.05, 1.7, .2, 3.9, 1.4);
+  archWall(lowerCourt, -1.95, -.8, .61, 3.9, 2.65, .4, 1.78);
+  archWall(lowerCourt, -.86, -2.16, -.58, 1.72, 2.7, .34, .72);
+  terrace(lowerCourt, -.05, 1.9, .2, 3.9, 1.4);
+  box(lowerCourt, 0, 1.87, .75, 3.9, .14, .3, cream);
+  box(lowerCourt, 0, 1.96, .87, 3.68, .045, .075, plasterLight);
   tower(lowerCourt, { x: -1.85, y: 1.5, z: -.1, height: 1.52, width: .76 });
   tower(lowerCourt, { x: 1.84, y: 1.48, z: .21, height: 1.85, width: .75, roof: false });
   planter(lowerCourt, -1.04, 1.8, -.2);
@@ -271,7 +281,7 @@ export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
   stairs(lowerCourt, .94, 1.75, 1.0, 1.8, 1.02, 13, 0);
 
   const crossing = new THREE.Group();
-  crossing.position.set(.05, 2.43, 1.13);
+  crossing.position.set(...monumentAnchors.crossing);
   root.add(crossing);
   box(crossing, .88, -.09, 0, 1.76, .18, .56, materials);
   box(crossing, .88, .09, -.29, 1.76, .27, .09, cream);
@@ -288,7 +298,7 @@ export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
 
   // Tiny white traveler gives the eye a consistent scale, as in the game.
   const traveler = new THREE.Group();
-  traveler.position.set(.05, 2.43, 1.13);
+  traveler.position.set(...monumentAnchors.crossing);
   root.add(traveler);
   const cloak = new THREE.Mesh(new THREE.ConeGeometry(.15, .45, 8), new THREE.MeshLambertMaterial({ color: "#fff9ed" }));
   cloak.position.y = .23;
