@@ -1,21 +1,34 @@
-export type PlatformPose = { angle: number; height: number; rise: number };
+import { Euler, Quaternion, Vector3 } from "three";
+
+export type PlatformPose = { angle: number; height: number; tilt: number; roll: number };
 export const ARM_LENGTH = 3.6;
 export const STAIR_START = .7;
 export const STAIR_RUN = 2.2;
 export const STAIR_COUNT = 10;
-export function stairHeight(pose: PlatformPose, distance: number) {
+export const STAIR_RISE = .9;
+export function stairHeight(distance: number) {
   const t=Math.max(0,Math.min(1,(distance-STAIR_START)/STAIR_RUN));
-  return pose.rise*Math.ceil(t*STAIR_COUNT)/STAIR_COUNT;
+  return STAIR_RISE*Math.ceil(t*STAIR_COUNT)/STAIR_COUNT;
 }
 export const platformConfigurations = [
-  { name: "East ascent", angle: 0, height: 0, rise: .9, depth: 1.6 },
-  { name: "Quarter descent", angle: Math.PI / 2, height: 0, rise: -.9, depth: -1.4 },
-  { name: "High stair", angle: Math.PI / 2, height: 2.2, rise: 1.1, depth: 1.2 },
-  { name: "Reversed stair", angle: Math.PI, height: 2.2, rise: -1.1, depth: -.9 },
-  { name: "Lower ascent", angle: Math.PI * 1.5, height: -1.4, rise: .8, depth: 1.2 },
+  { name: "The first ascent", angle: 0, height: 0, tilt: 0, roll: 0, depth: 1.6 },
+  { name: "Along the wall", angle: Math.PI/2, height: 0, tilt: Math.PI/2, roll: 0, depth: -1.4 },
+  { name: "Beneath the path", angle: Math.PI, height: 2.2, tilt: Math.PI, roll: 0, depth: 1.2 },
+  { name: "The falling stair", angle: 0, height: 1.5, tilt: 0, roll: -Math.PI/2, depth: 1.3 },
+  { name: "The far side", angle: Math.PI*1.5, height: 0, tilt: -Math.PI/2, roll: 0, depth: 1.2 },
 ];
+export function orientation(pose: PlatformPose) {
+  return new Quaternion().setFromEuler(new Euler(pose.tilt,pose.angle,pose.roll,"YXZ"));
+}
+export function transform(pose: PlatformPose, point: [number,number,number]): [number,number,number] {
+  const p=new Vector3(...point).applyQuaternion(orientation(pose));p.y+=pose.height;
+  return p.toArray() as [number,number,number];
+}
+export function surfaceNormal(pose: PlatformPose) {
+  return new Vector3(0,1,0).applyQuaternion(orientation(pose));
+}
 export function armPoint(pose: PlatformPose, distance: number): [number,number,number] {
-  return [Math.cos(pose.angle)*distance, pose.height+stairHeight(pose,distance), -Math.sin(pose.angle)*distance];
+  return transform(pose,[distance,stairHeight(distance),0]);
 }
 export function dockPoint(index: number, distance = 0): [number,number,number] {
   const config = platformConfigurations[index];
@@ -29,6 +42,11 @@ export function nearestAngle(from: number, to: number) {
 }
 export const smooth = (t: number) => { const x=Math.max(0,Math.min(1,t)); return x*x*(3-2*x); };
 export function platformMotion(from: PlatformPose, to: PlatformPose, progress: number): PlatformPose {
-  const turn=smooth(progress/.85), lift=smooth((progress-.12)/.88);
-  return { angle:from.angle+(nearestAngle(from.angle,to.angle)-from.angle)*turn, height:from.height+(to.height-from.height)*lift, rise:from.rise+(to.rise-from.rise)*smooth((progress-.2)/.8) };
+  const turn=smooth(progress), lift=smooth((progress-.12)/.88);
+  return {
+    angle:from.angle+(nearestAngle(from.angle,to.angle)-from.angle)*turn,
+    tilt:from.tilt+(nearestAngle(from.tilt,to.tilt)-from.tilt)*turn,
+    roll:from.roll+(nearestAngle(from.roll,to.roll)-from.roll)*turn,
+    height:from.height+(to.height-from.height)*lift,
+  };
 }
