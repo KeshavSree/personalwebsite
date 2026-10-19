@@ -1,5 +1,5 @@
-import IllusionPrototype from "@/app/monument/IllusionPrototype";
+import ObservatoryStudy from "@/app/monument/ObservatoryStudy";
 
 export default function Page() {
-  return <IllusionPrototype />;
+  return <ObservatoryStudy />;
 }
