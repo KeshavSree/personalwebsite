@@ -5,7 +5,7 @@ import { OrthographicCamera, Vector3 } from 'three';
 
 const source=readFileSync(new URL('../src/app/monument/platformGeometry.ts',import.meta.url),'utf8');
 const code=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext}}).outputText;
-const {ARM_LENGTH,platformConfigurations:configs,armPoint,dockPoint,travelerPoint,platformMotion}=await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
+const {ARM_LENGTH,STAIR_COUNT,platformConfigurations:configs,armPoint,dockPoint,travelerPoint,platformMotion}=await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
 const camera=new OrthographicCamera(-7,7,7,-7,.1,100);
 camera.position.set(14,14,14);camera.lookAt(0,0,0);camera.updateMatrixWorld();
 const screen=p=>new Vector3(...p).project(camera);
@@ -28,11 +28,13 @@ for(const from of configs)for(const to of configs){
     const p=platformMotion(from,to,i/120);
     const pivot=armPoint(p,0),end=armPoint(p,ARM_LENGTH);
     assert.ok(Math.abs(pivot[0])===0);assert.ok(Math.abs(pivot[2])===0,'Pivot never moves sideways');
-    assert.ok(Math.abs(new Vector3(...pivot).distanceTo(new Vector3(...end))-ARM_LENGTH)<1e-12,'Rigid arm cannot stretch');
+    assert.ok(Math.abs(Math.hypot(end[0]-pivot[0],end[2]-pivot[2])-ARM_LENGTH)<1e-12,'Platform run cannot stretch');
+    assert.ok(Math.abs(p.rise)/STAIR_COUNT<.3,'Adjacent treads must overlap vertically');
+    assert.ok(Math.abs(end[1]-pivot[1]-p.rise)<1e-12,'Stair flight must meet the elevated end landing');
     assert.deepEqual(configs.map((_,j)=>dockPoint(j)),fixedDocks,'Destination landings cannot track the moving endpoint');
     samples++;
   }
   const final=platformMotion(from,to,1);
   assert.ok(new Vector3(...armPoint(final,ARM_LENGTH)).distanceTo(new Vector3(...armPoint(to,ARM_LENGTH)))<1e-12);
 }
-console.log(`PASS: 5 depth-separated docks, full-face projection alignment, continuous traveler, ${samples} rigid-body samples across 20 transitions.`);
+console.log(`PASS: 5 depth-separated docks, full-face projection alignment, continuous traveler, ${samples} turn/lift/stair samples across 20 transitions.`);

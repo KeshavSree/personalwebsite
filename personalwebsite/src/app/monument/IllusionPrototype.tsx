@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { ARM_LENGTH, dockPoint, platformConfigurations as configurations, platformMotion, smooth, travelerPoint, type PlatformPose } from "./platformGeometry";
+import { ARM_LENGTH, STAIR_START, STAIR_RUN, STAIR_COUNT, dockPoint, platformConfigurations as configurations, platformMotion, smooth, travelerPoint, type PlatformPose } from "./platformGeometry";
 import "./illusion.css";
 
 export default function IllusionPrototype() {
@@ -40,7 +40,10 @@ export default function IllusionPrototype() {
       const m=new THREE.Mesh(box,material); m.position.set(x,y,z);m.scale.set(w,h,d);parent.add(m);return m;
     };
     const platform=new THREE.Group();root.add(platform);
-    const arm=mesh(platform,ARM_LENGTH/2,-.15,0,ARM_LENGTH,.3,.72,cream);
+    mesh(platform,STAIR_START/2,-.15,0,STAIR_START,.3,.72,cream);
+    const stairEnd=STAIR_START+STAIR_RUN;
+    const arm=mesh(platform,(stairEnd+ARM_LENGTH)/2,-.15,0,ARM_LENGTH-stairEnd,.3,.72,cream);
+    const treads=Array.from({length:STAIR_COUNT},(_,i)=>mesh(platform,STAIR_START+(i+.5)*STAIR_RUN/STAIR_COUNT,-.15,0,STAIR_RUN/STAIR_COUNT+.004,.3,.72,[pink,pink,cream,cream,cream,cream]));
     mesh(platform,0,-.15,-.95,.72,.3,2.6,cream);
     mesh(platform,0,-.15,0,.9,.3,.9,cream);
     const spindle=mesh(root,0,-2.4,0,.34,4.8,.34,support);
@@ -79,7 +82,7 @@ export default function IllusionPrototype() {
       const to=configurations[target];
       const rotating=Math.abs(Math.sin((to.angle-current.angle)/2))>.001;
       const lifting=Math.abs(to.height-current.height)>.001;
-      setStatus(rotating && lifting?"Turning around the anchor while changing level…":rotating?"Quarter-turn around the fixed anchor…":to.height>current.height?"Rising toward the upper landing…":"Lowering toward the next landing…");
+      setStatus(rotating && lifting?"Turning around the anchor while the stairs change direction…":rotating?"Quarter-turn around the fixed anchor…":to.height>current.height?"Rising toward the upper landing…":"Lowering toward the next landing…");
     };
     renderer.setAnimationLoop((time:number)=>{
       const dt=Math.min((time-lastTime)/1000,.05);lastTime=time;
@@ -103,10 +106,12 @@ export default function IllusionPrototype() {
           if(t===1){dock=target;phase="walking";elapsed=0;setStatus("Connected. The marker crosses to a landing at a different physical height.");}
         }else if(phase==="walking"){
           distance=(ARM_LENGTH+1.35)*smooth(Math.min(1,elapsed/3.5));
-          if(elapsed>=3.5){phase="rest";setStatus("Choose another position: the fixed landings stay still while the platform turns or lifts.");}
+          if(elapsed>=3.5){phase="rest";setStatus("Choose another position: the stairs reverse as the platform turns or changes level.");}
         }
       }
       platform.position.y=current.height;platform.rotation.y=current.angle;
+      arm.position.y=current.rise-.15;
+      treads.forEach((tread,i)=>{tread.position.y=current.rise*(i+1)/STAIR_COUNT-.15;});
       spindle.scale.y=current.height+4.15;spindle.position.y=-4.3+spindle.scale.y/2;
       const aligned=phase!=="moving";
       // Remove only mating end caps after docking; the full solid is visible
@@ -125,7 +130,7 @@ export default function IllusionPrototype() {
   },[]);
   const choose=(i:number)=>{selection.current=i;setSelected(i);};
   return <div className="illusion-lab">
-    <header><span>GEOMETRY STUDY / 02</span><h1>Turn. Lift. Connect.</h1><p>Rigid platforms · fixed anchor · locked isometric camera</p></header>
+    <header><span>GEOMETRY STUDY / 03</span><h1>Turn. Rise. Reverse.</h1><p>Anchored turns · reversing stairs · locked isometric camera</p></header>
     <nav aria-label="Platform configurations">{configurations.map((c,i)=><button key={c.name} aria-pressed={selected===i} onClick={()=>choose(i)}><small>0{i+1}</small>{c.name}</button>)}</nav>
     <div className="illusion-stage" ref={host} role="img" aria-label={`Rotating and lifting platform: ${configurations[selected].name}`}>{failed&&<p>WebGL is unavailable in this browser.</p>}</div>
     <footer><p aria-live="polite">{status}</p><div><button onClick={()=>choose((selected+1)%5)}>Next position →</button><button onClick={()=>{paused.current=!paused.current;setPaused(paused.current);}}>{isPaused?"Resume":"Pause"}</button><button onClick={()=>{walkRequest.current++;}}>Walk again</button></div><small>Turquoise marks the optical connection. All five destination landings remain fixed.</small></footer>
