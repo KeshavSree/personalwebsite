@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { buildMonument, disposeMonument, monumentAnchors, type MovingParts } from "./MonumentWorld";
+import { buildMonument, disposeMonument, monumentAnchors, retargetStairs, type MovingParts } from "./MonumentWorld";
 
 export type SceneName = "home" | "experience" | "projects" | "involvement" | "about";
 
@@ -17,9 +17,9 @@ type Pose = {
 const poses: Record<SceneName, Pose> = {
   home: { leftX: 0, leftY: 0, leftZ: 0, leftTurn: 0, rightX: 0, rightY: 0, rightZ: 0, rightTurn: 0, galleryY: 0, galleryTurn: 0, courtY: 0, courtTurn: 0, crossingY: 0, crossingTurn: 0, crossingTilt: 0 },
   experience: { leftX: -.5, leftY: .75, leftZ: 0, leftTurn: Math.PI / 2, rightX: 0, rightY: .5, rightZ: .5, rightTurn: 0, galleryY: .25, galleryTurn: 0, courtY: 0, courtTurn: 0, crossingY: .5, crossingTurn: Math.PI / 2, crossingTilt: 0 },
-  projects: { leftX: -.5, leftY: -.25, leftZ: .5, leftTurn: Math.PI / 2, rightX: -.5, rightY: .75, rightZ: .5, rightTurn: Math.PI / 2, galleryY: .5, galleryTurn: Math.PI / 2, courtY: .25, courtTurn: 0, crossingY: .75, crossingTurn: 0, crossingTilt: 0 },
-  involvement: { leftX: .25, leftY: .5, leftZ: -.5, leftTurn: -Math.PI / 2, rightX: .5, rightY: -.25, rightZ: -.5, rightTurn: -Math.PI / 2, galleryY: -.25, galleryTurn: 0, courtY: .5, courtTurn: 0, crossingY: -.5, crossingTurn: -Math.PI / 2, crossingTilt: 0 },
-  about: { leftX: 0, leftY: 1, leftZ: .5, leftTurn: Math.PI, rightX: -.5, rightY: 1, rightZ: .25, rightTurn: Math.PI / 2, galleryY: .75, galleryTurn: Math.PI / 2, courtY: -.25, courtTurn: 0, crossingY: 1, crossingTurn: Math.PI / 2, crossingTilt: 0 },
+  projects: { leftX: -.5, leftY: -.25, leftZ: .2, leftTurn: Math.PI / 2, rightX: -.5, rightY: .75, rightZ: .5, rightTurn: Math.PI / 2, galleryY: .5, galleryTurn: Math.PI / 2, courtY: .25, courtTurn: 0, crossingY: .75, crossingTurn: 0, crossingTilt: 0 },
+  involvement: { leftX: .25, leftY: .5, leftZ: -.25, leftTurn: -Math.PI / 2, rightX: .5, rightY: -.25, rightZ: -.5, rightTurn: -Math.PI / 2, galleryY: -.25, galleryTurn: 0, courtY: .5, courtTurn: 0, crossingY: -.5, crossingTurn: -Math.PI / 2, crossingTilt: 0 },
+  about: { leftX: 0, leftY: 1, leftZ: .2, leftTurn: Math.PI, rightX: -.5, rightY: 1, rightZ: .25, rightTurn: Math.PI / 2, galleryY: .75, galleryTurn: Math.PI / 2, courtY: -.25, courtTurn: 0, crossingY: 1, crossingTurn: Math.PI / 2, crossingTilt: 0 },
 };
 const poseKeys = Object.keys(poses.home) as (keyof Pose)[];
 const copyPose = (pose: Pose): Pose => ({ ...pose });
@@ -28,6 +28,9 @@ const blend = (from: Pose, to: Pose, progress: number): Pose => Object.fromEntri
 function setParts(parts: MovingParts, pose: Pose) {
   parts.leftTower.position.set(monumentAnchors.leftTower[0] + pose.leftX, monumentAnchors.leftTower[1] + pose.leftY, monumentAnchors.leftTower[2] + pose.leftZ);
   parts.leftTower.rotation.y = pose.leftTurn;
+  retargetStairs(parts.leftStairs,
+    [parts.leftTower.position.x, parts.leftTower.position.y + 4.5, parts.leftTower.position.z],
+    [-.55, 2.25, parts.leftTower.position.z]);
   parts.rightTower.position.set(monumentAnchors.rightTower[0] + pose.rightX, monumentAnchors.rightTower[1] + pose.rightY, monumentAnchors.rightTower[2] + pose.rightZ);
   parts.rightTower.rotation.y = pose.rightTurn;
   parts.upperGallery.position.y = monumentAnchors.upperGallery[1] + pose.galleryY;

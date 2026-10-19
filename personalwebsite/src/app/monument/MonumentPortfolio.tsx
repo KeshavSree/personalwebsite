@@ -102,13 +102,13 @@ export default function MonumentPortfolio() {
       </div>
 
       <div className="mv-right-column">
-        <div className="mv-art-window"><MonumentArtwork scene={scene}/><span className="mv-art-caption" aria-hidden="true">A landscape in four movements</span></div>
+        <div className="mv-art-window"><MonumentArtwork scene={scene}/></div>
         {scene !== "home" && <section className="mv-content" key={scene} aria-label={`${scene} details`}>
           <div className="mv-content-heading"><span className="mv-roman">{String(categories.findIndex(({ id }) => id === scene) + 1).padStart(2, "0")}</span><h2>{scene}</h2><button type="button" className="mv-close" onClick={() => choose("home")}>Close<span aria-hidden="true"> ×</span></button></div>
           <div className="mv-content-body"><SectionContent scene={scene} /></div>
         </section>}
       </div>
     </main>
-    <footer className="mv-footer"><span>© {new Date().getFullYear()} Keshav Sreekantham</span><span>Made to be explored</span></footer>
+    <footer className="mv-footer"><span>© {new Date().getFullYear()} Keshav Sreekantham</span></footer>
   </div>;
 }

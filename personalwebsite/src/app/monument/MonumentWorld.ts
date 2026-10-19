@@ -2,6 +2,7 @@ import * as THREE from "three";
 
 export type MovingParts = {
   leftTower: THREE.Group;
+  leftStairs: THREE.Group;
   rightTower: THREE.Group;
   upperGallery: THREE.Group;
   lowerCourt: THREE.Group;
@@ -127,12 +128,12 @@ function tower(parent: THREE.Object3D, { x, y, z, height, width = .9, roof = tru
   const openingHeight = openTop ? Math.min(2.25, height * .38) : 0;
   if (openTop) {
     box(group, 0, (height - openingHeight) / 2, 0, width, height - openingHeight, width, materials);
-    const frontArch = archWall(group, -width / 2, height - openingHeight, width / 2 - .14, width, openingHeight, .14, width * .48);
+    // The opening walls are centered on the same square footprint as the
+    // shaft, cornice and dome. Rotating a wall changes its axis, not its origin.
+    const frontArch = archWall(group, 0, height - openingHeight, width / 2 - .14, width, openingHeight, .14, width * .48);
     frontArch.material = [plasterLight, plasterShade];
-    const sideArch = archWall(group, -width / 2, height - openingHeight, width / 2 - .14, width, openingHeight, .14, width * .48);
+    const sideArch = archWall(group, width / 2 - .14, height - openingHeight, 0, width, openingHeight, .14, width * .48);
     sideArch.rotation.y = Math.PI / 2;
-    sideArch.position.x = width / 2 - .14;
-    sideArch.position.z = width / 2;
     sideArch.material = [plasterShade, plasterShade];
     box(group, 0, height - .06, 0, width, .14, width, plasterLight);
   } else {
@@ -172,17 +173,48 @@ function terrace(parent: THREE.Object3D, x: number, y: number, z: number, width:
   return group;
 }
 
-function stairs(parent: THREE.Object3D, x: number, y: number, z: number, length: number, climb: number, count: number, rotationY = 0) {
+function arcadedPlatform(parent: THREE.Object3D, x: number, level: number, z: number, width: number, depth: number, base: number, aperture: number) {
+  const height = level - base;
+  const wall = .34;
+  // The arcade faces sit exactly on the deck's front and right edges. Both
+  // walls finish at the walking surface; changing a deck cannot orphan them.
+  archWall(parent, x, base, z + depth / 2 - wall, width, height, wall, aperture);
+  const side = archWall(parent, x + width / 2 - wall, base, z, depth, height, wall, Math.min(aperture, depth * .55));
+  side.rotation.y = Math.PI / 2;
+  terrace(parent, x, level, z, width, depth);
+  box(parent, x, level + .035, z + depth / 2, width + .04, .1, .12, cream);
+}
+
+type Point3 = readonly [number, number, number];
+
+function stairsBetween(parent: THREE.Object3D, from: Point3, to: Point3, count: number) {
   const group = new THREE.Group();
-  group.position.set(x, y, z);
-  group.rotation.y = rotationY;
   parent.add(group);
   for (let i = 0; i < count; i++) {
-    const t = (i + .5) / count;
-    box(group, (t - .5) * length, t * climb, 0, length / count + .015, .13, .54, cream);
-    box(group, (t - .5) * length, t * climb - .075, .26, length / count + .015, .15, .045, plasterLight);
+    box(group, 0, 0, 0, 1, .13, .54, cream);
+    box(group, 0, 0, .26, 1, .15, .045, plasterLight);
   }
+  retargetStairs(group, from, to);
   return group;
+}
+
+export function retargetStairs(group: THREE.Group, from: Point3, to: Point3) {
+  const dx = to[0] - from[0];
+  const dz = to[2] - from[2];
+  if (Math.abs(dx) > .001 && Math.abs(dz) > .001) throw new Error("Stair run must follow one isometric axis");
+  const length = Math.hypot(dx, dz);
+  const climb = to[1] - from[1];
+  group.position.set((from[0] + to[0]) / 2, from[1], (from[2] + to[2]) / 2);
+  group.rotation.y = Math.atan2(-dz, dx);
+  const count = group.children.length / 2;
+  for (let i = 0; i < count; i++) {
+    const t = (i + .5) / count;
+    const tread = group.children[i * 2] as THREE.Mesh;
+    const lip = group.children[i * 2 + 1] as THREE.Mesh;
+    tread.position.set((t - .5) * length, t * climb, 0);
+    lip.position.set((t - .5) * length, t * climb - .075, .26);
+    tread.scale.x = lip.scale.x = length / count + .015;
+  }
 }
 
 function cypress(parent: THREE.Object3D, x: number, y: number, z: number, height: number) {
@@ -223,19 +255,15 @@ export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
 
   // Stepped architectural core and open arcades. The arches are actual holes,
   // so the eye can see one tier through another as components rotate.
-  archWall(root, -1.5, -2.8, 1.15, 3.0, 4.15, .34, 1.43);
-  archWall(root, -.05, -2.8, -.8, 2.7, 4.25, .34, 1.2);
+  arcadedPlatform(root, -.3, 2.25, .45, 2.75, 1.1, -2.8, 1.43);
   tower(root, { x: -.36, y: .85, z: -1.02, height: 6.25, width: 1.12, openTop: true });
   tower(root, { x: 1.18, y: .27, z: -1.0, height: 3.8, width: .88, roof: false });
-  terrace(root, -.3, 2.25, .45, 2.75, 1.1);
-  box(root, -1.5, 1.41, 1.22, 3.02, .13, .42, cream);
   terrace(root, .88, 3.55, -.58, 1.8, 1.35);
   box(root, .88, 3.59, -.58, 1.07, .04, .57, turquoise);
   box(root, .88, 3.64, -.58, .73, .025, .34, turquoiseDark);
   box(root, .82, 1.07, .71, .34, 2.87, .07, turquoise);
   box(root, .82, -.41, .78, .34, .11, .18, turquoiseDark);
   box(root, 1.26, 2.29, .43, 1.14, .045, .35, turquoise);
-  stairs(root, -1.08, 2.1, .52, 1.1, 1.4, 10, 0);
   cypress(root, -1.56, 2.32, .34, .77);
   cypress(root, 1.52, 3.7, -.95, .57);
 
@@ -245,22 +273,22 @@ export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
   tower(leftTower, { x: 0, y: 0, z: 0, height: 4.5, width: .88, openTop: true });
   terrace(leftTower, .1, 1.56, .43, 1.18, .95);
   planter(leftTower, -.27, 1.61, .64);
-  stairs(root, -1.73, 3.85, .71, 2.6, -1.6, 18, 0);
+  const leftStairs = stairsBetween(root, [-3.05, 3.85, .48], [-.55, 2.25, .48], 18);
 
   const rightTower = new THREE.Group();
   rightTower.position.set(...monumentAnchors.rightTower);
   root.add(rightTower);
   tower(rightTower, { x: 0, y: 0, z: 0, height: 4.8, width: .94, openTop: true });
-  archWall(root, 1.52, -2.45, .31, 2.05, 3.1, .3, .88);
-  terrace(root, 2.06, .75, .65, 1.95, .9);
-  stairs(root, 2.2, -.69, 1.24, 1.69, 1.38, 13, Math.PI / 2);
+  arcadedPlatform(root, 2.06, .75, .65, 1.95, .9, -2.45, .88);
+  // The right terrace meets the tower through a short landing at the same
+  // level; its footprint overlaps both structures instead of ending in air.
+  box(root, 2.69, .68, .08, .58, .14, .43, cream);
   planter(root, 2.69, .84, .75);
 
   const upperGallery = new THREE.Group();
   upperGallery.position.set(...monumentAnchors.upperGallery);
   root.add(upperGallery);
-  archWall(upperGallery, -1.17, 0, -.34, 2.34, 1.28, .28, .92);
-  terrace(upperGallery, -.03, 1.3, -.19, 2.48, .96);
+  arcadedPlatform(upperGallery, -.03, 1.3, -.19, 2.48, .96, 0, .92);
   box(upperGallery, .77, 1.36, -.19, .62, .04, .52, turquoise);
   box(upperGallery, -.53, 1.37, .17, 1.28, .035, .16, turquoise);
   cypress(upperGallery, -1.03, 1.48, -.19, .53);
@@ -268,17 +296,13 @@ export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
   const lowerCourt = new THREE.Group();
   lowerCourt.position.set(...monumentAnchors.lowerCourt);
   root.add(lowerCourt);
-  archWall(lowerCourt, -1.95, -.8, .61, 3.9, 2.65, .4, 1.78);
-  archWall(lowerCourt, -.86, -2.16, -.58, 1.72, 2.7, .34, .72);
-  terrace(lowerCourt, -.05, 1.9, .2, 3.9, 1.4);
-  box(lowerCourt, 0, 1.87, .75, 3.9, .14, .3, cream);
-  box(lowerCourt, 0, 1.96, .87, 3.68, .045, .075, plasterLight);
-  tower(lowerCourt, { x: -1.85, y: 1.5, z: -.1, height: 1.52, width: .76 });
-  tower(lowerCourt, { x: 1.84, y: 1.48, z: .21, height: 1.85, width: .75, roof: false });
+  arcadedPlatform(lowerCourt, -.05, 1.9, .2, 3.9, 1.4, -.8, 1.78);
+  tower(lowerCourt, { x: -1.6, y: 1.9, z: -.1, height: 1.12, width: .76 });
+  tower(lowerCourt, { x: 1.52, y: 1.9, z: .21, height: 1.43, width: .75, roof: false });
   planter(lowerCourt, -1.04, 1.8, -.2);
-  planter(lowerCourt, 1.02, 1.8, .52);
+  planter(lowerCourt, .87, 1.8, -.42);
   cypress(lowerCourt, -.6, 1.84, -.25, .74);
-  stairs(lowerCourt, .94, 1.75, 1.0, 1.8, 1.02, 13, 0);
+  stairsBetween(lowerCourt, [.3, 1.9, .21], [1.52, 3.33, .21], 13);
 
   const crossing = new THREE.Group();
   crossing.position.set(...monumentAnchors.crossing);
@@ -307,7 +331,7 @@ export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
   head.position.y = .54;
   traveler.add(head);
 
-  return { scene, parts: { leftTower, rightTower, upperGallery, lowerCourt, crossing, crossingEnd, impossibleLanding, traveler } };
+  return { scene, parts: { leftTower, leftStairs, rightTower, upperGallery, lowerCourt, crossing, crossingEnd, impossibleLanding, traveler } };
 }
 
 export function disposeMonument(scene: THREE.Scene) {

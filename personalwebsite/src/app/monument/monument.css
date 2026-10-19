@@ -39,7 +39,6 @@
 .mv-artwork { position: relative; flex: none; height: 100%; aspect-ratio: 2 / 3; transform: scale(1.18); transform-origin: center center; transition: transform 1s cubic-bezier(.2,.7,.2,1); }
 .mv-art-image, .mv-three-canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; user-select: none; }
 .mv-art-image { object-fit: contain; }
-.mv-art-caption { position: absolute; right: 9%; bottom: 2%; color: #c5dad1; font-family: var(--font-source-serif), Georgia, serif; font-size: 13px; font-style: italic; letter-spacing: .08em; opacity: .72; }
 
 .mv-open .mv-nav { margin-left: 0; gap: 0; }
 .mv-open .mv-category { min-height: clamp(54px, 7vh, 72px); font-size: clamp(19px, 2.15vw, 34px) !important; letter-spacing: .18em; }
@@ -49,7 +48,6 @@
 .mv-open .mv-layout { min-height: max(790px, calc(100svh - 75px)); }
 .mv-open .mv-art-window { height: min(70svh, 750px); margin-top: -25px; }
 .mv-open .mv-artwork { transform: translateX(-23%) scale(1.09); }
-.mv-open .mv-art-caption { opacity: 0; }
 
 .mv-content { position: absolute; top: clamp(112px, 16vh, 180px); right: clamp(18px, 2.4vw, 45px); width: clamp(265px, 26vw, 345px); margin: 0; padding: 20px 15px 26px 25px; border-left: 1px solid rgba(69, 108, 110, .32); background: rgba(237, 244, 234, .84); animation: mv-reveal .65s .25s both; }
 @keyframes mv-reveal { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
