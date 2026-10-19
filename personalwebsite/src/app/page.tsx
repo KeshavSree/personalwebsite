@@ -1,5 +1,5 @@
-import MonumentPortfolio from "@/app/monument/MonumentPortfolio";
+import IllusionPrototype from "@/app/monument/IllusionPrototype";
 
 export default function Page() {
-  return <MonumentPortfolio />;
+  return <IllusionPrototype />;
 }
