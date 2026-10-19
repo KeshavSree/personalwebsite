@@ -4,7 +4,7 @@ import ts from 'typescript';
 import { OrthographicCamera, Vector3 } from 'three';
 const source=readFileSync(new URL('../src/app/monument/platformGeometry.ts',import.meta.url),'utf8');
 const code=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext}}).outputText.replaceAll('from "three"',`from "${import.meta.resolve('three')}"`);
-const {ARM_LENGTH,platformConfigurations:configs,armPoint,dockPoint,travelerPoint,platformMotion,orientation,transform,surfaceNormal}=await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
+const {ARM_LENGTH,platformConfigurations:configs,armPoint,dockPoint,travelerPoint,platformMotion,orientation,transform,surfaceNormal,AXLE}=await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
 const camera=new OrthographicCamera(-7,7,7,-7,.1,100);
 camera.position.set(14,14,14);camera.lookAt(0,0,0);camera.updateMatrixWorld();
 const screen=p=>new Vector3(...p).project(camera);
@@ -25,9 +25,12 @@ const vertices=[[0,0,0],[.7,0,.36],[1.8,.45,-.36],[3.6,.9,0],[0,0,-2.2]];
 let samples=0;
 for(const from of configs)for(const to of configs){
   if(from===to)continue;
-  assert.ok(gap(screen(dockPoint(configs.indexOf(from))),screen(dockPoint(configs.indexOf(to))))>.05,'Every transition must create a different optical connection');
+  assert.ok(new Vector3(...dockPoint(configs.indexOf(from))).distanceTo(new Vector3(...dockPoint(configs.indexOf(to))))>1,'Every transition must switch to a physically different destination');
   for(let i=0;i<=120;i++){
     const p=platformMotion(from,to,i/120);
+    assert.ok(AXLE.clone().applyQuaternion(orientation(p)).distanceTo(AXLE)<1e-12,'The axle direction cannot change');
+    assert.deepEqual(transform(p,[0,0,0]),[0,0,0],'The pivot cannot translate');
+    p.lifts.forEach(h=>assert.ok(h>=-1.800001 && h<=.000001,'Lift stays on its vertical rail'));
     for(const a of vertices)for(const b of vertices){
       const before=new Vector3(...a).distanceTo(new Vector3(...b));
       const after=new Vector3(...transform(p,a)).distanceTo(new Vector3(...transform(p,b)));
@@ -39,4 +42,4 @@ for(const from of configs)for(const to of configs){
   const final=platformMotion(from,to,1);
   assert.ok(new Vector3(...armPoint(final,ARM_LENGTH)).distanceTo(new Vector3(...armPoint(to,ARM_LENGTH)))<1e-12);
 }
-console.log(`PASS: upward/sideways/downward surfaces; 5 impossible joins; ${samples} rigid multi-axis samples across all 20 transitions.`);
+console.log(`PASS: upward/sideways/downward surfaces; 5 impossible joins; ${samples} single-axle / vertical-lift samples across all 20 transitions.`);

@@ -47,8 +47,14 @@ export default function IllusionPrototype() {
     Array.from({length:STAIR_COUNT},(_,i)=>mesh(platform,STAIR_START+(i+.5)*STAIR_RUN/STAIR_COUNT,STAIR_RISE*(i+1)/STAIR_COUNT-.15,0,STAIR_RUN/STAIR_COUNT+.004,.3,.72,[pink,pink,cream,cream,cream,cream]));
     mesh(platform,0,-.15,-.95,.72,.3,2.6,cream);
     mesh(platform,0,-.15,0,.9,.3,.9,cream);
-    const spindle=mesh(root,0,-2.4,0,.34,4.8,.34,support);
-    mesh(root,0,-4.3,0,1.1,.2,1.1,support);
+    // A visible horizontal axle on a fixed rear pier. Nothing is parented
+    // to an additional rotating joint.
+    mesh(root,0,-2.2,-1.25,.65,4.4,.65,support);
+    mesh(root,0,-4.5,-1.25,1.3,.2,1.3,support);
+    const axleGeometry=new THREE.CylinderGeometry(.15,.15,1.65,24);
+    const axle=new THREE.Mesh(axleGeometry,teal);axle.rotation.x=Math.PI/2;axle.position.z=-.6;root.add(axle);
+    const collarGeometry=new THREE.TorusGeometry(.4,.06,12,48);
+    const collar=new THREE.Mesh(collarGeometry,teal);collar.position.z=.42;root.add(collar);
     const ringGeometry=new THREE.TorusGeometry(.27,.055,12,48);
     const ring=new THREE.Mesh(ringGeometry,teal);ring.rotation.x=-Math.PI/2;ring.position.y=.025;platform.add(ring);
     // The asymmetric counter-arm makes rigid rotation around the anchor legible.
@@ -58,11 +64,12 @@ export default function IllusionPrototype() {
       const entry=mesh(g,.65,-.15,0,1.3,.3,.72,pink);
       mesh(g,1.35,-.15,0,.8,.3,1.05,pink);
       const worldEnd=new THREE.Vector3(1.35,-.3,-.48).applyQuaternion(orientation(config)).add(g.position);
-      const foot=Math.min(-4.2,worldEnd.y-1.2), height=worldEnd.y-foot;
-      mesh(root,worldEnd.x,foot+height/2,worldEnd.z,.23,height,.23,support);
+      const foot=Math.min(-5.4,worldEnd.y-2.2), height=worldEnd.y-foot;
+      const piston=mesh(root,worldEnd.x,foot+height/2,worldEnd.z,.23,height,.23,support);
+      mesh(root,worldEnd.x,foot-.1,worldEnd.z,.65,.2,.65,support);
       const beacon=mesh(g,1.35,.045,0,.18,.09,.18,teal);
       const seam=mesh(g,.005,.007,0,.035,.014,.72,teal);
-      return {entry,beacon,seam};
+      return {group:g,base:g.position.clone(),entry,beacon,seam,piston,foot,top:worldEnd.y};
     });
     const markerGeometry=new THREE.SphereGeometry(.105,24,16);
     const markerMaterial=new THREE.MeshBasicMaterial({color:0xffffff});
@@ -87,8 +94,8 @@ export default function IllusionPrototype() {
       from={...current};elapsed=0;phase="moving";
       const to=configurations[target];
       const rotating=orientation(to).angleTo(orientation(current))>.001;
-      const lifting=Math.abs(to.height-current.height)>.001;
-      setStatus(rotating && lifting?"Turning the rigid path onto a new walking surface…":rotating?"Rotating the rigid path around its anchor…":to.height>current.height?"Rising toward the upper landing…":"Lowering toward the next landing…");
+      const lifting=to.lifts.some((height,i)=>Math.abs(height-current.lifts[i])>.001);
+      setStatus(rotating && lifting?"Release the landing. Turn the axle. Raise the next connection.":"Exchanging depth: one landing descends as the hidden landing rises.");
     };
     renderer.setAnimationLoop((time:number)=>{
       const dt=Math.min((time-lastTime)/1000,.05);lastTime=time;
@@ -107,21 +114,22 @@ export default function IllusionPrototype() {
           distance=returnDistance*(1-smooth(elapsed/1.1));
           if(elapsed>=1.1){distance=0;startMove();}
         }else if(phase==="moving"){
-          const t=reduced?1:Math.min(1,elapsed/2.8);
+          const t=reduced?1:Math.min(1,elapsed/4.2);
           current=platformMotion(from,configurations[target],t);
           if(t===1){dock=target;phase="walking";elapsed=0;setStatus("Connected. The marker crosses to a landing at a different physical height.");}
         }else if(phase==="walking"){
           distance=(ARM_LENGTH+1.35)*smooth(Math.min(1,elapsed/3.5));
-          if(elapsed>=3.5){phase="rest";setStatus("Choose a movement. The traveler follows the surface—even onto its side or underside.");}
+          if(elapsed>=3.5){phase="rest";setStatus("Choose a passage. The lifts make room; the stair turns; a new route meets it.");}
         }
       }
-      platform.position.y=current.height;platform.quaternion.copy(orientation(current));
-      spindle.scale.y=current.height+4.15;spindle.position.y=-4.3+spindle.scale.y/2;
+      platform.quaternion.copy(orientation(current));
       const aligned=phase!=="moving";
       // Remove only mating end caps after docking; the full solid is visible
       // while turning. Both rectangular cross-sections project identically.
       arm.material=aligned?[hidden,cream,cream,cream,cream,cream]:cream;
       docks.forEach((d,i)=>{
+        d.group.position.copy(d.base);d.group.position.y+=current.lifts[i];
+        d.piston.scale.y=Math.max(.1,d.top+current.lifts[i]-d.foot);d.piston.position.y=d.foot+d.piston.scale.y/2;
         d.entry.material=aligned && i===dock?[pink,hidden,pink,pink,pink,pink]:pink;
         d.seam.visible=aligned && i===dock;
         d.beacon.scale.y=aligned && i===dock?.18:.09;
@@ -131,13 +139,13 @@ export default function IllusionPrototype() {
       marker.quaternion.copy(orientation(current));
       renderer.render(world,camera);
     });
-    return()=>{renderer.setAnimationLoop(null);observer.disconnect();box.dispose();ringGeometry.dispose();markerGeometry.dispose();bodyGeometry.dispose();footRingGeometry.dispose();[cream,pink,support,teal,hidden,markerMaterial].forEach(m=>m.dispose());renderer.dispose();renderer.domElement.remove();};
+    return()=>{renderer.setAnimationLoop(null);observer.disconnect();box.dispose();axleGeometry.dispose();collarGeometry.dispose();ringGeometry.dispose();markerGeometry.dispose();bodyGeometry.dispose();footRingGeometry.dispose();[cream,pink,support,teal,hidden,markerMaterial].forEach(m=>m.dispose());renderer.dispose();renderer.domElement.remove();};
   },[]);
   const choose=(i:number)=>{selection.current=i;setSelected(i);};
   return <div className="illusion-lab">
-    <header><span>GEOMETRY STUDY / 04</span><h1>A different gravity.</h1><p>Rigid stairs · three axes · one fixed perspective</p></header>
+    <header><span>GEOMETRY STUDY / 05</span><h1>The turning stair.</h1><p>One horizontal axle · independent vertical lifts · fixed camera</p></header>
     <nav aria-label="Platform configurations">{configurations.map((c,i)=><button key={c.name} aria-pressed={selected===i} onClick={()=>choose(i)}><small>0{i+1}</small>{c.name}</button>)}</nav>
     <div className="illusion-stage" ref={host} role="img" aria-label={`Rotating and lifting platform: ${configurations[selected].name}`}>{failed&&<p>WebGL is unavailable in this browser.</p>}</div>
-    <footer><p aria-live="polite">{status}</p><div><button onClick={()=>choose((selected+1)%5)}>Next position →</button><button onClick={()=>{paused.current=!paused.current;setPaused(paused.current);}}>{isPaused?"Resume":"Pause"}</button><button onClick={()=>{walkRequest.current++;}}>Walk again</button></div><small>Every destination is physically separated. Each rotation creates a new perspective-only crossing.</small></footer>
+    <footer><p aria-live="polite">{status}</p><div><button onClick={()=>choose((selected+1)%5)}>Next position →</button><button onClick={()=>{paused.current=!paused.current;setPaused(paused.current);}}>{isPaused?"Resume":"Pause"}</button><button onClick={()=>{walkRequest.current++;}}>Walk again</button></div><small>The stair only turns around its horizontal axle. Each landing only moves vertically.</small></footer>
   </div>;
 }
