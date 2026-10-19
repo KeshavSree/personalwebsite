@@ -14,9 +14,9 @@ export type MovingParts = {
 
 export const monumentAnchors = {
   leftTower: [-3.05, -.65, .48],
-  rightTower: [3.02, -.95, -.5],
-  upperGallery: [.06, .54, .42],
-  lowerCourt: [.7, -3.6, .85],
+  rightTower: [3.02, -2.1, -.5],
+  upperGallery: [0, -1.2, 1.75],
+  lowerCourt: [.55, -4.6, 2.8],
   crossing: [.05, 2.43, 1.13],
 } as const;
 
@@ -185,6 +185,25 @@ function arcadedPlatform(parent: THREE.Object3D, x: number, level: number, z: nu
   box(parent, x, level + .035, z + depth / 2, width + .04, .1, .12, cream);
 }
 
+function levelBridge(parent: THREE.Object3D, from: Point3, to: Point3, width = .62) {
+  const dx = to[0] - from[0];
+  const dz = to[2] - from[2];
+  if (Math.abs(from[1] - to[1]) > .001 || (Math.abs(dx) > .001 && Math.abs(dz) > .001)) {
+    throw new Error("Bridge endpoints must share a level and an isometric axis");
+  }
+  const alongX = Math.abs(dx) > .001;
+  const length = Math.hypot(dx, dz);
+  const centerX = (from[0] + to[0]) / 2;
+  const centerZ = (from[2] + to[2]) / 2;
+  box(parent, centerX, from[1] - .1, centerZ, alongX ? length : width, .2, alongX ? width : length, materials);
+  for (const edge of [-1, 1]) {
+    box(parent,
+      centerX + (alongX ? 0 : edge * width / 2), from[1] + .13,
+      centerZ + (alongX ? edge * width / 2 : 0),
+      alongX ? length : .1, .28, alongX ? .1 : length, cream);
+  }
+}
+
 type Point3 = readonly [number, number, number];
 
 function stairsBetween(parent: THREE.Object3D, from: Point3, to: Point3, count: number) {
@@ -289,20 +308,24 @@ export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
   upperGallery.position.set(...monumentAnchors.upperGallery);
   root.add(upperGallery);
   arcadedPlatform(upperGallery, -.03, 1.3, -.19, 2.48, .96, 0, .92);
-  box(upperGallery, .77, 1.36, -.19, .62, .04, .52, turquoise);
-  box(upperGallery, -.53, 1.37, .17, 1.28, .035, .16, turquoise);
+  tower(upperGallery, { x: -2.75, y: -3.4, z: -.19, height: 4.7, width: .82, openTop: true });
+  levelBridge(upperGallery, [-2.75, 1.3, -.19], [-1.27, 1.3, -.19], .62);
+  box(upperGallery, -.03, 1.34, -.19, 1.85, .025, .28, turquoise);
+  box(upperGallery, -.03, 1.36, -.19, 1.53, .015, .19, turquoiseDark);
   cypress(upperGallery, -1.03, 1.48, -.19, .53);
 
   const lowerCourt = new THREE.Group();
   lowerCourt.position.set(...monumentAnchors.lowerCourt);
   root.add(lowerCourt);
+  arcadedPlatform(lowerCourt, -1.3, 3.2, -1.3, 3.4, .7, -.2, 1.4);
+  box(lowerCourt, -1.3, 3.24, -1.48, 2.35, .026, .16, turquoise);
   arcadedPlatform(lowerCourt, -.05, 1.9, .2, 3.9, 1.4, -.8, 1.78);
   tower(lowerCourt, { x: -1.6, y: 1.9, z: -.1, height: 1.12, width: .76 });
   tower(lowerCourt, { x: 1.52, y: 1.9, z: .21, height: 1.43, width: .75, roof: false });
   planter(lowerCourt, -1.04, 1.8, -.2);
   planter(lowerCourt, .87, 1.8, -.42);
   cypress(lowerCourt, -.6, 1.84, -.25, .74);
-  stairsBetween(lowerCourt, [.3, 1.9, .21], [1.52, 3.33, .21], 13);
+  stairsBetween(lowerCourt, [.2, 3.2, -1.3], [.2, 1.9, .1], 14);
 
   const crossing = new THREE.Group();
   crossing.position.set(...monumentAnchors.crossing);

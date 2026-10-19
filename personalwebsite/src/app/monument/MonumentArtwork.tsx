@@ -68,8 +68,8 @@ export default function MonumentArtwork({ scene }: { scene: SceneName }) {
     host.appendChild(renderer.domElement);
 
     const { scene: world, parts } = buildMonument();
-    const camera = new THREE.OrthographicCamera(-4.7, 4.7, 7, -7, .1, 100);
-    const lookAt = new THREE.Vector3(0, 1.65, 0);
+    const camera = new THREE.OrthographicCamera(-5.5, 5.5, 8.2, -8.2, .1, 100);
+    const lookAt = new THREE.Vector3(0, .9, 0);
     camera.position.copy(lookAt).add(new THREE.Vector3(12.5, 12.5, 12.5));
     camera.lookAt(lookAt);
     const cameraRay = new THREE.Vector3().subVectors(camera.position, lookAt).normalize();
@@ -92,10 +92,10 @@ export default function MonumentArtwork({ scene }: { scene: SceneName }) {
       const height = host.clientHeight || 1;
       renderer.setSize(width, height, false);
       const aspect = width / height;
-      camera.left = -7 * aspect;
-      camera.right = 7 * aspect;
-      camera.top = 7;
-      camera.bottom = -7;
+      camera.left = -8.2 * aspect;
+      camera.right = 8.2 * aspect;
+      camera.top = 8.2;
+      camera.bottom = -8.2;
       camera.updateProjectionMatrix();
       dirty = true;
     };
