@@ -4,7 +4,7 @@ import ts from 'typescript';
 import {Box3, OrthographicCamera, Vector3} from 'three';
 const source=readFileSync(new URL('../src/app/monument/ObservatoryWorld.ts',import.meta.url),'utf8');
 const code=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext}}).outputText.replaceAll('from "three"',`from "${import.meta.resolve('three')}"`);
-const {OBSERVATORY:d,buildObservatory,setObservatoryTurn}=await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
+const {OBSERVATORY:d,SLATE_LAYER,buildObservatory,setObservatoryTurn}=await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
 const world=buildObservatory();
 const camera=new OrthographicCamera(-7,7,8,-8,.1,100);
 camera.position.set(16,16,16);camera.lookAt(0,0,0);camera.updateMatrixWorld();
@@ -18,6 +18,11 @@ for(const rail of [...world.left.children.slice(0,2),...world.right.children.sli
 }
 assert.ok(new Box3().setFromObject(world.lowerBack).max.z<d.rear.z-d.beam/2,'Low back rail cuts through a pillar');
 assert.ok(new Box3().setFromObject(world.lowerFront).min.z>d.front.z+d.beam/2,'Low front rail cuts through a pillar');
+// The composited frame gets one optical depth, while its own render pass keeps
+// real connected corners and their shading. Do not move individual gray beams.
+assert.ok(world.slateDepth>d.rear.z+d.beam/2);
+assert.ok(world.slateDepth<d.front.z-d.beam/2);
+for(const part of [world.left,world.right])part.traverse(object=>assert.equal(object.layers.mask,1<<SLATE_LAYER));
 const parts=[world.left,world.right,world.cap];
 const pivots=parts.map(p=>p.position.clone());
 const half=(d.slate.top-d.slate.bottom)/2;
@@ -54,15 +59,18 @@ for(let sample=0;sample<=360;sample++){
   assert.deepEqual([world.lower.rotation.x,world.lower.rotation.y,world.lower.rotation.z],[0,0,0]);
   assert.ok(world.lower.position.x>=-d.lower.travel-1e-12&&world.lower.position.x<=1e-12,'Walkway left its slide range');
   assert.equal(world.lower.position.y,d.lower.y);assert.equal(world.lower.position.z,0);
-  for(const rail of world.opticalRails.slice(0,4)){
-    const bounds=new Box3().setFromObject(rail.mesh);
-    assert.ok(bounds.min.z>d.rear.z+d.beam/2,'Turning gray rail intersects rear pillar');
-    assert.ok(bounds.max.z<d.front.z-d.beam/2,'Turning gray rail intersects near pillar');
+  for(const rail of world.grayRails){
+    assert.ok(rail.mesh.position.distanceTo(rail.origin)<1e-12,'A beam moved away from its connected/shaded corner');
     for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5]){
       const corner=new Vector3(x,y,z);
       const actual=rail.mesh.localToWorld(corner.clone());
       const ideal=rail.mesh.parent.localToWorld(corner.multiply(rail.mesh.scale).add(rail.origin));
       assert.ok(screenGap(actual,ideal)<1e-12,'A gray beam changes its projected shape during the optical correction');
+      // Project onto the compositing plane along the locked camera ray.
+      // Screen position stays fixed; visible depth stays between both pillars.
+      const imagePoint=actual.clone().addScalar(world.slateDepth-actual.z);
+      assert.ok(screenGap(actual,imagePoint)<1e-12,'Composite changes the frame silhouette');
+      assert.ok(imagePoint.z>d.rear.z+d.beam/2&&imagePoint.z<d.front.z-d.beam/2);
     }
   }
   for(const x of [d.lower.left,d.lower.right]){

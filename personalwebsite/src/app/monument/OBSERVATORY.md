@@ -34,12 +34,20 @@ The detailed video comparison distinguishes TWO frames:
 
 ## How the optical construction works
 
-Equal world translation along X/Y/Z is invisible to the locked camera. Each gray
-rail undergoes its rigid rotation, then receives a camera-ray depth correction
-that keeps it between the pillars. All eight projected beam corners remain exactly
-where the uncorrected rigid rotation would put them. This preserves the visible
-motion while making the crossing impossible in ordinary space. Closing posts are
-separate rigid pieces. Internal end caps are hidden when the split rails meet.
+Equal world translation along X/Y/Z is invisible to the locked camera. The gray
+structure is rendered as genuinely connected rigid pieces in a separate transparent
+render target, with shared world-oriented face tones. Its image is then composited
+onto an XY depth plane between the ivory pillars, using the same locked camera.
+Every pixel keeps its screen position, while ordinary scene depth correctly puts
+the near pillar in front and the rear pillar behind it.
+
+This separate pass is essential for the corner shading. Moving individual beams
+along the camera ray preserved their silhouettes but exposed overlapping side faces
+at the left doorway and right handle corners. Recoloring those faces alone could
+not fix their false boundaries. Connected geometry now supplies continuous top
+surfaces, and only the final image receives the impossible depth. Internal end caps
+are hidden when the split rails meet. The render target resizes with the physical
+drawing buffer and resolves multisample coverage before compositing.
 
 The low walkway's rear rail is offset behind the rear pillar along the same null
 direction. Its apparent corner connections remain continuous throughout its slide.
@@ -55,7 +63,7 @@ From the app directory run `node scripts/check-observatory.mjs`.
 
 The test checks initial overlap order, split-rail quarter-turn joins, all four
 corners of the impossible top-arm dock, both door thresholds, and 361 samples of
-single-axis rigid rotation, gray/pillar clearance, projected beam-corner invariance,
+single-axis rigid rotation, composited gray/pillar depth order, projected beam-corner invariance,
 linear lower-walkway travel, and lower-frame optical joins.
 
 ## Limits of this verification

@@ -1,5 +1,7 @@
 import * as THREE from "three";
 
+export const SLATE_LAYER = 1;
+
 // Dimensions reconstructed against the Chapter X green-room frame at 0:34.
 // Y is vertical. The camera is the fixed (1,1,1) isometric projection.
 export const OBSERVATORY = {
@@ -58,12 +60,12 @@ export function buildObservatory() {
   const left=new THREE.Group();left.name="slate-left-x-axle";left.position.set(depthShift,centerY+depthShift,slateDepth);root.add(left);
   const right=new THREE.Group();right.name="slate-right-x-axle";right.position.copy(left.position);root.add(right);
   const hiddenCap=new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false});materials.push(hiddenCap);
-  const opticalRails:{mesh:THREE.Object3D,origin:THREE.Vector3,railY:number}[]=[];
+  const grayRails:{mesh:THREE.Mesh,origin:THREE.Vector3}[]=[];
   const seams:{mesh:THREE.Mesh,index:number}[]=[];
   for(const y of [-halfY,halfY]){
     const a=cube(left,(s.left+s.seam-b/2)/2,y,0,s.seam-s.left+b/2,b,b,[slate,slate,slate,slate,slate,slate]);
     const c=cube(right,(s.seam+s.right+b/2)/2,y,0,s.right-s.seam+b/2,b,b,[slate,slate,slate,slate,slate,slate]);
-    for(const mesh of [a,c])opticalRails.push({mesh,origin:mesh.position.clone(),railY:y});
+    for(const mesh of [a,c])grayRails.push({mesh,origin:mesh.position.clone()});
     seams.push({mesh:a,index:0},{mesh:c,index:1});
   }
   const leftEnd=new THREE.Group(),rightEnd=new THREE.Group();left.add(leftEnd);right.add(rightEnd);
@@ -124,13 +126,16 @@ export function buildObservatory() {
   cube(button,0,.02,0,.29,.014,.29,white);
   cube(button,0,.03,0,.2,.014,.2,line);
   cube(button,0,.04,0,.14,.014,.14,white);
-  opticalRails.push({mesh:button,origin:button.position.clone(),railY:-halfY});
   const traveler=new THREE.Group();traveler.position.set(-.4,1.15,-1.35);traveler.rotation.z=Math.PI/2;root.add(traveler);
   const headGeometry=new THREE.SphereGeometry(.08,16,12);geometries.push(headGeometry);
   const head=new THREE.Mesh(headGeometry,white);head.position.y=.35;traveler.add(head);
   const bodyGeometry=new THREE.ConeGeometry(.1,.26,12);geometries.push(bodyGeometry);
   const body=new THREE.Mesh(bodyGeometry,white);body.position.y=.16;traveler.add(body);
-  const world={scene,root,left,right,lower,lowerBack,lowerFront,cap,capReach,traveler,frameDoor,frontDoor,rearDoor,opticalDepth,opticalRails,seams,hiddenCap,slateMaterial:slate,dispose(){geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());}};
+  // Shade the genuinely connected gray pieces together in their own pass.
+  // The compositor supplies impossible depth relative to the ivory structure;
+  // individual beam offsets would expose false corner faces and lighting seams.
+  for(const part of [left,right])part.traverse(object=>object.layers.set(SLATE_LAYER));
+  const world={scene,root,left,right,lower,lowerBack,lowerFront,cap,capReach,traveler,frameDoor,frontDoor,rearDoor,opticalDepth,grayRails,slateDepth,seams,hiddenCap,slateMaterial:slate,dispose(){geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());}};
   setObservatoryTurn(world,0);
   return world;
 }
@@ -140,15 +145,6 @@ export function setObservatoryTurn(world:ReturnType<typeof buildObservatory>,ang
   world.right.rotation.x=angle;
   world.lower.position.x=OBSERVATORY.lower.travel*(Math.cos(angle)-1)/2;
   world.cap.rotation.y=-angle;
-  // In the footage both long gray rails remain behind the near pillar and
-  // ahead of the rear one even when the rectangle lies horizontally. Correct
-  // their depth along the camera null direction AFTER their rigid axle turn.
-  for(const rail of world.opticalRails){
-    const parent=rail.mesh.parent!;
-    const depth=-rail.railY*Math.sin(parent.rotation.x);
-    const offset=new THREE.Vector3(depth,depth,depth).applyQuaternion(parent.quaternion.clone().invert());
-    rail.mesh.position.copy(rail.origin).add(offset);
-  }
   const joined=Math.abs(Math.sin(2*angle))<1e-8;
   for(const seam of world.seams)(seam.mesh.material as THREE.Material[])[seam.index]=joined?world.hiddenCap:world.slateMaterial;
 }
