@@ -8,6 +8,7 @@ export interface WorkEntry {
   startDate: string;
   endDate: string;
   highlights: string[];
+  summary: string;
 }
 
 // Display shape consumed by the work timeline.
@@ -16,6 +17,7 @@ export interface JobEntry {
   company: string;
   year: string; // combined "start - end" range
   highlights: string[];
+  summary: string;
   icon: string; // path to logo under /public
 }
 
@@ -25,6 +27,7 @@ export function getJobs(): JobEntry[] {
     company: w.company,
     year: `${w.startDate} - ${w.endDate}`,
     highlights: w.highlights,
+    summary: w.summary,
     icon: w.logo,
   }));
 }

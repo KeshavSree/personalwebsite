@@ -1,27 +1,28 @@
 [
   {
-    "role": "AI Infrastructure Intern",
+    "role": "Software Engineer Intern",
     "company": "NI @ Emerson",
     "logo": "/niglobal_logo.jpeg",
     "startDate": "May 2026",
-    "endDate": "Present",
+    "endDate": "Aug 2026",
     "highlights": [
-      "Architected a client-facing CLI automating private AI deployment within Azure for 30+ Fortune 100 customers.",
-      "Designed a standalone CLI bundle + Azure DevOps CI pipeline for app updates, reducing customer support time by 85%.",
-      "Shipped as the flagship AI service of NI's test and measurement suite to 35,000+ companies worldwide."
-    ]
+      "Architected the client-facing CLI automating private LLM deployment in Azure for 30+ Fortune 100 customers.",
+      "Designed air-gapped application installer, private-by-default networking, and Azure DevOps CI pipeline, unlocking adoption by SpaceX, Lockheed Martin, KLA, and L3Harris, among others.",
+      "Shipped as the primary private-deployment path for NI's flagship AI service, cutting setup from 3 days to 2 hours."
+    ],
+    "summary": "I shipped the entire private deployment CLI for 30+ Fortune 100 customers, including an air-gapped installer, private networking, and Azure DevOps CI. This enabled adoption of Nigel AI by new clients in Aerospace, Defense, and Government, and cut full setup time from 3 days to 2 hours."
   },
   {
-    "role": "Project Manager",
+    "role": "Project Manager, ML Engineering",
     "company": "Mead Johnson @ Data Mine, Purdue",
     "logo": "/purduedatamine_logo.jpeg",
     "startDate": "Jan 2026",
-    "endDate": "Present",
+    "endDate": "Apr 2026",
     "highlights": [
-      "Led a team in the development of a state-of-the-art research database for Mead Johnson Reckitt R&D division.",
-      "Developed a multi-step LLM generation/validation pipeline to impute omissions, yielding an unprecedented corpus of 91,000 data points.",
-      "Consistently upheld Agile methodology by facilitating iterative planning, weekly stand-ups, sprint reviews, and continuous improvement through retrospectives."
-    ]
+      "Led a 6-person team unifying 5 legacy databases into a research database for Mead Johnson Reckitt R&D.",
+      "Developed a multi-step LLM pipeline to impute omissions to create a state-of-the-art set of 300k data points."
+    ],
+    "summary": "I led a 6-person team unifying 5 legacy databases into a research database for Mead Johnson Reckitt R&D, including building a multi-step LLM pipeline to fill missing values and create a state-of-the-art dataset of 300k data points."
   },
   {
     "role": "Measurement Software Engineer",
@@ -30,10 +31,11 @@
     "startDate": "Sep 2025",
     "endDate": "May 2026",
     "highlights": [
-      "Developed a full-stack real-time monitoring system using React.js and Node.js (Express) to continuously track metrics with sub-second latency, enabling a 90% reduction in manual equipment monitoring time.",
-      "Engineered a data pipeline to process and store over 2 million data points daily from on-site manufacturing equipment using MongoDB.",
-      "Implemented a real-time alerting system and robust data traceability to generate FDA-compliant batch records."
-    ]
+      "Built a real-time telemetry pipeline transmitting 20 million datapoints/day with sub-second latency using MongoDB Change Streams.",
+      "Reduced manual equipment monitoring time from 24 hours to 20 minutes per day.",
+      "Provided end-to-end traceability for FDA compliant batch records."
+    ],
+    "summary": "I built a real-time telemetry pipeline transmitting 20 million datapoints/day with sub-second latency using MongoDB Change Streams, reducing manual equipment monitoring time from 24 hours to 20 minutes per day. The pipeline also had end-to-end traceability for FDA compliant batch records."
   },
   {
     "role": "Software Engineering Intern",
@@ -42,9 +44,9 @@
     "startDate": "Jun 2025",
     "endDate": "Aug 2025",
     "highlights": [
-      "Built an educational analytics dashboard utilizing JavaScript, Next.js (React), and FastAPI enabling 65% faster longitudinal assessment of performance on exam questions.",
-      "Deployed on Vercel while managing the back end via a Python REST API, storing 2,500+ exam questions in a PostgreSQL database, deployed on Render.",
-      "Currently utilized to inform curriculum changes across 2 departments, 5+ classes, and 200+ students."
-    ]
+      "Designed a normalized data schema and migrated 5k+ legacy assessment records into queryable data.",
+      "Built a Next.js/FastAPI dashboard on top of the data, reducing time spent assessing question validity by 65%."
+    ],
+    "summary": "I designed a normalized data schema and migrated 5k+ legacy assessment records into queryable data, then built a Next.js/FastAPI dashboard on top of it. My project reduced time spent assessing question validity by 65%."
   }
 ]

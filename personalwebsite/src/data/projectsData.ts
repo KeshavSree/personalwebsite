@@ -7,6 +7,7 @@ export interface ProjectLink {
 }
 
 export interface ProjectDisplay {
+  websiteUrl?: string;
   embedUrl?: string;
   embedHeight?: number;
   images?: { src: string; alt: string; width: number; height: number }[];
@@ -22,6 +23,7 @@ export interface Project {
   links: ProjectLink[];
   display: ProjectDisplay;
   awards?: string;
+  sections?: {title: string; body: string; items?: string[]}[];
 }
 
 export const projects: Project[] = projectsJson as Project[];

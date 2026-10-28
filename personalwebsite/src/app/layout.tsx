@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import { Host_Grotesk, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/next";
+import PortfolioAnalytics from "@/app/components/PortfolioAnalytics";
 import ConditionalChrome from "@/app/components/ConditionalChrome";
 
 const hostGrotesk = Host_Grotesk({
@@ -75,7 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="h-full m-0 p-0 bg-surface text-ink antialiased">
         <ConditionalChrome>{children}</ConditionalChrome>
-        <Analytics />
+        <PortfolioAnalytics />
       </body>
     </html>
   );

@@ -28,7 +28,7 @@
   ],
   "qa": [
     { "q": "What is your favorite album?", "a": "Submarine by The Marías." },
-    { "q": "How long have you played clarinet?", "a": "8 years." },
+    { "q": "How long have you played clarinet?", "a": "9 years." },
     { "q": "What is your favorite food?", "a": "Tacos." },
     { "q": "What are some of your hobbies?", "a": "Climbing, eating, pickleball, and on occasion video games and volleyball." },
     { "q": "Why is every section a question?", "a": "It's all about asking the right questions." }

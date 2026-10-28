@@ -1,5 +1,80 @@
 [
   {
+    "id": "clubrecruiter",
+    "title": "ClubRecruiter",
+    "date": "Ongoing",
+    "description": "A comprehensive marketing and recruitment CRM for college organizations. It facilitates effective club marketing by telling you what's working and what isn't, and combines that with recruitment data to help organizations make maximally informed decisions. In its first month, it had 3000 users across 8 organizations.",
+    "ragNarrative": "",
+    "tools": "",
+    "links": [
+      {
+        "label": "Website",
+        "url": "https://clubrecruiter.app",
+        "type": "website"
+      }
+    ],
+    "display": {
+      "websiteUrl": "https://www.clubrecruiter.app/home"
+    }
+  },
+  {
+    "id": "tara",
+    "title": "Tara",
+    "date": "Ongoing",
+    "description": "Tara is my augmentation of agentic productivity assistants, based on the thesis that a useful agent is both maximally accessible and maximally informed. It gathers and centralizes information relevant to me from 20+ sources, and exposes non-sensitive information to products like Dots, Duet, Muse etc. Tara is accessible via Siri, Discord, and Notion so that I can relay random ideas as soon as I get them. It also utilizes Notion for a self-completing todo list.",
+    "ragNarrative": "",
+    "tools": "",
+    "links": [],
+    "display": {},
+    "sections": [
+      {
+        "title": "The Problem",
+        "body": "As personal assistant agents like OpenAI Dots become increasingly competent in execution quality and speed, the bottleneck moves to what they are actually executing. While using these products, I personally found it hard to keep up with the potential of these products because I could not efficiently funnel my own ideas into these agents. I often found myself thinking of an idea while walking, then completely forgetting about it until days later. So I asked myself: What if my personal agent could act on these ideas, or at the very least prepare them for further investigation, autonomously."
+      },
+      {
+        "title": "What already exists",
+        "body": "If you have been following these tools, you will know that what I described is, in theory, entirely possible. Just message your agent what you want, and it can do a fair amount of research and/or take action on its own. However, there are a couple issues with the current iteration of these products. (Speaking about OpenAI Dots here specifically, since that is what I use)",
+        "items": [
+          "The Dot only has person-specific knowledge of what is connected to it.",
+          "From a locked phone (IPhone), it takes at minimum 5 clicks/swipes to start dictating to your Dot. In my opinion, it should be 1 (and maybe 0)",
+          "Similarly, from a computer, you have to either navigate to the ChatGPT website or navigate to the desktop app. Both of which probably take greater than 5 seconds. In my opinion, it should be less than 1 second."
+        ]
+      },
+      {
+        "title": "Maximally Accessible",
+        "body": "As I said before, there are 2 main bottlenecks to getting an agent to work on your behalf. The agent can often execute faster than you can think, and it doesn't have the same context you have.\n\nI flipped the first issue on its head. Instead of 'thinking faster', what if we just increased the total amount of time spent thinking? This is how I landed on the idea of lowering the barrier to capture of thought when you *aren't at your computer*. So, I built out Tara access via Siri. All you do is call Siri, say 'Tara' then mention your idea, todo list item, or anything else. It automatically categorizes and begins working on the task. You can also access Tara via computer hotkey or Discord. The ultimate idea is for you to be able to relay your idea to Tara just as quickly as you had the idea."
+      },
+      {
+        "title": "Maximally Informed",
+        "body": "In order for an agent to act on your behalf, it needs to be maximally informed. How could an agent make a decision on your behalf if it doesn't have the context you have? For this reason, Tara is hooked up to nearly every source of incoming information I have (on my computer). Gmail, Google Calendar, Discord, Notion, Codex/Dot, location, Github, Slack, and Teams\n\nAll of the information from these sources lives in 1 place. Whenever Tara needs to act on an idea of mine, it can do so with maximal information, allowing it to act more similarly to how I would. This allows me to offload more work to, say, a OpenAI dot, and just have it read from Tara."
+      }
+    ],
+    "draftNotes": "Add privacy section."
+  },
+  {
+    "id": "cities",
+    "title": "C.I.T.I.E.S",
+    "date": "September 2026",
+    "description": "A 3D world where a person's GitHub is represented by a single tower. As you are active on GitHub or invite others, your tower will grow. To join you must choose a plot near who invited you, such that real life social proximity is represented in game.",
+    "ragNarrative": "",
+    "tools": "",
+    "links": [
+      {
+        "label": "Invite Link",
+        "url": "https://devcities.dev/?invite=b230f121-3018-44ae-872e-993b841ae59f",
+        "type": "website"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/KeshavSree/cities",
+        "type": "github"
+      }
+    ],
+    "display": {
+      "websiteUrl": "https://devcities.dev/"
+    }
+  },
+  {
     "id": "redub",
     "title": "Redub",
     "date": "Mar 2026",
@@ -7,28 +82,20 @@
     "ragNarrative": "Redub is a website that translates videos—both the audio and the video—into different languages. A user uploads a video of themselves speaking, chooses a target language, and Redub produces a version of them speaking fluently in that language, with lip movements matched to the new audio.\n\nKey technical details:\n- Achieved 66% lower compute cost compared to industry leaders like HeyGen for similar tasks\n- Cost savings came from leveraging Modal's scale-to-zero architecture, so compute only runs when a job is active\n- Pipeline stitches together OpenAI Whisper large-v3 for transcription, Groq API running LLaMA 3.3 70B for translation, Coqui XTTS v2 for voice cloning, and LatentSync for lip-sync\n- FFmpeg for media processing and Cloudflare R2 for storage\n- React frontend with a FastAPI backend",
     "tools": "React, FastAPI, Modal, OpenAI Whisper large-v3, Groq API, LLaMA 3.3 70B, Coqui XTTS v2, LatentSync, FFmpeg, Cloudflare R2",
     "links": [
-      { "label": "Devpost", "url": "https://devpost.com/software/redub", "type": "devpost" },
-      { "label": "GitHub", "url": "https://github.com/cli05/re-dub", "type": "github" }
+      {
+        "label": "Devpost",
+        "url": "https://devpost.com/software/redub",
+        "type": "devpost"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/cli05/re-dub",
+        "type": "github"
+      }
     ],
     "display": {
       "embedUrl": "https://www.youtube.com/embed/LsQABSzjdQE",
       "embedHeight": 375
-    }
-  },
-  {
-    "id": "kihara-pfp",
-    "title": "Protein Function Prediction Optimization",
-    "date": "Feb 2025 - Aug 2025",
-    "description": "As part of the KiharaLab's efforts, I optimized protein function prediction models, enabling 4x faster sequence alignment queries. This tool is used by clinical researchers as one of the official protein function prediction tools of the KiharaLab Bioinformatics Suite.",
-    "ragNarrative": "As part of the KiharaLab's efforts, Keshav optimized protein function prediction (PFP) models, enabling 4x faster sequence alignment queries. The tool is used by clinical researchers and is one of the official protein function prediction tools of the KiharaLab Bioinformatics Suite.\n\nKey technical details:\n- Delivered a 4x speedup on sequence alignment queries\n- Worked across Python, Perl, Ruby, and Shell in an established bioinformatics codebase\n- Shipped as an official tool in the KiharaLab Bioinformatics Suite, used by real clinical researchers",
-    "tools": "Python, Perl, Ruby, Shell",
-    "links": [
-      { "label": "Live", "url": "https://kiharalab.org/pfp", "type": "website" }
-    ],
-    "display": {
-      "images": [
-        { "src": "/projects/Kihara.png", "alt": "KiharaLab Protein Function Prediction", "width": 1200, "height": 613 }
-      ]
     }
   },
   {
@@ -39,11 +106,45 @@
     "ragNarrative": "Ember is a tool for people who are affected by natural disasters. It lets people create their own \"Embers,\" which are decentralized resource distribution locations. The core idea is resilience through decentralization: when dedicated humanitarian aid services fail or can't reach an area, Ember facilitates neighbors helping each other directly.\n\nKey technical details:\n- Built with Python and Flask, using SQLAlchemy over PostgreSQL with Alembic for migrations\n- Server-rendered with Jinja2 templates and WTForms\n- Interactive mapping via Leaflet and PMTiles for offline-friendly map tiles\n- Styled with Tailwind CSS and JavaScript",
     "tools": "Python, Flask, SQLAlchemy, PostgreSQL, Alembic, Jinja2, WTForms, Leaflet, PMTiles, Tailwind CSS, JavaScript",
     "links": [
-      { "label": "GitHub", "url": "https://github.com/KeshavSree/ember", "type": "github" }
+      {
+        "label": "GitHub",
+        "url": "https://github.com/KeshavSree/ember",
+        "type": "github"
+      }
     ],
     "display": {
       "images": [
-        { "src": "/projects/ember.png", "alt": "Ember", "width": 1200, "height": 614 }
+        {
+          "src": "/projects/ember.png",
+          "alt": "Ember",
+          "width": 1200,
+          "height": 614
+        }
+      ]
+    }
+  },
+  {
+    "id": "kihara-pfp",
+    "title": "Protein Function Prediction Optimization",
+    "date": "Feb 2025 - Aug 2025",
+    "description": "As part of the KiharaLab's efforts, I optimized protein function prediction models, enabling 4x faster sequence alignment queries. This tool is used by clinical researchers as one of the official protein function prediction tools of the KiharaLab Bioinformatics Suite.",
+    "ragNarrative": "As part of the KiharaLab's efforts, Keshav optimized protein function prediction (PFP) models, enabling 4x faster sequence alignment queries. The tool is used by clinical researchers and is one of the official protein function prediction tools of the KiharaLab Bioinformatics Suite.\n\nKey technical details:\n- Delivered a 4x speedup on sequence alignment queries\n- Worked across Python, Perl, Ruby, and Shell in an established bioinformatics codebase\n- Shipped as an official tool in the KiharaLab Bioinformatics Suite, used by real clinical researchers",
+    "tools": "Python, Perl, Ruby, Shell",
+    "links": [
+      {
+        "label": "Live",
+        "url": "https://kiharalab.org/pfp",
+        "type": "website"
+      }
+    ],
+    "display": {
+      "images": [
+        {
+          "src": "/projects/Kihara.png",
+          "alt": "KiharaLab Protein Function Prediction",
+          "width": 1200,
+          "height": 613
+        }
       ]
     }
   },
@@ -55,12 +156,25 @@
     "ragNarrative": "Spotify Playlist Curator lets you filter a given playlist using natural language. Instead of relying on an LLM, it uses a custom zero-shot model to reduce a natural language request down to real song metrics (Spotify's audio features), then filters the playlist accordingly.\n\nA notable detail: Spotify shipped essentially this same capability as an official feature about 3 months after Keshav and his team built the prototype, which validated the idea.\n\nKey technical details:\n- Custom zero-shot model maps natural language to concrete song metrics, no LLM in the loop\n- Next.js and React frontend with a FastAPI backend\n- Integrates directly with the Spotify API",
     "tools": "FastAPI, Spotify API, Next.js, React, custom Zero-Shot model",
     "links": [
-      { "label": "Devpost", "url": "https://devpost.com/software/playlist-curator-75uojr", "type": "devpost" },
-      { "label": "GitHub", "url": "https://github.com/cli05/Playlist_Curator-BMXII", "type": "github" }
+      {
+        "label": "Devpost",
+        "url": "https://devpost.com/software/playlist-curator-75uojr",
+        "type": "devpost"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/cli05/Playlist_Curator-BMXII",
+        "type": "github"
+      }
     ],
     "display": {
       "images": [
-        { "src": "/projects/spotify.jpg", "alt": "Spotify Playlist Curator", "width": 806, "height": 457 }
+        {
+          "src": "/projects/spotify.jpg",
+          "alt": "Spotify Playlist Curator",
+          "width": 806,
+          "height": 457
+        }
       ]
     }
   }

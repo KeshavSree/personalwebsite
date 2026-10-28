@@ -45,6 +45,7 @@ function box(parent: THREE.Object3D, x: number, y: number, z: number, w: number,
 function archShape(width: number, height: number, aperture: number) {
   const half = width / 2;
   const inner = aperture / 2;
+  const springline = Math.max(inner, height - Math.max(.28, height * .11) - inner);
   const shape = new THREE.Shape();
   shape.moveTo(-half, 0);
   shape.lineTo(half, 0);
@@ -53,8 +54,8 @@ function archShape(width: number, height: number, aperture: number) {
   shape.closePath();
   const hole = new THREE.Path();
   hole.moveTo(-inner, 0);
-  hole.lineTo(-inner, height * .48);
-  hole.absarc(0, height * .48, inner, Math.PI, 0, true);
+  hole.lineTo(-inner, springline);
+  hole.absarc(0, springline, inner, Math.PI, 0, true);
   hole.lineTo(inner, 0);
   hole.closePath();
   shape.holes.push(hole);
@@ -308,8 +309,8 @@ export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
   upperGallery.position.set(...monumentAnchors.upperGallery);
   root.add(upperGallery);
   arcadedPlatform(upperGallery, -.03, 1.3, -.19, 2.48, .96, 0, .92);
-  tower(upperGallery, { x: -2.75, y: -3.4, z: -.19, height: 4.7, width: .82, openTop: true });
-  levelBridge(upperGallery, [-2.75, 1.3, -.19], [-1.27, 1.3, -.19], .62);
+  tower(upperGallery, { x: -3.5, y: -3.4, z: -.19, height: 4.7, width: .82, openTop: true });
+  levelBridge(upperGallery, [-3.5, 1.3, -.19], [-1.27, 1.3, -.19], .62);
   box(upperGallery, -.03, 1.34, -.19, 1.85, .025, .28, turquoise);
   box(upperGallery, -.03, 1.36, -.19, 1.53, .015, .19, turquoiseDark);
   cypress(upperGallery, -1.03, 1.48, -.19, .53);
@@ -320,7 +321,7 @@ export function buildMonument(): { scene: THREE.Scene; parts: MovingParts } {
   arcadedPlatform(lowerCourt, -1.3, 3.2, -1.3, 3.4, .7, -.2, 1.4);
   box(lowerCourt, -1.3, 3.24, -1.48, 2.35, .026, .16, turquoise);
   arcadedPlatform(lowerCourt, -.05, 1.9, .2, 3.9, 1.4, -.8, 1.78);
-  tower(lowerCourt, { x: -1.6, y: 1.9, z: -.1, height: 1.12, width: .76 });
+  tower(lowerCourt, { x: -1.55, y: 1.9, z: .52, height: 1.12, width: .76 });
   tower(lowerCourt, { x: 1.52, y: 1.9, z: .21, height: 1.43, width: .75, roof: false });
   planter(lowerCourt, -1.04, 1.8, -.2);
   planter(lowerCourt, .87, 1.8, -.42);

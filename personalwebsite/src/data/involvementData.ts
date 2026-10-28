@@ -11,6 +11,8 @@ export interface InvolvementEntry {
   slug: string;
   title: string;
   role: string;
+  logo: string;
+  summary: string;
   date: string;
   link?: string;
   whatIsIt?: string;
@@ -26,6 +28,8 @@ interface RawInvolvement {
   slug: string;
   title: string;
   role: string;
+  logo: string;
+  summary: string;
   date?: string;
   link?: string;
   whatIsIt?: string;
@@ -40,6 +44,8 @@ export function getInvolvements(): InvolvementEntry[] {
     slug: i.slug,
     title: i.title,
     role: i.role,
+    logo: i.logo,
+    summary: i.summary,
     date: i.date ?? '',
     link: i.link,
     whatIsIt: i.whatIsIt,
