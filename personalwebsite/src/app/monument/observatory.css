@@ -95,12 +95,16 @@
 }
 @media(max-width:760px){
  .observatory-study{height:100svh;min-height:650px}
- .observatory-header{top:30px;left:6%}
- .observatory-header h1{font-size:clamp(18px,4.8vw,32px);max-width:none}
- .observatory-home-answer{font-size:21px}
- .observatory-home .observatory-canvas{inset:270px 0 36px}
- .observatory-home .observatory-chapters{--chapter-inset:6vw;top:210px;width:100%}
- .observatory-home .observatory-chapters ol{grid-template-columns:1fr 1fr}
+ .observatory-header{top:30px;left:6%;right:6%}
+ .observatory-header h1{font-size:clamp(26px,6.2vw,32px);max-width:none;white-space:normal;line-height:1.16;margin-bottom:18px}
+ .observatory-home-answer{font-size:26px}
+ .observatory-canvas{opacity:1;filter:blur(0);transition:opacity 1.2s ease,filter 1.2s ease}
+ .observatory-home .observatory-canvas{inset:140px -16% -80px -18%}
+ .observatory-home .observatory-chapters{--chapter-inset:6vw;top:clamp(225px,27svh,270px);width:280px}
+ .observatory-home .observatory-chapters ol{grid-template-columns:1fr}
+ .observatory-home .observatory-chapters li>a{font-size:18px;gap:12px;height:50px}
+ .observatory-home .observatory-chapter-number{font-size:10px;width:16px}
+ .observatory-home-contact .observatory-contact-links{flex-direction:column;align-items:flex-start;gap:10px}
  .observatory-chapters a{font-size:13px;gap:8px;height:43px;padding-right:8px;letter-spacing:.1em}
  .observatory-chapter-number{font-size:8px;width:14px}
  .observatory-contact-links{gap:14px}
@@ -109,15 +113,17 @@
  .observatory-reading .observatory-chapters ol{padding-left:calc(6vw - 8px)}
  .observatory-reading .observatory-chapters a{font-size:10px;padding:0 8px;gap:5px;letter-spacing:.06em}
  .observatory-reading .observatory-chapter-number{width:10px;font-size:7px}
- .observatory-reading .observatory-canvas{inset:65px -8% auto 30%;height:270px;opacity:.7}
- .observatory-content{top:290px;bottom:12px;left:6%;width:88%;max-width:none;animation-delay:.2s}
- .observatory-content-inner{padding:16px 10px 50px 0}
+ .observatory-reading .observatory-canvas{inset:0 -20% -60px -10%;height:auto;opacity:.15;filter:blur(3px)}
+ .observatory-study::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;background:linear-gradient(155deg,#c7d7d514,#172f352b 60%,#a8c3c214);backdrop-filter:blur(0);-webkit-backdrop-filter:blur(0);transition:opacity 1.2s ease,backdrop-filter 1.2s ease,-webkit-backdrop-filter 1.2s ease}
+ .observatory-reading::after{opacity:1;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+ .observatory-content{inset:0;width:100%;max-width:none;animation-delay:.2s;scroll-padding-top:92px;mask-image:linear-gradient(to bottom,transparent 64px,#000 92px,#000 calc(100% - 30px),transparent)}
+ .observatory-content-inner{padding:96px 6% 50px}
  .observatory-content h1{font-size:min(32px,6cqw);margin-bottom:30px;max-width:none}
  .observatory-content h2{font-size:22px}
  .observatory-content p,.observatory-content li,.observatory-content dd{font-size:16px}
 }
 @media(prefers-reduced-motion:reduce){
- .observatory-study *,.observatory-study *::before{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+ .observatory-study *,.observatory-study *::before,.observatory-study::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
  .observatory-sparkles{display:none}
 }
 
@@ -261,7 +267,7 @@ html.palace-menu-transition {view-transition-name:none}
 .observatory-currently-building a span {display:inline-block;margin-left:3px;transition:transform .2s ease}
 .observatory-currently-building a:hover,.observatory-currently-building a:focus-visible {color:var(--palace-gold)}
 .observatory-currently-building a:hover span {transform:translateX(3px)}
-@media(max-width:760px){.observatory-currently-building{margin-top:24px;font-size:14px}}
+@media(max-width:760px){.observatory-currently-building{margin-top:24px;font-size:17px}}
 
 .observatory-section-back {display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;color:var(--palace-muted);font-size:13px;letter-spacing:.025em;text-decoration:none}
 .observatory-section-back:hover,.observatory-section-back:focus-visible {color:var(--palace-cream)}
