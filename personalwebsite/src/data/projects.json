@@ -29,7 +29,7 @@
     "sections": [
       {
         "title": "The Problem",
-        "body": "As personal assistant agents like OpenAI Dots become increasingly competent in execution quality and speed, the bottleneck moves to what they are actually executing. While using these products, I personally found it hard to keep up with the potential of these products because I could not efficiently funnel my own ideas into these agents. I often found myself thinking of an idea while walking, then completely forgetting about it until days later. So I asked myself: What if my personal agent could act on these ideas, or at the very least prepare them for further investigation, autonomously."
+        "body": "As personal assistant agents like OpenAI Dots become increasingly competent in execution quality and speed, the bottleneck moves to both our trust in what they can execute, and the speed at which we can tell them to execute. While using these products, I have found the quality of answer comes down to whether or not it has the same context you do on the problem. I have also found that having an accessible agent means ideas flow more freely, meaning you can provide more complete context.\n\nI often think of ideas or todos while walking, and then completely forget until later. So I asked myself: What if I could easily relay my thoughts to personal agent, giving it greater context and ultimately allowing it to act on those thoughts?"
       },
       {
         "title": "What already exists",
